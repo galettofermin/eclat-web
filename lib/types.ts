@@ -37,8 +37,26 @@ export interface CourseModule {
   id: string
   course_id: string
   title: string
+  subtitle: string
   sort_order: number
   created_at: string
+}
+
+export interface ModuleQuiz {
+  id: string
+  module_id: string
+  title: string
+  created_at: string
+}
+
+export interface QuizQuestion {
+  id: string
+  quiz_id: string
+  question: string
+  options: string[]
+  correct_index: number
+  explanation: string
+  sort_order: number
 }
 
 export interface ModuleMaterial {
