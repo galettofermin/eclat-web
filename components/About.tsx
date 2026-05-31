@@ -1,12 +1,18 @@
 'use client'
 
-import FadeUp from './FadeUp'
+import { motion, useInView } from 'framer-motion'
+import { useRef } from 'react'
+
+const spring = { type: 'spring', stiffness: 260, damping: 24 }
 
 interface AboutProps {
   siteConfig?: Record<string, string>
 }
 
 export default function About({ siteConfig }: AboutProps) {
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, margin: '-80px' })
+
   const title = siteConfig?.about_title ?? 'Un centro pensado para cada persona.'
   const body = siteConfig?.about_body ?? 'Centro de Atención Integral reconocido y habilitado por el Ministerio de Desarrollo Social, registrado en el Registro Nacional de Prestadores de la Superintendencia de Servicios de Salud.'
   const quote = siteConfig?.about_quote ?? 'Una sociedad inclusiva reconoce y celebra la diversidad, promoviendo la igualdad de oportunidades.'
@@ -15,47 +21,73 @@ export default function About({ siteConfig }: AboutProps) {
   const enfoque = siteConfig?.about_enfoque ?? 'Mirada singular centrada en las necesidades, deseos y capacidades de cada persona.'
 
   const columns = [
-    { title: 'Misión', body: mision },
-    { title: 'Valores', body: valores },
-    { title: 'Enfoque', body: enfoque },
+    { title: 'Misión', body: mision, icon: '◎' },
+    { title: 'Valores', body: valores, icon: '◈' },
+    { title: 'Enfoque', body: enfoque, icon: '◇' },
   ]
 
   return (
-    <section id="sobre" className="py-32 px-6 bg-[#F5F5F7]">
-      <div className="max-w-5xl mx-auto">
-        <FadeUp>
-          <p className="text-[#2F7D6B] text-[13px] font-semibold tracking-widest uppercase mb-4">
-            Sobre ÉCLAT
-          </p>
-        </FadeUp>
+    <section id="sobre" className="py-24 md:py-32 px-5 bg-[#F5F5F7] overflow-hidden">
+      <div className="max-w-5xl mx-auto" ref={ref}>
 
-        <FadeUp delay={0.1}>
-          <h2 className="text-[clamp(2rem,4.5vw,3.2rem)] font-semibold tracking-tight text-[#0A0A0A] leading-tight mb-8 max-w-2xl">
+        {/* Header */}
+        <motion.p
+          initial={{ opacity: 0, y: 14 }} animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5 }}
+          className="text-[#2F7D6B] text-[12px] font-semibold tracking-[0.2em] uppercase mb-5"
+        >
+          Sobre ÉCLAT
+        </motion.p>
+
+        <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-start mb-16 md:mb-20">
+          <motion.h2
+            initial={{ opacity: 0, y: 28 }} animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ ...spring, delay: 0.1 }}
+            className="text-[clamp(2rem,5vw,3.4rem)] font-semibold tracking-tight text-[#0A0A0A] leading-[1.06]"
+          >
             {title}
-          </h2>
-        </FadeUp>
+          </motion.h2>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="flex flex-col justify-center"
+          >
+            <p className="text-[16px] md:text-[17px] text-[#424245] leading-relaxed mb-5">{body}</p>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#2F7D6B]" />
+              <span className="text-[13px] font-medium text-[#2F7D6B]">Habilitado por el Ministerio de Desarrollo Social</span>
+            </div>
+          </motion.div>
+        </div>
 
-        <FadeUp delay={0.15}>
-          <p className="text-[17px] text-[#424245] leading-relaxed mb-6 max-w-3xl">{body}</p>
-        </FadeUp>
-
-        <div className="grid sm:grid-cols-3 gap-6 mt-12 mb-20">
+        {/* 3 columnas */}
+        <div className="grid sm:grid-cols-3 gap-4 mb-14">
           {columns.map((col, i) => (
-            <FadeUp key={col.title} delay={0.1 * (i + 1)}>
-              <div className="bg-white rounded-2xl p-8 border border-black/5 h-full">
-                <h3 className="text-[11px] font-semibold tracking-widest uppercase text-[#2F7D6B] mb-4">
-                  {col.title}
-                </h3>
-                <p className="text-[15px] text-[#424245] leading-relaxed">{col.body}</p>
-              </div>
-            </FadeUp>
+            <motion.div
+              key={col.title}
+              initial={{ opacity: 0, y: 32, scale: 0.96 }}
+              animate={inView ? { opacity: 1, y: 0, scale: 1 } : {}}
+              transition={{ ...spring, delay: 0.15 + i * 0.1 }}
+              whileHover={{ y: -4, scale: 1.02 }}
+              className="bg-white rounded-2xl md:rounded-3xl p-7 border border-black/[0.06] shadow-sm cursor-default"
+            >
+              <span className="text-2xl text-[#2F7D6B] block mb-4">{col.icon}</span>
+              <h3 className="text-[11px] font-bold tracking-[0.18em] uppercase text-[#2F7D6B] mb-3">{col.title}</h3>
+              <p className="text-[14px] md:text-[15px] text-[#424245] leading-relaxed">{col.body}</p>
+            </motion.div>
           ))}
         </div>
 
         {/* REEMPLAZAR CON FOTO REAL del equipo */}
-        <FadeUp delay={0.2}>
-          <div className="w-full rounded-3xl bg-white border border-black/5 h-64 flex flex-col items-center justify-center gap-4 mb-16 overflow-hidden">
-            <div className="w-14 h-14 rounded-2xl bg-[#DCEFE8] flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ ...spring, delay: 0.4 }}
+          className="w-full rounded-2xl md:rounded-3xl overflow-hidden bg-gradient-to-br from-[#DCEFE8] to-[#b8ddd0] h-56 md:h-72 flex flex-col items-center justify-center gap-4 mb-14 relative"
+        >
+          <div className="absolute inset-0 opacity-20"
+            style={{ background: 'radial-gradient(ellipse at 50% 50%, #2F7D6B 0%, transparent 70%)' }} />
+          <div className="relative text-center">
+            <div className="w-14 h-14 rounded-2xl bg-white/60 backdrop-blur-sm flex items-center justify-center mx-auto mb-3 shadow-lg">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2F7D6B" strokeWidth="1.5">
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                 <circle cx="9" cy="7" r="4" />
@@ -63,18 +95,21 @@ export default function About({ siteConfig }: AboutProps) {
                 <path d="M16 3.13a4 4 0 0 1 0 7.75" />
               </svg>
             </div>
-            <p className="text-[13px] text-[#6E6E73] font-medium">Foto del equipo</p>
+            <p className="text-[13px] font-semibold text-[#2F7D6B]">Foto del equipo</p>
           </div>
-        </FadeUp>
+        </motion.div>
 
-        <FadeUp delay={0.25}>
-          <blockquote className="border-l-2 border-[#2F7D6B] pl-8 py-2">
-            <p className="text-[clamp(1.1rem,2.5vw,1.4rem)] font-light leading-relaxed text-[#0A0A0A] mb-3">
-              "{quote}"
-            </p>
-            <cite className="text-[13px] text-[#6E6E73] not-italic">— Centro ÉCLAT</cite>
-          </blockquote>
-        </FadeUp>
+        {/* Quote */}
+        <motion.blockquote
+          initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ ...spring, delay: 0.5 }}
+          className="border-l-[3px] border-[#2F7D6B] pl-7 py-2"
+        >
+          <p className="text-[clamp(1.1rem,2.5vw,1.45rem)] font-light leading-relaxed text-[#0A0A0A] mb-3">
+            "{quote}"
+          </p>
+          <cite className="text-[13px] text-[#86868b] not-italic">— Centro ÉCLAT</cite>
+        </motion.blockquote>
       </div>
     </section>
   )
