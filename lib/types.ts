@@ -22,6 +22,7 @@ export interface Course {
   sort_order: number
   published: boolean
   price: number
+  price_original: number   // Precio tachado (valor real antes del descuento)
   is_free: boolean
   // Campos enriquecidos
   long_description: string

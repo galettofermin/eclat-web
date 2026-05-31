@@ -7,6 +7,8 @@ import Footer from '@/components/Footer'
 import WhatsAppButton from '@/components/WhatsAppButton'
 import CourseQuiz from '@/components/CourseQuiz'
 import DirectorModules from '@/components/admin/DirectorModules'
+import CourseAccordion from '@/components/course/CourseAccordion'
+import CoursePriceCard from '@/components/course/CoursePriceCard'
 import type { QuizQuestion } from '@/lib/types'
 import { DIRECTOR_EMAIL } from '@/lib/constants'
 
@@ -36,11 +38,10 @@ export default async function CursoPage({
     .from('courses').select('*').eq('id', params.id).eq('published', true).single()
   if (!course) redirect('/formacion')
 
-  // Módulos con materiales, quiz y preguntas
+  // Módulos + materiales + quiz + preguntas
   const { data: modulesRaw } = await adminSb
     .from('course_modules').select('*, module_materials(*)').eq('course_id', params.id).order('sort_order')
 
-  // Para cada módulo obtener el quiz y preguntas
   const modules = await Promise.all((modulesRaw ?? []).map(async (mod) => {
     const { data: quiz } = await adminSb
       .from('module_quizzes').select('*, quiz_questions(*)').eq('module_id', mod.id).maybeSingle()
@@ -52,12 +53,18 @@ export default async function CursoPage({
     }
   }))
 
+  // Inscripción del usuario
   let enrollment = null
   if (user) {
     const { data } = await adminSb
       .from('enrollments').select('*').eq('user_id', user.id).eq('course_id', params.id).maybeSingle()
     enrollment = data
   }
+
+  // Contador de alumnos
+  const { count: studentCount } = await adminSb
+    .from('enrollments').select('*', { count: 'exact', head: true })
+    .eq('course_id', params.id).eq('status', 'approved')
 
   const isApproved = course.is_free || enrollment?.status === 'approved' || isDirector
   const isPending = !course.is_free && enrollment?.status === 'pending'
@@ -66,128 +73,126 @@ export default async function CursoPage({
     ? course.learnings.split('\n').map((s: string) => s.trim()).filter(Boolean) : []
   const syllabus: string[] = course.syllabus
     ? course.syllabus.split('\n').map((s: string) => s.trim()).filter(Boolean) : []
+  const audience: string[] = course.target_audience
+    ? course.target_audience.split('\n').map((s: string) => s.trim()).filter(Boolean) : []
 
-  const moduleCount = modules.length
-  const materialCount = modules.reduce((acc, m) => acc + (m.module_materials?.length ?? 0), 0)
+  const priceOriginal = course.price_original ?? 0
 
   return (
     <main className="min-h-screen bg-white">
       <Navbar />
 
-      {/* Director mode banner */}
+      {/* Director banner */}
       {isDirector && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#2F7D6B] text-white text-center py-2.5 text-[13px] font-semibold">
-          ✏️ Modo director — Editás los módulos directamente en esta página
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#2F7D6B] text-white text-center py-2.5 text-[13px] font-semibold shadow-lg">
+          ✏️ Modo director — Podés editar módulos y preguntas directamente en esta página
         </div>
       )}
 
-      {/* Hero del curso */}
-      <div className="bg-[#F5F5F7] border-b border-black/[0.06]">
-        <div className="max-w-5xl mx-auto px-5 pt-24 pb-10">
-          <Link href="/formacion" className="inline-flex items-center gap-1.5 text-[13px] text-[#6E6E73] hover:text-[#2F7D6B] transition-colors mb-6">
+      {/* ── HERO DEL CURSO ── */}
+      <div className="bg-gradient-to-b from-[#0A0A0A] to-[#1a1a1a] text-white">
+        <div className="max-w-6xl mx-auto px-5 pt-24 pb-12">
+          <Link href="/formacion" className="inline-flex items-center gap-1.5 text-[13px] text-white/50 hover:text-white/80 transition-colors mb-6">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
             Formación
           </Link>
 
-          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8">
-            <div className="flex-1 max-w-2xl">
-              <span className={`inline-block text-[11px] font-bold tracking-[0.15em] uppercase px-3 py-1 rounded-full mb-4 ${course.is_free ? 'bg-[#DCEFE8] text-[#2F7D6B]' : 'bg-white text-[#6E6E73] border border-black/10'}`}>
+          <div className="flex flex-col lg:flex-row gap-10 lg:gap-16">
+            <div className="flex-1">
+              {/* Badge */}
+              <span className={`inline-block text-[11px] font-bold tracking-[0.15em] uppercase px-3 py-1 rounded-full mb-5 ${
+                course.is_free ? 'bg-[#DCEFE8] text-[#2F7D6B]' : 'bg-[#2F7D6B]/20 text-[#7bc4b5] border border-[#2F7D6B]/30'
+              }`}>
                 {course.badge}
               </span>
-              <h1 className="text-[clamp(2rem,5vw,3rem)] font-semibold tracking-tight text-[#0A0A0A] leading-[1.05] mb-4">
+
+              <h1 className="text-[clamp(2rem,5vw,3.2rem)] font-bold tracking-tight text-white leading-[1.05] mb-4">
                 {course.title}
               </h1>
-              <p className="text-[16px] md:text-[17px] text-[#424245] leading-relaxed mb-6">
+
+              <p className="text-[16px] text-white/70 leading-relaxed mb-6 max-w-2xl">
                 {course.long_description || course.description}
               </p>
-              <div className="flex flex-wrap gap-3">
+
+              {/* Stats row */}
+              <div className="flex flex-wrap gap-4">
+                {(studentCount ?? 0) > 0 && (
+                  <div className="flex items-center gap-1.5 text-[13px] text-white/60">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                      <circle cx="9" cy="7" r="4"/>
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    <span className="text-white font-semibold">{studentCount}</span> alumno{(studentCount ?? 0) !== 1 ? 's' : ''} inscripto{(studentCount ?? 0) !== 1 ? 's' : ''}
+                  </div>
+                )}
                 {course.duration && (
-                  <div className="flex items-center gap-1.5 bg-white rounded-full px-4 py-2 border border-black/[0.08] text-[13px] font-medium text-[#424245]">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2F7D6B" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                  <div className="flex items-center gap-1.5 text-[13px] text-white/60">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
                     {course.duration}
                   </div>
                 )}
                 {course.modality && (
-                  <div className="flex items-center gap-1.5 bg-white rounded-full px-4 py-2 border border-black/[0.08] text-[13px] font-medium text-[#424245]">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2F7D6B" strokeWidth="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+                  <div className="flex items-center gap-1.5 text-[13px] text-white/60">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
                     {course.modality}
                   </div>
                 )}
                 {course.level && (
-                  <div className="flex items-center gap-1.5 bg-white rounded-full px-4 py-2 border border-black/[0.08] text-[13px] font-medium text-[#424245]">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2F7D6B" strokeWidth="1.5"><path d="M2 20h20M6 20V10M12 20V4M18 20v-6"/></svg>
+                  <div className="flex items-center gap-1.5 text-[13px] text-white/60">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2 20h20M6 20V10M12 20V4M18 20v-6"/></svg>
                     {course.level}
                   </div>
                 )}
-                {moduleCount > 0 && (
-                  <div className="flex items-center gap-1.5 bg-white rounded-full px-4 py-2 border border-black/[0.08] text-[13px] font-medium text-[#424245]">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2F7D6B" strokeWidth="1.5"><path d="M12 2L2 7l10 5 10-5-10-5Z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-                    {moduleCount} módulo{moduleCount !== 1 ? 's' : ''}
+                {modules.length > 0 && (
+                  <div className="flex items-center gap-1.5 text-[13px] text-white/60">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 2L2 7l10 5 10-5-10-5Z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                    {modules.length} módulo{modules.length !== 1 ? 's' : ''}
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Card precio */}
-            {!course.is_free && (
-              <div className="lg:w-72 shrink-0">
-                <div className="bg-white rounded-2xl border border-black/[0.08] shadow-lg p-6 lg:sticky lg:top-24">
-                  <p className="text-[32px] font-bold text-[#0A0A0A] mb-1">{formatPrice(course.price)}</p>
-                  <p className="text-[13px] text-[#6E6E73] mb-5">Acceso completo · {moduleCount} módulos · {materialCount} materiales</p>
-                  {isDirector ? (
-                    <div className="w-full text-center bg-[#DCEFE8] text-[#2F7D6B] font-semibold py-3.5 rounded-xl text-[14px] mb-3">
-                      ✓ Director — acceso total
-                    </div>
-                  ) : !user ? (
-                    <Link href={`/login?redirect=/inscripcion/${course.id}`} className="block w-full text-center bg-[#2F7D6B] text-white font-semibold py-3.5 rounded-xl hover:bg-[#245f52] transition-colors text-[15px] mb-3">
-                      Comprar curso
-                    </Link>
-                  ) : !enrollment ? (
-                    <Link href={`/inscripcion/${course.id}`} className="block w-full text-center bg-[#2F7D6B] text-white font-semibold py-3.5 rounded-xl hover:bg-[#245f52] transition-colors text-[15px] mb-3">
-                      Comprar curso
-                    </Link>
-                  ) : isPending ? (
-                    <div className="w-full text-center bg-amber-50 text-amber-700 font-semibold py-3.5 rounded-xl text-[14px] mb-3 border border-amber-200">
-                      Pago en verificación
-                    </div>
-                  ) : (
-                    <div className="w-full text-center bg-[#DCEFE8] text-[#2F7D6B] font-semibold py-3.5 rounded-xl text-[14px] mb-3">
-                      ✓ Acceso activo
-                    </div>
-                  )}
-                  {!isDirector && (
-                    <div className="space-y-2.5 pt-3 border-t border-black/5">
-                      {['Acceso de por vida', 'Materiales descargables', 'Cierre de módulo'].map(item => (
-                        <div key={item} className="flex items-center gap-2 text-[13px] text-[#424245]">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2F7D6B" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg>
-                          {item}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+            {/* Price card - visible en desktop dentro del hero */}
+            <div className="lg:w-80 shrink-0 hidden lg:block">
+              <div className="lg:sticky lg:top-20">
+                <CoursePriceCard
+                  price={course.price}
+                  priceOriginal={priceOriginal}
+                  courseId={course.id}
+                  isFree={course.is_free}
+                  freeLink={course.link}
+                  freeCta={course.cta}
+                  isDirector={isDirector}
+                  isEnrolled={isApproved && !isDirector}
+                  isPending={isPending}
+                  user={!!user}
+                />
               </div>
-            )}
-
-            {course.is_free && course.link && (
-              <div className="lg:w-72 shrink-0">
-                <div className="bg-white rounded-2xl border border-[#2F7D6B]/30 shadow-lg p-6">
-                  <p className="text-[20px] font-bold text-[#2F7D6B] mb-1">Gratis</p>
-                  <p className="text-[13px] text-[#6E6E73] mb-5">Descarga directa sin registro</p>
-                  <a href={course.link} target="_blank" rel="noopener noreferrer"
-                    className="block w-full text-center bg-[#2F7D6B] text-white font-semibold py-3.5 rounded-xl hover:bg-[#245f52] transition-colors text-[15px]">
-                    {course.cta ?? 'Descargar gratis'}
-                  </a>
-                </div>
-              </div>
-            )}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Banners */}
+      {/* Price card mobile */}
+      <div className="lg:hidden px-5 -mt-4 mb-6">
+        <CoursePriceCard
+          price={course.price}
+          priceOriginal={priceOriginal}
+          courseId={course.id}
+          isFree={course.is_free}
+          freeLink={course.link}
+          freeCta={course.cta}
+          isDirector={isDirector}
+          isEnrolled={isApproved && !isDirector}
+          isPending={isPending}
+          user={!!user}
+        />
+      </div>
+
+      {/* Banner pago */}
       {searchParams.pago === 'ok' && (
-        <div className="max-w-5xl mx-auto px-5 pt-6">
+        <div className="max-w-4xl mx-auto px-5 pt-4">
           <div className="bg-[#DCEFE8] border border-[#2F7D6B]/20 rounded-2xl px-5 py-4 flex items-center gap-3">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2F7D6B" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg>
             <p className="text-[15px] font-semibold text-[#2F7D6B]">¡Pago confirmado! Ya tenés acceso al curso.</p>
@@ -195,145 +200,165 @@ export default async function CursoPage({
         </div>
       )}
 
-      {/* Cuerpo */}
-      <div className={`max-w-5xl mx-auto px-5 py-12 md:py-16 ${isDirector ? 'pb-20' : ''}`}>
-        <div className="max-w-2xl space-y-12">
+      {/* ── CUERPO ── */}
+      <div className="max-w-4xl mx-auto px-5 py-10 md:py-14 space-y-12">
 
-          {/* Qué vas a aprender */}
-          {learnings.length > 0 && (
-            <div>
-              <h2 className="text-[22px] md:text-[24px] font-semibold text-[#0A0A0A] mb-6">Qué vas a aprender</h2>
-              <div className="grid sm:grid-cols-2 gap-3">
-                {learnings.map((item, i) => (
-                  <div key={i} className="flex items-start gap-3 bg-[#F5F5F7] rounded-xl px-4 py-3">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2F7D6B" strokeWidth="2.5" className="shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>
-                    <span className="text-[14px] text-[#424245] leading-snug">{item}</span>
+        {/* Qué vas a aprender */}
+        {learnings.length > 0 && (
+          <div>
+            <h2 className="text-[22px] md:text-[26px] font-bold text-[#0A0A0A] mb-6">
+              Con este curso vas a aprender
+            </h2>
+            <div className="grid sm:grid-cols-2 gap-3">
+              {learnings.map((item, i) => (
+                <div key={i} className="flex items-start gap-3 bg-[#F5F5F7] rounded-xl px-4 py-3.5 border border-black/[0.05]">
+                  <div className="w-5 h-5 rounded-full bg-[#2F7D6B] flex items-center justify-center shrink-0 mt-0.5">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
                   </div>
-                ))}
-              </div>
+                  <span className="text-[13px] md:text-[14px] text-[#424245] leading-snug">{item}</span>
+                </div>
+              ))}
             </div>
-          )}
+          </div>
+        )}
 
-          {/* Para quién */}
-          {course.target_audience && (
-            <div>
-              <h2 className="text-[22px] md:text-[24px] font-semibold text-[#0A0A0A] mb-4">¿Para quién es este curso?</h2>
-              <div className="bg-[#DCEFE8]/50 border border-[#2F7D6B]/20 rounded-2xl p-6">
-                <p className="text-[15px] text-[#424245] leading-relaxed">{course.target_audience}</p>
-              </div>
-            </div>
-          )}
-
-          {/* Temario */}
-          {syllabus.length > 0 && (
-            <div>
-              <h2 className="text-[22px] md:text-[24px] font-semibold text-[#0A0A0A] mb-6">Temario del curso</h2>
-              <div className="border border-black/[0.08] rounded-2xl overflow-hidden divide-y divide-black/[0.06]">
-                {syllabus.map((item, i) => (
-                  <div key={i} className="flex items-center gap-4 px-5 py-3.5 bg-white hover:bg-[#F5F5F7] transition-colors">
-                    <span className="w-6 h-6 rounded-full bg-[#DCEFE8] text-[#2F7D6B] text-[12px] font-bold flex items-center justify-center shrink-0">{i + 1}</span>
-                    <span className="text-[14px] text-[#0A0A0A]">{item}</span>
+        {/* Para quién */}
+        {audience.length > 0 && (
+          <div>
+            <h2 className="text-[22px] md:text-[26px] font-bold text-[#0A0A0A] mb-6">
+              ¿Para quién está orientado?
+            </h2>
+            <div className="grid sm:grid-cols-2 gap-3">
+              {audience.map((item, i) => (
+                <div key={i} className="flex items-center gap-3 bg-white rounded-xl px-4 py-3.5 border border-black/[0.07] shadow-sm">
+                  <div className="w-9 h-9 rounded-xl bg-[#DCEFE8] flex items-center justify-center shrink-0">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2F7D6B" strokeWidth="1.5">
+                      <circle cx="12" cy="8" r="4"/>
+                      <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                    </svg>
                   </div>
-                ))}
-              </div>
+                  <span className="text-[14px] font-medium text-[#0A0A0A]">{item}</span>
+                </div>
+              ))}
             </div>
-          )}
+          </div>
+        )}
 
-          {/* Módulos */}
+        {/* Temario — acordeón */}
+        {syllabus.length > 0 && (
           <div>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-[22px] md:text-[24px] font-semibold text-[#0A0A0A]">
-                {isApproved ? 'Contenido del curso' : 'Contenido'}
-              </h2>
-              {isDirector && (
-                <span className="text-[12px] font-semibold text-[#2F7D6B] bg-[#DCEFE8] px-3 py-1 rounded-full">
-                  ✏️ Modo edición
-                </span>
-              )}
+              <h2 className="text-[22px] md:text-[26px] font-bold text-[#0A0A0A]">Temario del curso</h2>
+              <span className="text-[13px] text-[#86868b]">{syllabus.length} temas</span>
             </div>
+            <CourseAccordion items={syllabus} />
+          </div>
+        )}
 
-            {/* Director: editor inline completo */}
-            {isDirector ? (
-              <DirectorModules courseId={course.id} initialModules={modules} />
-            ) : !modules.length ? (
-              <div className="bg-[#F5F5F7] rounded-2xl p-8 text-center text-[#6E6E73] text-[15px]">
-                Los módulos estarán disponibles próximamente.
-              </div>
-            ) : (
-              <div className="border border-black/[0.08] rounded-2xl overflow-hidden divide-y divide-black/[0.06]">
-                {modules.map((mod, i) => (
-                  <div key={mod.id} className="bg-white">
-                    <div className={`flex items-center gap-3 px-5 py-4 ${isApproved ? '' : 'opacity-75'}`}>
-                      <span className={`w-8 h-8 rounded-full flex items-center justify-center text-[12px] font-bold shrink-0 ${isApproved ? 'bg-[#DCEFE8] text-[#2F7D6B]' : 'bg-[#F5F5F7] text-[#86868b]'}`}>
-                        {i + 1}
-                      </span>
-                      <div className="flex-1">
-                        <p className="text-[14px] md:text-[15px] font-semibold text-[#0A0A0A]">{mod.title}</p>
-                        {mod.subtitle && <p className="text-[12px] text-[#6E6E73] mt-0.5">{mod.subtitle}</p>}
-                      </div>
-                      {isApproved ? (
-                        <span className="text-[12px] text-[#86868b]">{mod.module_materials?.length ?? 0} archivo{(mod.module_materials?.length ?? 0) !== 1 ? 's' : ''}</span>
-                      ) : (
+        {/* Módulos / Contenido */}
+        <div>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-[22px] md:text-[26px] font-bold text-[#0A0A0A]">
+              Contenido del curso
+            </h2>
+            {isDirector && (
+              <span className="text-[12px] font-semibold text-[#2F7D6B] bg-[#DCEFE8] px-3 py-1 rounded-full">
+                ✏️ Modo edición
+              </span>
+            )}
+          </div>
+
+          {/* Director: editor completo */}
+          {isDirector ? (
+            <DirectorModules courseId={course.id} initialModules={modules} />
+          ) : !modules.length ? (
+            <div className="bg-[#F5F5F7] rounded-2xl p-8 text-center text-[#6E6E73] text-[15px]">
+              Los módulos estarán disponibles próximamente.
+            </div>
+          ) : (
+            <div className="border border-black/[0.08] rounded-2xl overflow-hidden divide-y divide-black/[0.06]">
+              {modules.map((mod, i) => (
+                <div key={mod.id} className="bg-white">
+                  <div className={`flex items-center gap-3 px-5 py-4 ${isApproved ? '' : 'opacity-80'}`}>
+                    <span className={`w-8 h-8 rounded-full flex items-center justify-center text-[13px] font-bold shrink-0 ${isApproved ? 'bg-[#2F7D6B] text-white' : 'bg-[#F5F5F7] text-[#86868b]'}`}>
+                      {i + 1}
+                    </span>
+                    <div className="flex-1">
+                      <p className="text-[14px] md:text-[15px] font-semibold text-[#0A0A0A]">{mod.title}</p>
+                      {mod.subtitle && <p className="text-[12px] text-[#6E6E73] mt-0.5">{mod.subtitle}</p>}
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      {isApproved && (
+                        <span className="text-[11px] text-[#86868b]">
+                          {mod.module_materials?.length ?? 0} archivo{(mod.module_materials?.length ?? 0) !== 1 ? 's' : ''}
+                          {mod.questions.length > 0 && ` · cierre`}
+                        </span>
+                      )}
+                      {!isApproved && (
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#86868b" strokeWidth="1.5">
                           <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                         </svg>
                       )}
                     </div>
-
-                    {isApproved && mod.module_materials?.length > 0 && (
-                      <div className="px-5 pb-4 pt-1 bg-[#F9F9F9] border-t border-black/[0.04] space-y-1.5">
-                        {mod.module_materials.map((mat: { id: string; type: string; title: string; url: string }) => (
-                          <a key={mat.id} href={mat.url} target="_blank" rel="noopener noreferrer"
-                            className="flex items-center gap-3 py-2 px-3 rounded-xl hover:bg-white transition-colors group">
-                            <span className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${mat.type === 'pdf' ? 'bg-red-50 text-red-500' : mat.type === 'video' ? 'bg-blue-50 text-blue-500' : 'bg-red-50 text-red-500'}`}>
-                              {mat.type === 'pdf' ? ICON_PDF : mat.type === 'video' ? ICON_VIDEO : ICON_YT}
-                            </span>
-                            <span className="text-[13px] font-medium text-[#0A0A0A] group-hover:text-[#2F7D6B] transition-colors flex-1 truncate">{mat.title}</span>
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#86868b" strokeWidth="1.5" className="shrink-0">
-                              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                              <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
-                            </svg>
-                          </a>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Quiz del módulo — solo para inscritos */}
-                    {isApproved && mod.questions.length > 0 && (
-                      <div className="px-5 pb-5 border-t border-black/[0.04] bg-white">
-                        <CourseQuiz questions={mod.questions} />
-                      </div>
-                    )}
                   </div>
-                ))}
-              </div>
-            )}
 
-            {/* CTAs sin acceso */}
-            {!isApproved && !isPending && !course.is_free && (
-              <div className="mt-6 bg-[#0A0A0A] rounded-2xl p-7 md:p-8 text-center text-white">
-                <p className="text-[17px] font-semibold mb-2">{!user ? 'Registrate para acceder' : 'Desbloqueá el contenido completo'}</p>
-                <p className="text-white/55 text-[14px] mb-6">{!user ? 'Creá tu cuenta gratis y comprá el curso.' : `${formatPrice(course.price)} · Acceso de por vida`}</p>
-                {!user ? (
-                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                    <Link href="/registro" className="bg-white text-[#0A0A0A] font-semibold px-6 py-3 rounded-full text-[15px] hover:bg-white/90 transition-colors">Crear cuenta gratis</Link>
-                    <Link href={`/login?redirect=/inscripcion/${course.id}`} className="border border-white/20 text-white font-semibold px-6 py-3 rounded-full text-[15px] hover:bg-white/10 transition-colors">Ya tengo cuenta</Link>
-                  </div>
-                ) : (
-                  <Link href={`/inscripcion/${course.id}`} className="inline-block bg-white text-[#0A0A0A] font-semibold px-8 py-3 rounded-full text-[15px] hover:bg-white/90 transition-colors">
-                    Comprar — {formatPrice(course.price)}
-                  </Link>
-                )}
-              </div>
-            )}
+                  {/* Materiales desbloqueados */}
+                  {isApproved && mod.module_materials?.length > 0 && (
+                    <div className="px-5 pb-3 pt-1 bg-[#F9F9F9] border-t border-black/[0.04] space-y-1.5">
+                      {mod.module_materials.map((mat: { id: string; type: string; title: string; url: string }) => (
+                        <a key={mat.id} href={mat.url} target="_blank" rel="noopener noreferrer"
+                          className="flex items-center gap-3 py-2 px-3 rounded-xl hover:bg-white transition-colors group">
+                          <span className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${mat.type === 'pdf' ? 'bg-red-50 text-red-500' : mat.type === 'video' ? 'bg-blue-50 text-blue-500' : 'bg-red-50 text-red-500'}`}>
+                            {mat.type === 'pdf' ? ICON_PDF : mat.type === 'video' ? ICON_VIDEO : ICON_YT}
+                          </span>
+                          <span className="text-[13px] font-medium text-[#0A0A0A] group-hover:text-[#2F7D6B] transition-colors flex-1 truncate">{mat.title}</span>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#86868b" strokeWidth="1.5" className="shrink-0">
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                            <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                          </svg>
+                        </a>
+                      ))}
+                    </div>
+                  )}
 
-            {isPending && (
-              <div className="mt-6 bg-amber-50 border border-amber-200 rounded-2xl p-7 text-center">
-                <p className="text-[17px] font-semibold text-amber-800 mb-2">Tu pago está siendo verificado</p>
-                <p className="text-amber-700 text-[14px]">Una vez confirmado, el contenido se desbloqueará automáticamente.</p>
-              </div>
-            )}
-          </div>
+                  {/* Cierre del módulo */}
+                  {isApproved && mod.questions.length > 0 && (
+                    <div className="px-5 pb-5 border-t border-black/[0.04] bg-white">
+                      <CourseQuiz questions={mod.questions} />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* CTAs sin acceso */}
+          {!isApproved && !isPending && !course.is_free && (
+            <div className="mt-6 bg-[#0A0A0A] rounded-2xl p-7 md:p-8 text-center text-white">
+              <p className="text-[17px] font-semibold mb-2">{!user ? 'Registrate para acceder' : 'Desbloqueá el contenido completo'}</p>
+              <p className="text-white/55 text-[14px] mb-6">
+                {!user ? 'Creá tu cuenta gratis y comprá el curso.' : `${formatPrice(course.price)} · Acceso de por vida`}
+                {priceOriginal > course.price && ` (antes ${formatPrice(priceOriginal)})`}
+              </p>
+              {!user ? (
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <Link href="/registro" className="bg-white text-[#0A0A0A] font-semibold px-6 py-3 rounded-full text-[15px] hover:bg-white/90 transition-colors">Crear cuenta gratis</Link>
+                  <Link href={`/login?redirect=/inscripcion/${course.id}`} className="border border-white/20 text-white font-semibold px-6 py-3 rounded-full text-[15px] hover:bg-white/10 transition-colors">Ya tengo cuenta</Link>
+                </div>
+              ) : (
+                <Link href={`/inscripcion/${course.id}`} className="inline-block bg-white text-[#0A0A0A] font-semibold px-8 py-3 rounded-full text-[15px] hover:bg-white/90 transition-colors">
+                  Inscribirme — {formatPrice(course.price)}
+                </Link>
+              )}
+            </div>
+          )}
+
+          {isPending && (
+            <div className="mt-6 bg-amber-50 border border-amber-200 rounded-2xl p-7 text-center">
+              <p className="text-[17px] font-semibold text-amber-800 mb-2">Tu pago está siendo verificado</p>
+              <p className="text-amber-700 text-[14px]">Una vez confirmado, el contenido se desbloqueará automáticamente.</p>
+            </div>
+          )}
         </div>
       </div>
 

@@ -27,6 +27,8 @@ export default function CourseForm({ course }: { course?: Course }) {
     badge_type: course?.badge_type ?? 'soon' as 'free' | 'soon',
     link: course?.link ?? '',
     cta: course?.cta ?? '',
+    price: course?.price ?? 49999,
+    price_original: course?.price_original ?? 85000,
     sort_order: course?.sort_order ?? 0,
     published: course?.published ?? true,
   })
@@ -158,7 +160,33 @@ export default function CourseForm({ course }: { course?: Course }) {
             Precio y badge
           </h3>
           <div className="grid sm:grid-cols-2 gap-4">
-            <div>
+            <div className="sm:col-span-2 grid sm:grid-cols-2 gap-4 p-4 bg-[#F5F5F7] rounded-xl border border-black/5">
+              <div>
+                <label className="block text-[13px] font-medium text-[#0A0A0A] mb-1.5">
+                  Precio de oferta <span className="text-[#86868b] font-normal">(el que paga el alumno)</span>
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[14px] text-[#6E6E73]">$</span>
+                  <input type="number" min={0} value={form.price ?? 0}
+                    onChange={e => set('price' as keyof typeof form, parseInt(e.target.value) || 0)}
+                    className="w-full pl-7 pr-4 py-3 rounded-xl border border-black/10 text-[15px] font-bold text-[#2F7D6B] focus:outline-none focus:border-[#2F7D6B] transition-colors" />
+                </div>
+              </div>
+              <div>
+                <label className="block text-[13px] font-medium text-[#0A0A0A] mb-1.5">
+                  Precio tachado <span className="text-[#86868b] font-normal">(valor real, aparece con ~~)</span>
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[14px] text-[#6E6E73]">$</span>
+                  <input type="number" min={0} value={form.price_original}
+                    onChange={e => set('price_original', parseInt(e.target.value) || 0)}
+                    className="w-full pl-7 pr-4 py-3 rounded-xl border border-black/10 text-[15px] text-[#86868b] line-through focus:outline-none focus:border-[#2F7D6B] transition-colors" />
+                </div>
+                <p className="text-[11px] text-[#86868b] mt-1">Poné 0 para no mostrar precio tachado</p>
+              </div>
+            </div>
+
+          <div>
               <label className="block text-[13px] font-medium text-[#0A0A0A] mb-1.5">Tipo de badge</label>
               <select value={form.badge_type} onChange={(e) => {
                 const type = e.target.value as 'free' | 'soon'

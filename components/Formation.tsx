@@ -14,10 +14,10 @@ import { useRouter } from 'next/navigation'
 const spring = { type: 'spring', stiffness: 260, damping: 24 }
 
 const DEFAULT_COURSES: Omit<Course, 'id'>[] = [
-  { title:'Educación Inclusiva', description:'Recursos y estrategias para acompañar trayectorias educativas diversas desde un enfoque inclusivo.', badge:'Descarga gratuita', badge_type:'free', link:'https://drive.google.com/file/d/1GXOx9nWtOgjW1Ve22DXjH6mP9495t0yy/view', cta:'Descargar gratis', sort_order:1, published:true, price:0, is_free:true, long_description:'', target_audience:'', learnings:'', syllabus:'', duration:'', modality:'', level:'' },
-  { title:'Intervención Psicopedagógica', description:'Herramientas clínicas y pedagógicas para el abordaje de las dificultades de aprendizaje.', badge:'Próximamente', badge_type:'soon', link:null, cta:null, sort_order:2, published:true, price:49999, is_free:false, long_description:'', target_audience:'', learnings:'', syllabus:'', duration:'', modality:'', level:'' },
-  { title:'Cuerpo y Desarrollo', description:'Formación sobre la dimensión corporal en el desarrollo infantil y los procesos emocionales.', badge:'Próximamente', badge_type:'soon', link:null, cta:null, sort_order:3, published:true, price:49999, is_free:false, long_description:'', target_audience:'', learnings:'', syllabus:'', duration:'', modality:'', level:'' },
-  { title:'Clínica Interdisciplinaria', description:'Reflexiones y casos clínicos sobre el trabajo conjunto entre disciplinas.', badge:'Próximamente', badge_type:'soon', link:null, cta:null, sort_order:4, published:true, price:49999, is_free:false, long_description:'', target_audience:'', learnings:'', syllabus:'', duration:'', modality:'', level:'' },
+  { title:'Educación Inclusiva', description:'Recursos y estrategias para acompañar trayectorias educativas diversas desde un enfoque inclusivo.', badge:'Descarga gratuita', badge_type:'free', link:'https://drive.google.com/file/d/1GXOx9nWtOgjW1Ve22DXjH6mP9495t0yy/view', cta:'Descargar gratis', sort_order:1, published:true, price:0, price_original:0, is_free:true, long_description:'', target_audience:'', learnings:'', syllabus:'', duration:'', modality:'', level:'' },
+  { title:'Intervención Psicopedagógica', description:'Herramientas clínicas y pedagógicas para el abordaje de las dificultades de aprendizaje.', badge:'Próximamente', badge_type:'soon', link:null, cta:null, sort_order:2, published:true, price:49999, price_original:85000, is_free:false, long_description:'', target_audience:'', learnings:'', syllabus:'', duration:'', modality:'', level:'' },
+  { title:'Cuerpo y Desarrollo', description:'Formación sobre la dimensión corporal en el desarrollo infantil y los procesos emocionales.', badge:'Próximamente', badge_type:'soon', link:null, cta:null, sort_order:3, published:true, price:49999, price_original:85000, is_free:false, long_description:'', target_audience:'', learnings:'', syllabus:'', duration:'', modality:'', level:'' },
+  { title:'Clínica Interdisciplinaria', description:'Reflexiones y casos clínicos sobre el trabajo conjunto entre disciplinas.', badge:'Próximamente', badge_type:'soon', link:null, cta:null, sort_order:4, published:true, price:49999, price_original:85000, is_free:false, long_description:'', target_audience:'', learnings:'', syllabus:'', duration:'', modality:'', level:'' },
 ]
 
 const formatPrice = (p: number) =>
@@ -107,7 +107,14 @@ export default function Formation({ courses: initialCourses, siteConfig }: Forma
                     <span className={`inline-block text-[11px] font-bold tracking-[0.12em] uppercase px-3 py-1 rounded-full ${isFree ? 'bg-[#DCEFE8] text-[#2F7D6B]' : 'bg-[#F5F5F7] text-[#86868b]'}`}>
                       {course.badge}
                     </span>
-                    {price > 0 && !isFree && <span className="text-[17px] font-bold text-[#0A0A0A] shrink-0">{formatPrice(price)}</span>}
+                    {price > 0 && !isFree && (
+                      <div className="text-right shrink-0">
+                        {c.price_original > price && (
+                          <p className="text-[12px] text-[#86868b] line-through leading-none">{formatPrice(c.price_original)}</p>
+                        )}
+                        <p className="text-[17px] font-bold text-[#2F7D6B] leading-tight">{formatPrice(price)}</p>
+                      </div>
+                    )}
                   </div>
                   <h3 className="text-[17px] md:text-[18px] font-semibold text-[#0A0A0A] leading-snug">{course.title}</h3>
                   <p className="text-[13px] md:text-[14px] text-[#6E6E73] leading-relaxed flex-1">{course.description}</p>
