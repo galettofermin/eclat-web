@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import AdminNav from '@/components/admin/AdminNav'
+import AdminShell from '@/components/admin/AdminShell'
 
 export const metadata = { title: 'Admin — Centro ÉCLAT' }
 
@@ -7,7 +7,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  // Sin usuario → middleware ya redirigió a login; este layout solo renderiza el form
   if (!user) {
     return (
       <html lang="es">
@@ -17,13 +16,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F5F7] font-sans">
-      <AdminNav userEmail={user.email ?? ''} />
-      <main style={{ paddingLeft: 232 }} className="min-h-screen">
-        <div className="max-w-4xl mx-auto px-8 py-10">
-          {children}
-        </div>
-      </main>
-    </div>
+    <AdminShell userEmail={user.email ?? ''}>
+      {children}
+    </AdminShell>
   )
 }

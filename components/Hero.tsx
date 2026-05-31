@@ -12,7 +12,7 @@ const WA_ICON = (
 
 const serviceChips = [
   'Psicología', 'Psicopedagogía', 'Fonoaudiología', 'Psicomotricidad',
-  'Arteterapia', 'Docente de Apoyo', 'Habilidades Sociales', 'Evaluaciones Diagnósticas',
+  'Arteterapia', 'Docente de Apoyo', 'Habilidades Sociales', 'Evaluaciones',
 ]
 
 interface HeroProps {
@@ -20,72 +20,68 @@ interface HeroProps {
 }
 
 export default function Hero({ siteConfig }: HeroProps) {
-  const title = siteConfig?.hero_title ?? 'Cuerpo, voz y palabra. Un lugar para cada uno.'
+  const rawTitle = siteConfig?.hero_title ?? 'Cuerpo, voz y palabra. Un lugar para cada uno.'
   const subtitle = siteConfig?.hero_subtitle ?? 'Un espacio donde cada persona es escuchada en su singularidad. Acompañamos el desarrollo de niños, adolescentes y adultos desde una mirada que hace lugar a cada uno.'
+  const quote = siteConfig?.hero_quote ?? 'Acompañamos a cada persona a encontrar su propio brillo, desde un lugar de respeto, profesionalismo y calidez humana.'
+  const ctaTitle = siteConfig?.cta_title ?? '¿Querés saber si podemos ayudarte?'
+  const ctaSubtitle = siteConfig?.cta_subtitle ?? 'Escribinos por WhatsApp y te respondemos a la brevedad.'
+
+  const dotIdx = rawTitle.indexOf('.')
+  const titlePart1 = dotIdx >= 0 ? rawTitle.slice(0, dotIdx + 1) : rawTitle
+  const titlePart2 = dotIdx >= 0 ? rawTitle.slice(dotIdx + 1).trim() : ''
 
   return (
     <>
-      {/* ── Hero full-screen ── */}
-      <section
-        id="inicio"
-        className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-white px-6 pt-16"
-      >
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(47,125,107,0.07) 0%, transparent 70%)' }}
-        />
+      {/* ── Hero ── */}
+      <section id="inicio" className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-white px-5 pt-16">
+        <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(47,125,107,0.07) 0%, transparent 70%)' }} />
 
         <div className="relative z-10 max-w-5xl mx-auto w-full">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             <div>
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
-                className="inline-flex items-center gap-2 bg-[#DCEFE8] text-[#2F7D6B] text-[13px] font-semibold px-4 py-1.5 rounded-full mb-8"
+                className="inline-flex items-center gap-2 bg-[#DCEFE8] text-[#2F7D6B] text-[12px] font-semibold px-4 py-1.5 rounded-full mb-6"
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-[#2F7D6B] animate-pulse" />
                 Centro interdisciplinario de salud y educación
               </motion.div>
 
               <motion.h1
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                className="text-[clamp(2.4rem,6vw,3.8rem)] font-semibold leading-[1.06] tracking-tight text-[#0A0A0A] mb-6"
+                className="text-[clamp(2.2rem,7vw,4rem)] font-semibold leading-[1.06] tracking-tight text-[#0A0A0A] mb-5"
               >
-                {title.split('.')[0]}.
-                <br />
-                <span className="text-[#2F7D6B]">{title.split('.').slice(1).join('.').trim()}</span>
+                {titlePart1}
+                {titlePart2 && <><br /><span className="text-[#2F7D6B]">{titlePart2}</span></>}
               </motion.h1>
 
               <motion.p
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                className="text-[17px] text-[#6E6E73] leading-relaxed mb-10 max-w-lg"
+                className="text-[16px] md:text-[17px] text-[#6E6E73] leading-relaxed mb-8 max-w-lg"
               >
                 {subtitle}
               </motion.p>
 
               <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                className="flex flex-col sm:flex-row gap-4"
+                className="flex flex-col sm:flex-row gap-3"
               >
                 <a
                   href={WHATSAPP_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 bg-[#2F7D6B] text-white font-semibold text-[16px] px-8 py-4 rounded-full hover:bg-[#245f52] active:scale-95 transition-all shadow-lg shadow-[#2F7D6B]/20"
+                  className="inline-flex items-center justify-center gap-2 bg-[#2F7D6B] text-white font-semibold text-[15px] md:text-[16px] px-7 py-3.5 rounded-full hover:bg-[#245f52] active:scale-95 transition-all shadow-lg shadow-[#2F7D6B]/20"
                 >
                   {WA_ICON}
                   Reservar turno
                 </a>
                 <Link
                   href="/servicios"
-                  className="inline-flex items-center justify-center gap-2 bg-white text-[#0A0A0A] border border-black/10 font-semibold text-[16px] px-8 py-4 rounded-full hover:bg-black/5 active:scale-95 transition-all"
+                  className="inline-flex items-center justify-center bg-white text-[#0A0A0A] border border-black/10 font-semibold text-[15px] md:text-[16px] px-7 py-3.5 rounded-full hover:bg-black/5 active:scale-95 transition-all"
                 >
                   Conocer servicios
                 </Link>
@@ -94,18 +90,13 @@ export default function Hero({ siteConfig }: HeroProps) {
 
             {/* REEMPLAZAR CON FOTO REAL del espacio */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.97 }}
-              animate={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
               className="hidden lg:block"
             >
-              <div className="aspect-[4/3] rounded-3xl bg-[#F5F5F7] border border-black/5 flex flex-col items-center justify-center gap-4 overflow-hidden">
+              <div className="aspect-[4/3] rounded-3xl bg-[#F5F5F7] border border-black/5 flex flex-col items-center justify-center gap-4">
                 <div className="w-16 h-16 rounded-2xl bg-[#DCEFE8] flex items-center justify-center">
-                  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#2F7D6B" strokeWidth="1.5">
-                    <rect x="3" y="3" width="18" height="18" rx="2" />
-                    <circle cx="8.5" cy="8.5" r="1.5" />
-                    <path d="m21 15-5-5L5 21" />
-                  </svg>
+                  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#2F7D6B" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="m21 15-5-5L5 21" /></svg>
                 </div>
                 <p className="text-[13px] text-[#6E6E73] font-medium">Foto del espacio</p>
               </div>
@@ -113,45 +104,24 @@ export default function Hero({ siteConfig }: HeroProps) {
           </div>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.4 }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2"
-        >
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ repeat: Infinity, duration: 1.6, ease: 'easeInOut' }}
-            className="w-5 h-8 rounded-full border border-black/20 flex items-start justify-center p-1"
-          >
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.4 }} className="absolute bottom-8 left-1/2 -translate-x-1/2">
+          <motion.div animate={{ y: [0, 8, 0] }} transition={{ repeat: Infinity, duration: 1.6, ease: 'easeInOut' }} className="w-5 h-8 rounded-full border border-black/20 flex items-start justify-center p-1">
             <div className="w-1 h-2 rounded-full bg-black/30" />
           </motion.div>
         </motion.div>
       </section>
 
-      {/* ── Grid de servicios ── */}
-      <section className="py-20 px-6 bg-[#F5F5F7]">
+      {/* ── Chips de servicios ── */}
+      <section className="py-14 md:py-20 px-5 bg-[#F5F5F7]">
         <div className="max-w-5xl mx-auto">
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-60px' }}
-            transition={{ duration: 0.6 }}
-            className="text-center text-[13px] text-[#6E6E73] font-medium uppercase tracking-widest mb-8"
-          >
+          <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center text-[12px] text-[#6E6E73] font-medium uppercase tracking-widest mb-6">
             Nuestros servicios
           </motion.p>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
             {serviceChips.map((s, i) => (
-              <motion.div
-                key={s}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-40px' }}
-                transition={{ duration: 0.5, delay: i * 0.05 }}
-                className="bg-white rounded-2xl px-5 py-4 border border-black/5 text-[14px] font-medium text-[#1d1d1f] flex items-center gap-3"
-              >
-                <span className="w-2 h-2 rounded-full bg-[#2F7D6B] shrink-0" />
+              <motion.div key={s} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.05 }}
+                className="bg-white rounded-2xl px-4 py-3.5 border border-black/5 text-[13px] md:text-[14px] font-medium text-[#1d1d1f] flex items-center gap-2.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#2F7D6B] shrink-0" />
                 {s}
               </motion.div>
             ))}
@@ -160,44 +130,26 @@ export default function Hero({ siteConfig }: HeroProps) {
       </section>
 
       {/* ── Frase destacada ── */}
-      <section className="py-28 px-6 bg-white">
+      <section className="py-20 md:py-28 px-5 bg-white">
         <div className="max-w-3xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <p className="text-[clamp(1.5rem,3.5vw,2.2rem)] font-light leading-relaxed text-[#0A0A0A] tracking-tight mb-5">
-              "Acompañamos a cada persona a encontrar su propio brillo, desde un lugar de respeto, profesionalismo y calidez humana."
+          <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}>
+            <p className="text-[clamp(1.3rem,3.5vw,2.2rem)] font-light leading-relaxed text-[#0A0A0A] tracking-tight mb-4">
+              "{quote}"
             </p>
-            <span className="text-[14px] text-[#6E6E73]">— Equipo ÉCLAT</span>
+            <span className="text-[13px] text-[#6E6E73]">— Equipo ÉCLAT</span>
           </motion.div>
         </div>
       </section>
 
       {/* ── CTA negro ── */}
-      <section className="px-6 pb-24">
+      <section className="px-5 pb-16 md:pb-24">
         <div className="max-w-5xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="bg-[#0A0A0A] rounded-3xl px-10 py-16 text-center text-white"
-          >
-            <h2 className="text-[clamp(1.8rem,4vw,2.8rem)] font-semibold tracking-tight mb-4">
-              ¿Querés saber si podemos ayudarte?
-            </h2>
-            <p className="text-white/60 text-[17px] mb-10 max-w-md mx-auto leading-relaxed">
-              Escribinos por WhatsApp y te respondemos a la brevedad.
-            </p>
-            <a
-              href={WHATSAPP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-white text-[#0A0A0A] font-semibold text-[16px] px-8 py-4 rounded-full hover:bg-white/90 active:scale-95 transition-all"
-            >
+          <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="bg-[#0A0A0A] rounded-2xl md:rounded-3xl px-7 md:px-10 py-12 md:py-16 text-center text-white">
+            <h2 className="text-[clamp(1.6rem,4vw,2.8rem)] font-semibold tracking-tight mb-3">{ctaTitle}</h2>
+            <p className="text-white/60 text-[15px] md:text-[17px] mb-8 max-w-md mx-auto leading-relaxed">{ctaSubtitle}</p>
+            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-white text-[#0A0A0A] font-semibold text-[15px] md:text-[16px] px-7 py-3.5 rounded-full hover:bg-white/90 active:scale-95 transition-all">
               {WA_ICON}
               Reservar turno
             </a>

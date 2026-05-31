@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { NAV_LINKS, WHATSAPP_URL, LOGO_URL, DIRECTOR_EMAIL } from '@/lib/constants'
+import { NAV_LINKS, WHATSAPP_URL, DIRECTOR_EMAIL } from '@/lib/constants'
+import LogoImage from './LogoImage'
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
@@ -46,16 +46,24 @@ export default function Navbar() {
           scrolled ? 'bg-white/90 backdrop-blur-md border-b border-black/5 shadow-sm' : 'bg-transparent'
         }`}
       >
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3 group">
-            <Image src={LOGO_URL} alt="Centro ÉCLAT" width={36} height={36} className="rounded-full object-cover" unoptimized />
-            <span className="font-semibold text-[15px] tracking-tight text-[#1d1d1f] group-hover:text-[#2F7D6B] transition-colors">ÉCLAT</span>
+        <div className="max-w-6xl mx-auto px-5 h-15 flex items-center justify-between" style={{ height: 60 }}>
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <LogoImage size={34} />
+            <span className="font-semibold text-[15px] tracking-tight text-[#1d1d1f] group-hover:text-[#2F7D6B] transition-colors">
+              ÉCLAT
+            </span>
           </Link>
 
-          <ul className="hidden md:flex items-center gap-8">
+          {/* Desktop links */}
+          <ul className="hidden md:flex items-center gap-6">
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
-                <Link href={link.href} className={`text-[14px] font-medium transition-colors ${pathname === link.href ? 'text-[#2F7D6B]' : 'text-[#424245] hover:text-[#2F7D6B]'}`}>
+                <Link
+                  href={link.href}
+                  className={`text-[14px] font-medium transition-colors ${
+                    pathname === link.href ? 'text-[#2F7D6B]' : 'text-[#424245] hover:text-[#2F7D6B]'
+                  }`}
+                >
                   {link.label}
                 </Link>
               </li>
@@ -68,10 +76,7 @@ export default function Navbar() {
                 <Link href="/mis-cursos" className="text-[14px] font-medium text-[#424245] hover:text-[#2F7D6B] transition-colors">
                   Mis cursos
                 </Link>
-                <button
-                  onClick={handleLogout}
-                  className="text-[13px] font-medium text-[#6E6E73] hover:text-[#0A0A0A] transition-colors"
-                >
+                <button onClick={handleLogout} className="text-[13px] font-medium text-[#6E6E73] hover:text-[#0A0A0A] transition-colors">
                   Salir
                 </button>
               </>
@@ -84,20 +89,26 @@ export default function Navbar() {
               href={WHATSAPP_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 bg-[#2F7D6B] text-white text-[13px] font-semibold px-5 py-2 rounded-full hover:bg-[#245f52] transition-colors"
+              className="flex items-center gap-2 bg-[#2F7D6B] text-white text-[13px] font-semibold px-4 py-2 rounded-full hover:bg-[#245f52] transition-colors"
             >
               Turnos
             </a>
           </div>
 
-          <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden flex flex-col gap-1.5 p-1" aria-label="Menú">
-            <motion.span animate={menuOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }} className="block w-6 h-0.5 bg-[#1d1d1f] origin-center transition-all" />
-            <motion.span animate={menuOpen ? { opacity: 0 } : { opacity: 1 }} className="block w-6 h-0.5 bg-[#1d1d1f]" />
-            <motion.span animate={menuOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }} className="block w-6 h-0.5 bg-[#1d1d1f] origin-center" />
+          {/* Mobile hamburger */}
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="md:hidden flex flex-col gap-1.5 p-2 -mr-1"
+            aria-label="Menú"
+          >
+            <motion.span animate={menuOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }} className="block w-5 h-0.5 bg-[#1d1d1f] origin-center transition-all" />
+            <motion.span animate={menuOpen ? { opacity: 0 } : { opacity: 1 }} className="block w-5 h-0.5 bg-[#1d1d1f]" />
+            <motion.span animate={menuOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }} className="block w-5 h-0.5 bg-[#1d1d1f] origin-center" />
           </button>
         </div>
       </motion.nav>
 
+      {/* Mobile menu */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
@@ -105,12 +116,16 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="fixed top-16 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-b border-black/10 md:hidden"
+            className="fixed top-[60px] inset-x-0 z-40 bg-white/98 backdrop-blur-md border-b border-black/10 md:hidden shadow-lg"
           >
-            <ul className="flex flex-col px-6 py-4 gap-1">
+            <ul className="flex flex-col px-5 py-3 gap-0">
               {NAV_LINKS.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} onClick={() => setMenuOpen(false)} className="block w-full py-3 text-[16px] text-[#1d1d1f] font-medium border-b border-black/5 last:border-0">
+                  <Link
+                    href={link.href}
+                    onClick={() => setMenuOpen(false)}
+                    className="block w-full py-3.5 text-[16px] text-[#1d1d1f] font-medium border-b border-black/5 last:border-0"
+                  >
                     {link.label}
                   </Link>
                 </li>
@@ -118,25 +133,30 @@ export default function Navbar() {
               {userEmail ? (
                 <>
                   <li>
-                    <Link href="/mis-cursos" onClick={() => setMenuOpen(false)} className="block w-full py-3 text-[16px] text-[#1d1d1f] font-medium border-b border-black/5">
+                    <Link href="/mis-cursos" onClick={() => setMenuOpen(false)} className="block w-full py-3.5 text-[16px] text-[#1d1d1f] font-medium border-b border-black/5">
                       Mis cursos
                     </Link>
                   </li>
                   <li>
-                    <button onClick={() => { handleLogout(); setMenuOpen(false) }} className="block w-full text-left py-3 text-[16px] text-[#6E6E73] font-medium border-b border-black/5">
+                    <button onClick={() => { handleLogout(); setMenuOpen(false) }} className="block w-full text-left py-3.5 text-[16px] text-[#6E6E73] font-medium border-b border-black/5">
                       Cerrar sesión
                     </button>
                   </li>
                 </>
               ) : (
                 <li>
-                  <Link href="/login" onClick={() => setMenuOpen(false)} className="block w-full py-3 text-[16px] text-[#1d1d1f] font-medium border-b border-black/5">
+                  <Link href="/login" onClick={() => setMenuOpen(false)} className="block w-full py-3.5 text-[16px] text-[#1d1d1f] font-medium border-b border-black/5">
                     Ingresar
                   </Link>
                 </li>
               )}
-              <li className="pt-3">
-                <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="block text-center bg-[#2F7D6B] text-white py-3 rounded-xl font-semibold">
+              <li className="pt-3 pb-2">
+                <a
+                  href={WHATSAPP_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-center bg-[#2F7D6B] text-white py-3.5 rounded-2xl font-semibold text-[15px]"
+                >
                   Reservar turno
                 </a>
               </li>
