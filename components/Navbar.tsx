@@ -12,6 +12,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [userEmail, setUserEmail] = useState<string | null>(null)
+  const [isDirector, setIsDirector] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
 
@@ -24,7 +25,14 @@ export default function Navbar() {
   useEffect(() => {
     const supabase = createClient()
     supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user?.email !== DIRECTOR_EMAIL) setUserEmail(user?.email ?? null)
+      if (!user) { setUserEmail(null); setIsDirector(false); return }
+      if (user.email === DIRECTOR_EMAIL) {
+        setIsDirector(true)
+        setUserEmail(null)
+      } else {
+        setIsDirector(false)
+        setUserEmail(user.email ?? null)
+      }
     })
   }, [pathname])
 
@@ -32,6 +40,7 @@ export default function Navbar() {
     const supabase = createClient()
     await supabase.auth.signOut()
     setUserEmail(null)
+    setIsDirector(false)
     router.push('/')
     router.refresh()
   }
@@ -46,7 +55,7 @@ export default function Navbar() {
           scrolled ? 'bg-white/90 backdrop-blur-md border-b border-black/5 shadow-sm' : 'bg-transparent'
         }`}
       >
-        <div className="max-w-6xl mx-auto px-5 h-15 flex items-center justify-between" style={{ height: 60 }}>
+        <div className="max-w-6xl mx-auto px-5 flex items-center justify-between" style={{ height: 60 }}>
           <Link href="/" className="flex items-center gap-2.5 group">
             <LogoImage size={34} />
             <span className="font-semibold text-[15px] tracking-tight text-[#1d1d1f] group-hover:text-[#2F7D6B] transition-colors">
@@ -54,24 +63,36 @@ export default function Navbar() {
             </span>
           </Link>
 
-          {/* Desktop links */}
+          {/* Desktop nav links */}
           <ul className="hidden md:flex items-center gap-6">
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
-                <Link
-                  href={link.href}
-                  className={`text-[14px] font-medium transition-colors ${
-                    pathname === link.href ? 'text-[#2F7D6B]' : 'text-[#424245] hover:text-[#2F7D6B]'
-                  }`}
-                >
+                <Link href={link.href} className={`text-[14px] font-medium transition-colors ${pathname === link.href ? 'text-[#2F7D6B]' : 'text-[#424245] hover:text-[#2F7D6B]'}`}>
                   {link.label}
                 </Link>
               </li>
             ))}
           </ul>
 
+          {/* Desktop auth */}
           <div className="hidden md:flex items-center gap-3">
-            {userEmail ? (
+            {isDirector ? (
+              <>
+                <Link
+                  href="/admin"
+                  className="flex items-center gap-1.5 text-[13px] font-semibold text-[#2F7D6B] hover:text-[#245f52] transition-colors"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" />
+                    <rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" />
+                  </svg>
+                  Panel admin
+                </Link>
+                <button onClick={handleLogout} className="text-[13px] font-medium text-[#6E6E73] hover:text-[#0A0A0A] transition-colors">
+                  Salir
+                </button>
+              </>
+            ) : userEmail ? (
               <>
                 <Link href="/mis-cursos" className="text-[14px] font-medium text-[#424245] hover:text-[#2F7D6B] transition-colors">
                   Mis cursos
@@ -85,22 +106,13 @@ export default function Navbar() {
                 Ingresar
               </Link>
             )}
-            <a
-              href={WHATSAPP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 bg-[#2F7D6B] text-white text-[13px] font-semibold px-4 py-2 rounded-full hover:bg-[#245f52] transition-colors"
-            >
+            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-[#2F7D6B] text-white text-[13px] font-semibold px-4 py-2 rounded-full hover:bg-[#245f52] transition-colors">
               Turnos
             </a>
           </div>
 
           {/* Mobile hamburger */}
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden flex flex-col gap-1.5 p-2 -mr-1"
-            aria-label="Menú"
-          >
+          <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden flex flex-col gap-1.5 p-2 -mr-1" aria-label="Menú">
             <motion.span animate={menuOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }} className="block w-5 h-0.5 bg-[#1d1d1f] origin-center transition-all" />
             <motion.span animate={menuOpen ? { opacity: 0 } : { opacity: 1 }} className="block w-5 h-0.5 bg-[#1d1d1f]" />
             <motion.span animate={menuOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }} className="block w-5 h-0.5 bg-[#1d1d1f] origin-center" />
@@ -118,19 +130,29 @@ export default function Navbar() {
             transition={{ duration: 0.2 }}
             className="fixed top-[60px] inset-x-0 z-40 bg-white/98 backdrop-blur-md border-b border-black/10 md:hidden shadow-lg"
           >
-            <ul className="flex flex-col px-5 py-3 gap-0">
+            <ul className="flex flex-col px-5 py-3">
               {NAV_LINKS.map((link) => (
                 <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    onClick={() => setMenuOpen(false)}
-                    className="block w-full py-3.5 text-[16px] text-[#1d1d1f] font-medium border-b border-black/5 last:border-0"
-                  >
+                  <Link href={link.href} onClick={() => setMenuOpen(false)} className="block w-full py-3.5 text-[16px] text-[#1d1d1f] font-medium border-b border-black/5">
                     {link.label}
                   </Link>
                 </li>
               ))}
-              {userEmail ? (
+
+              {isDirector ? (
+                <>
+                  <li>
+                    <Link href="/admin" onClick={() => setMenuOpen(false)} className="block w-full py-3.5 text-[16px] text-[#2F7D6B] font-semibold border-b border-black/5">
+                      Panel admin
+                    </Link>
+                  </li>
+                  <li>
+                    <button onClick={() => { handleLogout(); setMenuOpen(false) }} className="block w-full text-left py-3.5 text-[16px] text-[#6E6E73] font-medium border-b border-black/5">
+                      Cerrar sesión
+                    </button>
+                  </li>
+                </>
+              ) : userEmail ? (
                 <>
                   <li>
                     <Link href="/mis-cursos" onClick={() => setMenuOpen(false)} className="block w-full py-3.5 text-[16px] text-[#1d1d1f] font-medium border-b border-black/5">
@@ -151,12 +173,7 @@ export default function Navbar() {
                 </li>
               )}
               <li className="pt-3 pb-2">
-                <a
-                  href={WHATSAPP_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block text-center bg-[#2F7D6B] text-white py-3.5 rounded-2xl font-semibold text-[15px]"
-                >
+                <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="block text-center bg-[#2F7D6B] text-white py-3.5 rounded-2xl font-semibold text-[15px]">
                   Reservar turno
                 </a>
               </li>

@@ -9,9 +9,7 @@ export async function middleware(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() {
-          return request.cookies.getAll()
-        },
+        getAll() { return request.cookies.getAll() },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
           supabaseResponse = NextResponse.next({ request })
@@ -26,15 +24,21 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
 
   const isAdminPath = request.nextUrl.pathname.startsWith('/admin')
-  const isLoginPath = request.nextUrl.pathname === '/admin/login'
+  const isLoginPath = request.nextUrl.pathname === '/login'
+  const DIRECTOR_EMAIL = 'galettofermin@gmail.com'
 
-  // No logueado intentando acceder a /admin → redirigir a login
-  if (isAdminPath && !isLoginPath && !user) {
-    return NextResponse.redirect(new URL('/admin/login', request.url))
+  // /admin/* sin sesión → redirigir a /login
+  if (isAdminPath && !user) {
+    return NextResponse.redirect(new URL('/login?redirect=/admin', request.url))
   }
 
-  // Logueado visitando /admin/login → redirigir al dashboard
-  if (isLoginPath && user) {
+  // /admin/* con sesión pero no es director → redirigir al inicio
+  if (isAdminPath && user && user.email !== DIRECTOR_EMAIL) {
+    return NextResponse.redirect(new URL('/', request.url))
+  }
+
+  // Director logueado en /login → redirigir al admin
+  if (isLoginPath && user?.email === DIRECTOR_EMAIL) {
     return NextResponse.redirect(new URL('/admin', request.url))
   }
 
@@ -42,5 +46,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ['/admin/:path*', '/login'],
 }
