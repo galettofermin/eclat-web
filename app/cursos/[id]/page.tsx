@@ -9,6 +9,7 @@ import CourseQuiz from '@/components/CourseQuiz'
 import DirectorModules from '@/components/admin/DirectorModules'
 import CourseAccordion from '@/components/course/CourseAccordion'
 import CoursePriceCard from '@/components/course/CoursePriceCard'
+import ModuleCompleteBtn from '@/components/course/ModuleCompleteBtn'
 import type { QuizQuestion } from '@/lib/types'
 import { DIRECTOR_EMAIL } from '@/lib/constants'
 
@@ -321,10 +322,26 @@ export default async function CursoPage({
                     </div>
                   )}
 
-                  {/* Cierre del módulo */}
+                  {/* Botón completar + cierre del módulo */}
+                  {isApproved && !isDirector && user && (
+                    <div className="px-5 py-3 border-t border-black/[0.04] bg-[#FAFAFA] flex items-center justify-between gap-3 flex-wrap">
+                      <p className="text-[12px] text-[#86868b]">
+                        {mod.questions.length > 0 ? 'Completá el cierre para marcar el módulo' : 'Marcá el módulo cuando hayas terminado'}
+                      </p>
+                      {mod.questions.length === 0 && (
+                        <ModuleCompleteBtn moduleId={mod.id} courseId={course.id} userId={user.id} />
+                      )}
+                    </div>
+                  )}
+
                   {isApproved && mod.questions.length > 0 && (
                     <div className="px-5 pb-5 border-t border-black/[0.04] bg-white">
-                      <CourseQuiz questions={mod.questions} />
+                      <CourseQuiz
+                        questions={mod.questions}
+                        quizId={mod.quiz?.id}
+                        courseId={course.id}
+                        userId={user?.id}
+                      />
                     </div>
                   )}
                 </div>
