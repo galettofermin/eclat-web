@@ -2,15 +2,19 @@
 
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
+import Link from 'next/link'
 import { WHATSAPP_URL } from '@/lib/constants'
 import type { Course } from '@/lib/types'
 
 const DEFAULT_COURSES: Omit<Course, 'id'>[] = [
-  { title: 'Educación Inclusiva', description: 'Recursos y estrategias para acompañar trayectorias educativas diversas desde un enfoque inclusivo.', badge: 'Descarga gratuita', badge_type: 'free', link: 'https://drive.google.com/file/d/1GXOx9nWtOgjW1Ve22DXjH6mP9495t0yy/view', cta: 'Descargar gratis →', sort_order: 1, published: true },
-  { title: 'Intervención Psicopedagógica', description: 'Herramientas clínicas y pedagógicas para el abordaje de las dificultades de aprendizaje.', badge: 'Próximamente', badge_type: 'soon', link: null, cta: null, sort_order: 2, published: true },
-  { title: 'Cuerpo y Desarrollo', description: 'Formación sobre la dimensión corporal en el desarrollo infantil y los procesos emocionales.', badge: 'Próximamente', badge_type: 'soon', link: null, cta: null, sort_order: 3, published: true },
-  { title: 'Clínica Interdisciplinaria', description: 'Reflexiones y casos clínicos sobre el trabajo conjunto entre disciplinas.', badge: 'Próximamente', badge_type: 'soon', link: null, cta: null, sort_order: 4, published: true },
+  { title: 'Educación Inclusiva', description: 'Recursos y estrategias para acompañar trayectorias educativas diversas desde un enfoque inclusivo.', badge: 'Descarga gratuita', badge_type: 'free', link: 'https://drive.google.com/file/d/1GXOx9nWtOgjW1Ve22DXjH6mP9495t0yy/view', cta: 'Descargar gratis →', sort_order: 1, published: true, price: 0, is_free: true },
+  { title: 'Intervención Psicopedagógica', description: 'Herramientas clínicas y pedagógicas para el abordaje de las dificultades de aprendizaje.', badge: 'Próximamente', badge_type: 'soon', link: null, cta: null, sort_order: 2, published: true, price: 49999, is_free: false },
+  { title: 'Cuerpo y Desarrollo', description: 'Formación sobre la dimensión corporal en el desarrollo infantil y los procesos emocionales.', badge: 'Próximamente', badge_type: 'soon', link: null, cta: null, sort_order: 3, published: true, price: 49999, is_free: false },
+  { title: 'Clínica Interdisciplinaria', description: 'Reflexiones y casos clínicos sobre el trabajo conjunto entre disciplinas.', badge: 'Próximamente', badge_type: 'soon', link: null, cta: null, sort_order: 4, published: true, price: 49999, is_free: false },
 ]
+
+const formatPrice = (p: number) =>
+  new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(p)
 
 interface FormationProps {
   courses?: Course[]
@@ -36,33 +40,51 @@ export default function Formation({ courses, siteConfig }: FormationProps) {
         </div>
 
         <div className="grid sm:grid-cols-2 gap-5">
-          {data.map((course, i) => (
-            <motion.div
-              key={(course as Course).id ?? course.title}
-              initial={{ opacity: 0, y: 24 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.2 + i * 0.1, ease: [0.16, 1, 0.3, 1] }}
-              className="bg-white rounded-2xl overflow-hidden border border-black/5 flex flex-col"
-            >
-              <div className="h-1.5 bg-[#2F7D6B]" />
-              <div className="p-7 flex flex-col gap-4 flex-1">
-                <span className={`inline-block text-[11px] font-semibold tracking-wider uppercase px-3 py-1 rounded-full w-fit ${course.badge_type === 'free' ? 'bg-[#DCEFE8] text-[#2F7D6B]' : 'bg-[#F5F5F7] text-[#6E6E73]'}`}>
-                  {course.badge}
-                </span>
-                <h3 className="text-[18px] font-semibold text-[#0A0A0A] leading-snug">{course.title}</h3>
-                <p className="text-[14px] text-[#6E6E73] leading-relaxed flex-1">{course.description}</p>
-                <div className="pt-2 border-t border-black/5">
-                  {course.link ? (
-                    <a href={course.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-[14px] font-semibold text-[#2F7D6B] hover:underline">
-                      {course.cta}
-                    </a>
-                  ) : (
-                    <span className="text-[13px] text-[#86868b]">Disponible próximamente</span>
-                  )}
+          {data.map((course, i) => {
+            const courseWithId = course as Course
+            const isFree = (course as any).is_free || course.badge_type === 'free'
+            const price = (course as any).price
+            const hasId = !!courseWithId.id
+
+            return (
+              <motion.div
+                key={courseWithId.id ?? course.title}
+                initial={{ opacity: 0, y: 24 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.6, delay: 0.2 + i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                className="bg-white rounded-2xl overflow-hidden border border-black/5 flex flex-col"
+              >
+                <div className="h-1.5 bg-[#2F7D6B]" />
+                <div className="p-7 flex flex-col gap-4 flex-1">
+                  <div className="flex items-start justify-between gap-3">
+                    <span className={`inline-block text-[11px] font-semibold tracking-wider uppercase px-3 py-1 rounded-full w-fit ${
+                      isFree ? 'bg-[#DCEFE8] text-[#2F7D6B]' : course.badge_type === 'soon' ? 'bg-[#F5F5F7] text-[#6E6E73]' : 'bg-[#DCEFE8] text-[#2F7D6B]'
+                    }`}>
+                      {course.badge}
+                    </span>
+                    {price > 0 && !isFree && (
+                      <span className="text-[17px] font-bold text-[#0A0A0A] shrink-0">{formatPrice(price)}</span>
+                    )}
+                  </div>
+                  <h3 className="text-[18px] font-semibold text-[#0A0A0A] leading-snug">{course.title}</h3>
+                  <p className="text-[14px] text-[#6E6E73] leading-relaxed flex-1">{course.description}</p>
+                  <div className="pt-2 border-t border-black/5">
+                    {isFree && course.link ? (
+                      <a href={course.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-[14px] font-semibold text-[#2F7D6B] hover:underline">
+                        {course.cta}
+                      </a>
+                    ) : hasId && price > 0 && !isFree ? (
+                      <Link href={`/inscripcion/${courseWithId.id}`} className="inline-flex items-center gap-2 bg-[#2F7D6B] text-white font-semibold px-5 py-2.5 rounded-full text-[14px] hover:bg-[#245f52] transition-colors">
+                        Comprar curso →
+                      </Link>
+                    ) : (
+                      <span className="text-[13px] text-[#86868b]">Disponible próximamente</span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            )
+          })}
         </div>
 
         <motion.div

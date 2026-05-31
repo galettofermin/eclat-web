@@ -21,6 +21,8 @@ export interface Course {
   cta: string | null
   sort_order: number
   published: boolean
+  price: number
+  is_free: boolean
 }
 
 export interface CourseModule {

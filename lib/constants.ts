@@ -13,6 +13,10 @@ export const NAV_LINKS = [
   { label: 'Escritos', href: '/escritos' },
 ]
 
+export const BANK_ALIAS = 'CENTRO.SALUD.ECLAT'
+export const COURSE_PRICE = 49999
+export const DIRECTOR_EMAIL = 'galettofermin@gmail.com'
+
 export const COLORS = {
   bg: '#FFFFFF',
   textMain: '#0A0A0A',
