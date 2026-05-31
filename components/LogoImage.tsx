@@ -31,7 +31,6 @@ export default function LogoImage({
       width={size}
       height={size}
       className={`rounded-full object-cover shrink-0 ${className}`}
-      unoptimized
       onError={() => setHasError(true)}
     />
   )
