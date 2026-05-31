@@ -35,13 +35,13 @@ export default function InscripcionPage() {
       if (!courseData) { router.push('/formacion'); return }
       if (courseData.is_free) { router.push(`/cursos/${courseId}`); return }
 
-      // Check existing enrollment
+      // Check existing enrollment (maybeSingle no da 406 si no hay filas)
       const { data: enr } = await supabase
         .from('enrollments')
         .select('status')
         .eq('user_id', user.id)
         .eq('course_id', courseId)
-        .single()
+        .maybeSingle()
 
       if (enr) { router.push(`/cursos/${courseId}`); return }
 
@@ -61,12 +61,13 @@ export default function InscripcionPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ courseId: course.id, userId: user.id, userEmail: user.email }),
       })
-      const { init_point, error } = await res.json()
-      if (error || !init_point) throw new Error(error ?? 'Sin init_point')
+      const json = await res.json()
+      const { init_point, error, detail } = json
+      if (error || !init_point) throw new Error(detail ?? error ?? JSON.stringify(json))
       window.location.href = init_point
-    } catch {
+    } catch (e) {
       setMpLoading(false)
-      alert('Error al conectar con Mercado Pago. Intentá de nuevo.')
+      alert('Error MP: ' + (e instanceof Error ? e.message : String(e)))
     }
   }
 

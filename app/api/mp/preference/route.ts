@@ -10,17 +10,27 @@ export async function POST(req: Request) {
     }
 
     const supabase = createAdminClient()
-    const { data: course } = await supabase
+    const { data: course, error: courseError } = await supabase
       .from('courses')
-      .select('id, title, price')
+      .select('id, title, price, is_free')
       .eq('id', courseId)
       .single()
 
-    if (!course) {
-      return NextResponse.json({ error: 'Curso no encontrado' }, { status: 404 })
+    if (courseError || !course) {
+      return NextResponse.json({ error: 'Curso no encontrado', detail: courseError?.message }, { status: 404 })
     }
 
-    const mp = new MercadoPagoConfig({ accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN! })
+    const price = Number(course.price)
+    if (!price || price <= 0) {
+      return NextResponse.json({ error: 'El curso no tiene precio configurado', price }, { status: 400 })
+    }
+
+    const token = process.env.MERCADOPAGO_ACCESS_TOKEN
+    if (!token) {
+      return NextResponse.json({ error: 'Token de MP no configurado en el servidor' }, { status: 500 })
+    }
+
+    const mp = new MercadoPagoConfig({ accessToken: token })
     const preference = new Preference(mp)
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://eclatcentro.com'
 
@@ -31,7 +41,7 @@ export async function POST(req: Request) {
           title: course.title,
           quantity: 1,
           currency_id: 'ARS',
-          unit_price: Number(course.price),
+          unit_price: price,
         }],
         back_urls: {
           success: `${siteUrl}/cursos/${courseId}?pago=ok`,
@@ -49,8 +59,9 @@ export async function POST(req: Request) {
     })
 
     return NextResponse.json({ init_point: result.init_point })
-  } catch (error) {
-    console.error('MP preference error:', error)
-    return NextResponse.json({ error: 'Error al crear preferencia' }, { status: 500 })
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : String(error)
+    console.error('MP preference error:', msg)
+    return NextResponse.json({ error: 'Error MP', detail: msg }, { status: 500 })
   }
 }
