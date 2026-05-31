@@ -23,6 +23,14 @@ export interface Course {
   published: boolean
   price: number
   is_free: boolean
+  // Campos enriquecidos
+  long_description: string
+  target_audience: string
+  learnings: string        // Una línea por objetivo
+  syllabus: string         // Una línea por tema del temario
+  duration: string
+  modality: string
+  level: string
 }
 
 export interface CourseModule {
