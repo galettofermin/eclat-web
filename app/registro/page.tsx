@@ -24,7 +24,7 @@ export default function RegistroPage() {
     setLoading(true)
     setError('')
     const supabase = createClient()
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: { data: { full_name: name } },
@@ -33,9 +33,16 @@ export default function RegistroPage() {
     if (error) {
       setError(error.message)
       setLoading(false)
-    } else {
+    } else if (data.session) {
+      // Confirmación desactivada → sesión inmediata
       router.push('/mis-cursos')
       router.refresh()
+    } else {
+      // Confirmación requerida → mostrar mensaje
+      setError('')
+      setLoading(false)
+      alert('¡Cuenta creada! Revisá tu casilla de email y confirmá tu cuenta para ingresar.')
+      router.push('/login')
     }
   }
 
