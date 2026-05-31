@@ -84,7 +84,7 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
               <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.1 }}
                 className="inline-flex items-center gap-2 bg-[#DCEFE8] text-[#2F7D6B] text-[12px] font-semibold px-4 py-1.5 rounded-full mb-7">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#2F7D6B] animate-pulse" />
-                Centro interdisciplinario de salud y educación
+                Centro interdisciplinario de Salud y Educación
               </motion.div>
 
               <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.18 }}
