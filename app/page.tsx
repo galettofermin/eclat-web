@@ -5,7 +5,7 @@ import CoursesCarousel from '@/components/course/CoursesCarousel'
 import About from '@/components/About'
 import Services from '@/components/Services'
 import Formation from '@/components/Formation'
-import Escritos from '@/components/Escritos'
+import PausaBento from '@/components/PausaBento'
 import Footer from '@/components/Footer'
 import WhatsAppButton from '@/components/WhatsAppButton'
 import type { Article, Course, Service } from '@/lib/types'
@@ -46,7 +46,7 @@ export default async function Home() {
       <About siteConfig={siteConfig} />
       <Services services={services} siteConfig={siteConfig} />
       <Formation courses={courses} siteConfig={siteConfig} />
-      <Escritos articles={articles} siteConfig={siteConfig} />
+      <PausaBento articles={articles} />
       <Footer />
       <WhatsAppButton />
     </main>
