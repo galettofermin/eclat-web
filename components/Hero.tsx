@@ -30,21 +30,21 @@ const SERVICES = [
 const keywords = ['Clínica', 'Educación', 'Formación', 'Instituciones', 'Trayectorias', 'Comunidad']
 
 const PARTICLES = [
-  { x: '5%',  y: '15%', size: 4, color: 'rgba(47,125,107,0.4)',   dur: 6,  delay: 0,   dy: -30, dx: 15  },
-  { x: '15%', y: '70%', size: 3, color: 'rgba(183,216,204,0.3)', dur: 8,  delay: 1,   dy: 20,  dx: -10 },
-  { x: '25%', y: '40%', size: 5, color: 'rgba(47,125,107,0.4)',   dur: 5,  delay: 2,   dy: -25, dx: 10  },
-  { x: '35%', y: '85%', size: 3, color: 'rgba(183,216,204,0.3)', dur: 9,  delay: 0.5, dy: -20, dx: -15 },
-  { x: '45%', y: '20%', size: 6, color: 'rgba(47,125,107,0.4)',   dur: 7,  delay: 3,   dy: 30,  dx: 12  },
-  { x: '55%', y: '60%', size: 4, color: 'rgba(183,216,204,0.3)', dur: 6,  delay: 1.5, dy: -18, dx: -8  },
-  { x: '65%', y: '30%', size: 3, color: 'rgba(47,125,107,0.4)',   dur: 10, delay: 4,   dy: 25,  dx: 15  },
-  { x: '75%', y: '75%', size: 5, color: 'rgba(183,216,204,0.3)', dur: 8,  delay: 2,   dy: -30, dx: -12 },
-  { x: '85%', y: '45%', size: 4, color: 'rgba(47,125,107,0.4)',   dur: 5,  delay: 0.8, dy: 20,  dx: 10  },
-  { x: '92%', y: '10%', size: 3, color: 'rgba(183,216,204,0.3)', dur: 9,  delay: 3.5, dy: -25, dx: -10 },
-  { x: '10%', y: '90%', size: 6, color: 'rgba(47,125,107,0.4)',   dur: 7,  delay: 1.2, dy: -20, dx: 18  },
-  { x: '30%', y: '55%', size: 3, color: 'rgba(183,216,204,0.3)', dur: 6,  delay: 4.5, dy: 15,  dx: -8  },
-  { x: '50%', y: '80%', size: 5, color: 'rgba(47,125,107,0.4)',   dur: 8,  delay: 2.8, dy: -28, dx: 12  },
-  { x: '70%', y: '15%', size: 4, color: 'rgba(183,216,204,0.3)', dur: 5,  delay: 0.3, dy: 22,  dx: -14 },
-  { x: '88%', y: '65%', size: 3, color: 'rgba(47,125,107,0.4)',   dur: 9,  delay: 3.2, dy: -15, dx: 8   },
+  { x: '5%',  y: '15%', size: 4, color: 'rgba(47,125,107,0.35)',  dur: 6,  delay: 0,   dy: -30, dx: 15  },
+  { x: '15%', y: '70%', size: 3, color: 'rgba(183,216,204,0.6)',  dur: 8,  delay: 1,   dy: 20,  dx: -10 },
+  { x: '25%', y: '40%', size: 5, color: 'rgba(47,125,107,0.35)',  dur: 5,  delay: 2,   dy: -25, dx: 10  },
+  { x: '35%', y: '85%', size: 3, color: 'rgba(183,216,204,0.6)',  dur: 9,  delay: 0.5, dy: -20, dx: -15 },
+  { x: '45%', y: '20%', size: 6, color: 'rgba(47,125,107,0.35)',  dur: 7,  delay: 3,   dy: 30,  dx: 12  },
+  { x: '55%', y: '60%', size: 4, color: 'rgba(183,216,204,0.6)',  dur: 6,  delay: 1.5, dy: -18, dx: -8  },
+  { x: '65%', y: '30%', size: 3, color: 'rgba(47,125,107,0.35)',  dur: 10, delay: 4,   dy: 25,  dx: 15  },
+  { x: '75%', y: '75%', size: 5, color: 'rgba(183,216,204,0.6)',  dur: 8,  delay: 2,   dy: -30, dx: -12 },
+  { x: '85%', y: '45%', size: 4, color: 'rgba(47,125,107,0.35)',  dur: 5,  delay: 0.8, dy: 20,  dx: 10  },
+  { x: '92%', y: '10%', size: 3, color: 'rgba(183,216,204,0.6)',  dur: 9,  delay: 3.5, dy: -25, dx: -10 },
+  { x: '10%', y: '90%', size: 6, color: 'rgba(47,125,107,0.35)',  dur: 7,  delay: 1.2, dy: -20, dx: 18  },
+  { x: '30%', y: '55%', size: 3, color: 'rgba(183,216,204,0.6)',  dur: 6,  delay: 4.5, dy: 15,  dx: -8  },
+  { x: '50%', y: '80%', size: 5, color: 'rgba(47,125,107,0.35)',  dur: 8,  delay: 2.8, dy: -28, dx: 12  },
+  { x: '70%', y: '15%', size: 4, color: 'rgba(183,216,204,0.6)',  dur: 5,  delay: 0.3, dy: 22,  dx: -14 },
+  { x: '88%', y: '65%', size: 3, color: 'rgba(47,125,107,0.35)',  dur: 9,  delay: 3.2, dy: -15, dx: 8   },
 ]
 
 const cardBgs = ['#DCEFE8', '#E8F4F0', '#F0FAF5', '#E4F2EC']
@@ -150,7 +150,7 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
         ref={heroRef}
         id="inicio"
         className="relative min-h-screen flex flex-col justify-center overflow-hidden px-5 pt-16"
-        style={{ background: 'linear-gradient(135deg, #0A1F1A 0%, #0D2B24 50%, #071510 100%)' }}
+        style={{ background: 'linear-gradient(135deg, #F0F7F4 0%, #E8F2EE 40%, #F2F4F3 70%, #EAEFF0 100%)' }}
       >
         {/* Dot grid sutil */}
         <div
@@ -180,7 +180,7 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
           style={{
             width: 600, height: 600,
             top: -200, right: -100,
-            background: 'radial-gradient(circle, rgba(47,125,107,0.18) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(47,125,107,0.12) 0%, transparent 70%)',
             borderRadius: '60% 40% 70% 30% / 50% 60% 40% 50%',
             zIndex: 1,
           }}
@@ -202,7 +202,7 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
           style={{
             width: 400, height: 400,
             bottom: -100, left: -50,
-            background: 'radial-gradient(circle, rgba(47,125,107,0.12) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(183,216,204,0.25) 0%, transparent 70%)',
             zIndex: 1,
           }}
           animate={{ scale: [1, 1.2, 1], rotate: [0, -10, 0] }}
@@ -215,7 +215,7 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
           style={{
             width: 300, height: 300,
             top: '40%', left: '40%',
-            background: 'radial-gradient(circle, rgba(183,216,204,0.08) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(47,125,107,0.08) 0%, transparent 70%)',
             zIndex: 1,
           }}
           animate={{ scale: [1, 1.3, 1], x: [0, 30, 0], y: [0, -20, 0] }}
@@ -251,21 +251,21 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
         >
           <motion.path
             d="M -100 300 Q 400 80 900 350 Q 1200 500 1700 250"
-            stroke="rgba(47,125,107,0.12)" strokeWidth="1.5" fill="none"
+            stroke="rgba(47,125,107,0.1)" strokeWidth="1.5" fill="none"
             strokeDasharray="2000 2000"
             animate={{ strokeDashoffset: [2000, 0, -2000] }}
             transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
           />
           <motion.path
             d="M 0 600 Q 500 200 1000 500 Q 1300 650 1700 400"
-            stroke="rgba(47,125,107,0.10)" strokeWidth="1.5" fill="none"
+            stroke="rgba(47,125,107,0.1)" strokeWidth="1.5" fill="none"
             strokeDasharray="2000 2000"
             animate={{ strokeDashoffset: [2000, 0, -2000] }}
             transition={{ duration: 11, repeat: Infinity, ease: 'linear', delay: 3 }}
           />
           <motion.path
             d="M 200 -50 Q 700 350 1100 150 Q 1400 0 1700 350"
-            stroke="rgba(183,216,204,0.08)" strokeWidth="1.5" fill="none"
+            stroke="rgba(47,125,107,0.1)" strokeWidth="1.5" fill="none"
             strokeDasharray="2000 2000"
             animate={{ strokeDashoffset: [2000, 0, -2000] }}
             transition={{ duration: 14, repeat: Infinity, ease: 'linear', delay: 6 }}
@@ -278,7 +278,7 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
           style={{
             width: '120%', height: '120%',
             top: '-10%', left: '-10%',
-            background: 'radial-gradient(ellipse at 30% 50%, rgba(47,125,107,0.2) 0%, transparent 60%)',
+            background: 'radial-gradient(ellipse at 30% 50%, rgba(47,125,107,0.12) 0%, transparent 60%)',
             zIndex: 1,
           }}
           animate={{ x: ['0%', '40%', '0%'] }}
@@ -292,7 +292,7 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
             width: 800, height: 400,
             top: '50%', left: '50%',
             transform: 'translate(-50%, -50%)',
-            background: 'radial-gradient(ellipse, rgba(47,125,107,0.08) 0%, transparent 70%)',
+            background: 'radial-gradient(ellipse, rgba(47,125,107,0.1) 0%, transparent 70%)',
             zIndex: 1,
           }}
           animate={{ opacity: [0.5, 1, 0.5], scale: [1, 1.1, 1] }}
@@ -303,7 +303,7 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: 'linear-gradient(to bottom, transparent 60%, rgba(10,31,26,0.8) 100%)',
+            background: 'linear-gradient(to bottom, transparent 60%, rgba(240,247,244,0.9) 100%)',
             zIndex: 2,
           }}
         />
@@ -326,7 +326,7 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
               <motion.div
                 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
-                className="inline-flex items-center gap-2 text-[12px] font-semibold text-white/60 mb-8 tracking-wide"
+                className="inline-flex items-center gap-2 text-[12px] font-semibold text-[#2F7D6B] mb-8 tracking-wide"
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-[#2F7D6B] animate-pulse" />
                 ÉCLAT — Institución interdisciplinaria
@@ -338,10 +338,10 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
                 transition={{ duration: 0.9, delay: 0.18, ease: [0.16, 1, 0.3, 1] }}
                 className="text-[clamp(2.6rem,6.5vw,4.4rem)] leading-[1.04] tracking-tight mb-6"
               >
-                <span className="block text-white" style={{ fontWeight: 800 }}>
+                <span className="block" style={{ fontWeight: 800, color: '#0A1F1A' }}>
                   {title}
                 </span>
-                <span className="block" style={{ fontWeight: 300, color: 'rgba(255,255,255,0.85)' }}>
+                <span className="block" style={{ fontWeight: 300, color: '#4B6B5E' }}>
                   Un lugar para cada uno.
                 </span>
               </motion.h1>
@@ -350,7 +350,7 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
               <motion.p
                 initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.28, ease: [0.16, 1, 0.3, 1] }}
-                className="text-[17px] md:text-[18px] text-white/65 leading-relaxed mb-4 max-w-xl font-light"
+                className="text-[17px] md:text-[18px] leading-relaxed mb-4 max-w-xl font-light" style={{ color: '#4B6B5E' }}
               >
                 {subtitle}
               </motion.p>
@@ -359,7 +359,7 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
               <motion.p
                 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.36 }}
-                className="text-[14px] text-white/40 leading-relaxed mb-10 max-w-lg"
+                className="text-[14px] leading-relaxed mb-10 max-w-lg" style={{ color: 'rgba(75,107,94,0.7)' }}
               >
                 {brief}
               </motion.p>
@@ -384,7 +384,7 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
                 <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                   transition={{ type: 'spring', stiffness: 400, damping: 25 }}>
                   <Link href="/servicios"
-                    className="inline-flex items-center justify-center gap-2 bg-white/10 text-white border border-white/20 font-semibold text-[15px] px-7 py-3.5 rounded-full hover:bg-white/15 transition-colors w-full sm:w-auto">
+                    className="inline-flex items-center justify-center gap-2 bg-white text-[#2F7D6B] font-semibold text-[15px] px-7 py-3.5 rounded-full hover:bg-[#F0F7F4] transition-colors w-full sm:w-auto" style={{ border: '1.5px solid #2F7D6B' }}>
                     Conocé nuestros servicios
                   </Link>
                 </motion.div>
@@ -401,7 +401,7 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
                     key={word}
                     animate={{ y: [0, -3, 0] }}
                     transition={{ duration: 3.5 + i * 0.4, repeat: Infinity, ease: 'easeInOut', delay: i * 0.5 }}
-                    className="text-[12px] font-medium text-white/50 bg-white/8 border border-white/10 px-3 py-1.5 rounded-full cursor-default"
+                    className="text-[12px] font-medium text-[#4B6B5E] bg-white/70 border border-[#2F7D6B]/15 px-3 py-1.5 rounded-full cursor-default"
                   >
                     {word}
                   </motion.span>
@@ -444,14 +444,14 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
 
                     {/* Texto del servicio */}
                     <motion.span
-                      animate={{ opacity: isActive ? 1 : 0.25 }}
+                      animate={{ opacity: 1 }}
                       transition={{ duration: 0.4 }}
                       style={{
                         fontSize: isActive
                           ? 'clamp(1.3rem, 2.2vw, 1.8rem)'
                           : 'clamp(0.9rem, 1.5vw, 1.2rem)',
                         fontWeight: isActive ? 700 : 400,
-                        color: 'white',
+                        color: isActive ? '#0A1F1A' : 'rgba(10,31,26,0.3)',
                         lineHeight: 1.25,
                         transition: 'font-size 0.4s ease',
                         cursor: 'default',
@@ -476,9 +476,9 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
           <motion.div
             animate={{ y: [0, 8, 0] }}
             transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
-            className="w-5 h-8 rounded-full border-2 border-white/20 flex items-start justify-center pt-1.5"
+            className="w-5 h-8 rounded-full border-2 border-[#2F7D6B]/30 flex items-start justify-center pt-1.5"
           >
-            <div className="w-1 h-2 rounded-full bg-white/30" />
+            <div className="w-1 h-2 rounded-full bg-[#2F7D6B]/40" />
           </motion.div>
         </motion.div>
       </section>
