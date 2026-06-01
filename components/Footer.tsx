@@ -18,7 +18,8 @@ export default function Footer() {
               <span className="font-semibold text-[15px]">Centro ÉCLAT</span>
             </div>
             <p className="text-[14px] text-white/50 leading-relaxed">
-              Cuerpo, voz y palabra.<br />Un lugar para cada uno.
+              Un espacio para construir posibilidades.<br />
+              <span className="text-[12px]">Clínica · Educación · Formación · Instituciones</span>
             </p>
           </div>
 

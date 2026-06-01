@@ -3,9 +3,9 @@ import './globals.css'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://eclatcentro.com'),
-  title: 'Centro ÉCLAT — Cuerpo, voz y palabra',
+  title: 'Centro ÉCLAT — Un espacio para construir posibilidades',
   description:
-    'Centro ÉCLAT: un espacio interdisciplinario de salud y educación. Psicología, Psicopedagogía, Fonoaudiología, Psicomotricidad, Arteterapia y más.',
+    'ÉCLAT acompaña a personas, familias, profesionales e instituciones a través de la clínica, la educación, la formación y el trabajo interdisciplinario.',
   keywords: [
     'psicología',
     'psicopedagogía',
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Centro ÉCLAT',
-    description: 'Cuerpo, voz y palabra. Un lugar para cada uno.',
+    description: 'Un espacio para construir posibilidades. Clínica, educación, formación e instituciones.',
     url: 'https://eclatcentro.com',
     siteName: 'Centro ÉCLAT',
     images: [{ url: '/LOGO CON NOMBRE.png' }],
