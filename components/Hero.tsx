@@ -15,8 +15,6 @@ interface HeroProps {
   courses?: Course[]
 }
 
-const BG_IMAGE = 'https://images.unsplash.com/photo-1573497019418-b400bb3ab074?w=1600'
-
 const SERVICES = [
   'Psicología',
   'Psicopedagogía',
@@ -27,12 +25,6 @@ const SERVICES = [
   'Arteterapia',
   'Habilidades Sociales',
   'Evaluaciones Diagnósticas',
-]
-
-const BLOBS = [
-  { w: '55vw', h: '55vw', top: '-15%', left: '-15%', dur: 10, delay: 0 },
-  { w: '45vw', h: '45vw', top: '25%',  right: '-10%', dur: 13, delay: 1.5 },
-  { w: '38vw', h: '38vw', bottom: '-8%', left: '28%', dur: 9,  delay: 0.8 },
 ]
 
 const keywords = ['Clínica', 'Educación', 'Formación', 'Instituciones', 'Trayectorias', 'Comunidad']
@@ -139,32 +131,87 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
       <section
         ref={heroRef}
         id="inicio"
-        className="relative min-h-screen flex flex-col justify-center overflow-hidden bg-[#0A0A0A] px-5 pt-16"
+        className="relative min-h-screen flex flex-col justify-center overflow-hidden px-5 pt-16"
+        style={{ background: 'linear-gradient(135deg, #0A1F1A 0%, #0D2B24 50%, #071510 100%)' }}
       >
-        {/* Imagen de fondo */}
-        <img
-          src={BG_IMAGE}
-          alt=""
-          aria-hidden
-          className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
-          style={{ opacity: 0.2 }}
+        {/* Dot grid sutil */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: 'radial-gradient(rgba(47,125,107,0.15) 1px, transparent 1px)',
+            backgroundSize: '40px 40px',
+            opacity: 0.4,
+            zIndex: 0,
+          }}
         />
 
-        {/* Blobs animados */}
-        {BLOBS.map((b, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full pointer-events-none"
-            style={{
-              width: b.w, height: b.h,
-              top: (b as any).top, left: (b as any).left,
-              right: (b as any).right, bottom: (b as any).bottom,
-              background: 'radial-gradient(circle, rgba(47,125,107,0.15) 0%, transparent 70%)',
-            }}
-            animate={{ scale: [1, 1.15, 0.95, 1], rotate: [0, 8, -5, 0] }}
-            transition={{ duration: b.dur, repeat: Infinity, ease: 'easeInOut', delay: b.delay }}
-          />
-        ))}
+        {/* SVG líneas decorativas */}
+        <svg
+          className="absolute inset-0 w-full h-full pointer-events-none"
+          style={{ zIndex: 1 }}
+          xmlns="http://www.w3.org/2000/svg"
+          preserveAspectRatio="none"
+        >
+          <line x1="0" y1="0" x2="100%" y2="100%" stroke="rgba(47,125,107,0.08)" strokeWidth="1" />
+          <line x1="100%" y1="0" x2="0" y2="100%" stroke="rgba(47,125,107,0.08)" strokeWidth="1" />
+        </svg>
+
+        {/* Blob 1 — grande, arriba derecha */}
+        <motion.div
+          className="absolute pointer-events-none"
+          style={{
+            width: 600, height: 600,
+            top: -200, right: -100,
+            background: 'radial-gradient(circle, rgba(47,125,107,0.18) 0%, transparent 70%)',
+            borderRadius: '60% 40% 70% 30% / 50% 60% 40% 50%',
+            zIndex: 1,
+          }}
+          animate={{
+            scale: [1, 1.15, 1],
+            rotate: [0, 8, 0],
+            borderRadius: [
+              '60% 40% 70% 30% / 50% 60% 40% 50%',
+              '40% 60% 30% 70% / 60% 40% 50% 60%',
+              '60% 40% 70% 30% / 50% 60% 40% 50%',
+            ],
+          }}
+          transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+        />
+
+        {/* Blob 2 — mediano, abajo izquierda */}
+        <motion.div
+          className="absolute pointer-events-none"
+          style={{
+            width: 400, height: 400,
+            bottom: -100, left: -50,
+            background: 'radial-gradient(circle, rgba(47,125,107,0.12) 0%, transparent 70%)',
+            zIndex: 1,
+          }}
+          animate={{ scale: [1, 1.2, 1], rotate: [0, -10, 0] }}
+          transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut', delay: 4 }}
+        />
+
+        {/* Blob 3 — pequeño, centro flotante */}
+        <motion.div
+          className="absolute pointer-events-none"
+          style={{
+            width: 300, height: 300,
+            top: '40%', left: '40%',
+            background: 'radial-gradient(circle, rgba(183,216,204,0.08) 0%, transparent 70%)',
+            zIndex: 1,
+          }}
+          animate={{ scale: [1, 1.3, 1], x: [0, 30, 0], y: [0, -20, 0] }}
+          transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
+        />
+
+        {/* Overlay inferior — fusión suave con la sección siguiente */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'linear-gradient(to bottom, transparent 60%, rgba(10,31,26,0.8) 100%)',
+            zIndex: 2,
+          }}
+        />
 
         <motion.div
           style={{ opacity: heroOpacity, y: heroY }}
