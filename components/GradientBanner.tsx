@@ -3,6 +3,15 @@
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 
+const GRADIENT = `
+  radial-gradient(ellipse at 20% 20%, #B7D8CC 0%, transparent 50%),
+  radial-gradient(ellipse at 80% 20%, #DCEFE8 0%, transparent 45%),
+  radial-gradient(ellipse at 50% 50%, #F9D5E0 0%, transparent 50%),
+  radial-gradient(ellipse at 80% 80%, #FFF9C4 0%, transparent 45%),
+  radial-gradient(ellipse at 20% 80%, #E8F5F0 0%, transparent 40%),
+  #FFFFFF
+`.trim()
+
 const CARDS = [
   {
     emoji: '🎯',
@@ -36,39 +45,60 @@ export default function GradientBanner() {
   const inView = useInView(ref, { once: true, margin: '-80px' })
 
   return (
-    <section className="relative overflow-hidden py-24 md:py-32 px-5">
+    <section
+      className="relative overflow-hidden py-24 md:py-32 px-5"
+      style={{ background: GRADIENT }}
+    >
+      {/* Blob 1 — arriba derecha */}
+      <motion.div
+        className="absolute pointer-events-none"
+        style={{
+          width: 500, height: 500,
+          top: -100, right: -100,
+          background: 'radial-gradient(circle, rgba(47,125,107,0.12) 0%, transparent 70%)',
+          zIndex: 1,
+        }}
+        animate={{ scale: [1, 1.15, 1], rotate: [0, 10, 0] }}
+        transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
+      />
 
-      {/* Fondo animado */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          className="absolute"
-          style={{
-            inset: '-8%',
-            backgroundImage: 'url(/gradient-bg.jpg)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-          animate={{
-            scale: [1, 1.08, 1],
-            x: ['0%', '-4%', '0%'],
-            y: ['0%', '-3%', '0%'],
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
-        />
-      </div>
+      {/* Blob 2 — abajo izquierda */}
+      <motion.div
+        className="absolute pointer-events-none"
+        style={{
+          width: 400, height: 400,
+          bottom: -80, left: -80,
+          background: 'radial-gradient(circle, rgba(183,216,204,0.2) 0%, transparent 70%)',
+          zIndex: 1,
+        }}
+        animate={{ scale: [1, 1.2, 1], rotate: [0, -8, 0] }}
+        transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut', delay: 3 }}
+      />
 
-      {/* Overlay */}
+      {/* Pulso de opacidad sobre el gradiente */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: GRADIENT,
+          zIndex: 2,
+        }}
+        animate={{ opacity: [0.7, 1, 0.7] }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+      />
+
+      {/* Overlay para legibilidad */}
       <div
-        className="absolute inset-0 z-[1]"
+        className="absolute inset-0 pointer-events-none"
         style={{
           background: 'rgba(255,255,255,0.45)',
           backdropFilter: 'blur(2px)',
           WebkitBackdropFilter: 'blur(2px)',
+          zIndex: 3,
         }}
       />
 
       {/* Contenido */}
-      <div className="relative z-10 max-w-5xl mx-auto" ref={ref}>
+      <div className="relative max-w-5xl mx-auto" style={{ zIndex: 10 }} ref={ref}>
 
         {/* Encabezado */}
         <div className="text-center mb-12">
