@@ -60,7 +60,7 @@ function RecuperarForm() {
       setStatus('ready')
     } else {
       setStatus('done')
-      setTimeout(() => router.push('/login'), 2500)
+      setTimeout(() => router.push('/'), 2000)
     }
   }
 
@@ -149,8 +149,8 @@ function RecuperarForm() {
               <polyline points="20 6 9 17 4 12" />
             </svg>
           </div>
-          <p className="text-[16px] font-semibold text-[#0A0A0A]">¡Contraseña actualizada!</p>
-          <p className="text-[14px] text-[#6E6E73]">Redirigiendo al inicio de sesión…</p>
+          <p className="text-[16px] font-semibold text-[#0A0A0A]">¡Contraseña actualizada correctamente!</p>
+          <p className="text-[14px] text-[#6E6E73]">Redirigiendo al inicio…</p>
         </div>
       )}
 

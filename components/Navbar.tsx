@@ -98,11 +98,11 @@ export default function Navbar() {
               </>
             ) : userEmail ? (
               <>
-                <Link href="/mis-cursos" className="text-[14px] font-medium text-[#1B2B26] hover:text-[#2F7D6B] transition-colors">
-                  Mis cursos
+                <Link href="/mi-cuenta/perfil" className="text-[14px] font-medium text-[#1B2B26] hover:text-[#2F7D6B] transition-colors">
+                  Mi cuenta
                 </Link>
                 <button onClick={handleLogout} className="text-[13px] font-medium text-[#6E6E73] hover:text-[#0A0A0A] transition-colors">
-                  Salir
+                  Cerrar sesión
                 </button>
               </>
             ) : (
@@ -158,6 +158,11 @@ export default function Navbar() {
                 </>
               ) : userEmail ? (
                 <>
+                  <li>
+                    <Link href="/mi-cuenta/perfil" onClick={() => setMenuOpen(false)} className="block w-full py-3.5 text-[16px] text-[#1d1d1f] font-medium border-b border-black/5">
+                      Mi cuenta
+                    </Link>
+                  </li>
                   <li>
                     <Link href="/mis-cursos" onClick={() => setMenuOpen(false)} className="block w-full py-3.5 text-[16px] text-[#1d1d1f] font-medium border-b border-black/5">
                       Mis cursos
