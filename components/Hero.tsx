@@ -31,7 +31,9 @@ const keywords = ['Clínica', 'Educación', 'Formación', 'Instituciones', 'Tray
 
 const cardBgs = ['#DCEFE8', '#E8F4F0', '#F0FAF5', '#E4F2EC']
 
-// Animación sincronizada: bar + clip-path del texto, 6s loop
+// Animación sincronizada: bar + clip-path del texto, 14s loop
+const EASE = [0.45, 0, 0.55, 1] as const
+
 const SWEEP = {
   animate: {
     clipPath: [
@@ -42,10 +44,11 @@ const SWEEP = {
     ],
   },
   transition: {
-    duration: 6,
+    duration: 14,
     repeat: Infinity,
-    ease: 'easeInOut' as const,
+    ease: EASE,
     times: [0, 0.5, 0.95, 1],
+    repeatDelay: 1.5,
   },
 }
 
@@ -116,8 +119,8 @@ function PaintText({
 }) {
   return (
     <span className={`relative inline-block ${className ?? ''}`} style={style}>
-      {/* Base — verde muy oscuro */}
-      <span style={{ color: '#1B2B26' }}>{children}</span>
+      {/* Base — verde oscuro suave */}
+      <span style={{ color: '#2D4A42' }}>{children}</span>
       {/* Revelado — verde ÉCLAT, sigue la barra */}
       <motion.span
         className="absolute inset-0 overflow-hidden"
@@ -144,7 +147,7 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
   useEffect(() => {
     const id = setInterval(() => {
       setActiveIdx(i => (i + 1) % SERVICES.length)
-    }, 2500)
+    }, 3500)
     return () => clearInterval(id)
   }, [])
 
@@ -174,30 +177,30 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
         id="inicio"
         className="relative min-h-screen flex flex-col justify-center overflow-hidden px-5 pt-16 bg-white"
       >
-        {/* Rastro verde — fondo que avanza con la barra */}
+        {/* Rastro verde — fondo suave que avanza con la barra */}
         <motion.div
           className="absolute top-0 left-0 pointer-events-none"
           style={{
             height: '100%',
-            background: 'linear-gradient(to right, #DCEFE8 0%, #F0F7F4 100%)',
+            background: 'linear-gradient(to right, #F0F7F4 0%, #F7FAF8 100%)',
             zIndex: 1,
           }}
           animate={{ width: ['0%', '100%', '0%'] }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', times: [0, 0.5, 1] }}
+          transition={{ duration: 14, repeat: Infinity, ease: EASE, times: [0, 0.5, 1], repeatDelay: 1.5 }}
         />
 
-        {/* Barra vertical luminosa */}
+        {/* Barra vertical luminosa — sutil */}
         <motion.div
           className="absolute top-0 pointer-events-none"
           style={{
-            width: 3,
+            width: 1.5,
             height: '100%',
-            background: 'linear-gradient(to bottom, transparent 0%, #2F7D6B 20%, #2F7D6B 80%, transparent 100%)',
-            boxShadow: '0 0 20px rgba(47,125,107,0.4), 0 0 60px rgba(47,125,107,0.2)',
+            background: 'linear-gradient(to bottom, transparent 0%, rgba(47,125,107,0.4) 15%, rgba(47,125,107,0.6) 50%, rgba(47,125,107,0.4) 85%, transparent 100%)',
+            boxShadow: '0 0 8px rgba(47,125,107,0.15), 0 0 24px rgba(47,125,107,0.08)',
             zIndex: 5,
           }}
           animate={{ x: ['-5vw', '105vw', '-5vw'] }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', times: [0, 0.5, 1] }}
+          transition={{ duration: 14, repeat: Infinity, ease: EASE, times: [0, 0.5, 1], repeatDelay: 1.5 }}
         />
 
         {/* Contenido del hero */}
