@@ -163,15 +163,32 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
           }}
         />
 
-        {/* SVG líneas decorativas */}
+        {/* Trazo orgánico 1 */}
         <svg
           className="absolute inset-0 w-full h-full pointer-events-none"
-          style={{ zIndex: 1 }}
+          style={{ zIndex: 1, overflow: 'visible' }}
           xmlns="http://www.w3.org/2000/svg"
-          preserveAspectRatio="none"
         >
-          <line x1="0" y1="0" x2="100%" y2="100%" stroke="rgba(47,125,107,0.08)" strokeWidth="1" />
-          <line x1="100%" y1="0" x2="0" y2="100%" stroke="rgba(47,125,107,0.08)" strokeWidth="1" />
+          <motion.path
+            d="M -100 300 Q 200 100 500 400 Q 700 600 1000 200 Q 1200 50 1500 350"
+            stroke="rgba(47,125,107,0.25)" strokeWidth="2" fill="none" strokeLinecap="round"
+            animate={{ pathLength: [0, 1, 0], opacity: [0, 0.6, 0] }}
+            transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 0 }}
+          />
+        </svg>
+
+        {/* Trazo orgánico 2 */}
+        <svg
+          className="absolute inset-0 w-full h-full pointer-events-none"
+          style={{ zIndex: 1, overflow: 'visible' }}
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <motion.path
+            d="M 1600 100 Q 1200 300 900 150 Q 600 0 300 250 Q 100 400 -100 200"
+            stroke="rgba(183,216,204,0.3)" strokeWidth="1.5" fill="none" strokeLinecap="round"
+            animate={{ pathLength: [0, 1, 0], opacity: [0, 0.5, 0] }}
+            transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut', delay: 3 }}
+          />
         </svg>
 
         {/* Blob 1 — grande, arriba derecha */}
@@ -242,35 +259,6 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
           />
         ))}
 
-        {/* SVG líneas que fluyen */}
-        <svg
-          className="absolute inset-0 w-full h-full pointer-events-none"
-          style={{ zIndex: 1 }}
-          xmlns="http://www.w3.org/2000/svg"
-          preserveAspectRatio="none"
-        >
-          <motion.path
-            d="M -100 300 Q 400 80 900 350 Q 1200 500 1700 250"
-            stroke="rgba(47,125,107,0.1)" strokeWidth="1.5" fill="none"
-            strokeDasharray="2000 2000"
-            animate={{ strokeDashoffset: [2000, 0, -2000] }}
-            transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
-          />
-          <motion.path
-            d="M 0 600 Q 500 200 1000 500 Q 1300 650 1700 400"
-            stroke="rgba(47,125,107,0.1)" strokeWidth="1.5" fill="none"
-            strokeDasharray="2000 2000"
-            animate={{ strokeDashoffset: [2000, 0, -2000] }}
-            transition={{ duration: 11, repeat: Infinity, ease: 'linear', delay: 3 }}
-          />
-          <motion.path
-            d="M 200 -50 Q 700 350 1100 150 Q 1400 0 1700 350"
-            stroke="rgba(47,125,107,0.1)" strokeWidth="1.5" fill="none"
-            strokeDasharray="2000 2000"
-            animate={{ strokeDashoffset: [2000, 0, -2000] }}
-            transition={{ duration: 14, repeat: Infinity, ease: 'linear', delay: 6 }}
-          />
-        </svg>
 
         {/* Gradiente que respira */}
         <motion.div
