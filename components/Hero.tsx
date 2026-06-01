@@ -29,6 +29,24 @@ const SERVICES = [
 
 const keywords = ['Clínica', 'Educación', 'Formación', 'Instituciones', 'Trayectorias', 'Comunidad']
 
+const PARTICLES = [
+  { x: '5%',  y: '15%', size: 4, color: 'rgba(47,125,107,0.4)',   dur: 6,  delay: 0,   dy: -30, dx: 15  },
+  { x: '15%', y: '70%', size: 3, color: 'rgba(183,216,204,0.3)', dur: 8,  delay: 1,   dy: 20,  dx: -10 },
+  { x: '25%', y: '40%', size: 5, color: 'rgba(47,125,107,0.4)',   dur: 5,  delay: 2,   dy: -25, dx: 10  },
+  { x: '35%', y: '85%', size: 3, color: 'rgba(183,216,204,0.3)', dur: 9,  delay: 0.5, dy: -20, dx: -15 },
+  { x: '45%', y: '20%', size: 6, color: 'rgba(47,125,107,0.4)',   dur: 7,  delay: 3,   dy: 30,  dx: 12  },
+  { x: '55%', y: '60%', size: 4, color: 'rgba(183,216,204,0.3)', dur: 6,  delay: 1.5, dy: -18, dx: -8  },
+  { x: '65%', y: '30%', size: 3, color: 'rgba(47,125,107,0.4)',   dur: 10, delay: 4,   dy: 25,  dx: 15  },
+  { x: '75%', y: '75%', size: 5, color: 'rgba(183,216,204,0.3)', dur: 8,  delay: 2,   dy: -30, dx: -12 },
+  { x: '85%', y: '45%', size: 4, color: 'rgba(47,125,107,0.4)',   dur: 5,  delay: 0.8, dy: 20,  dx: 10  },
+  { x: '92%', y: '10%', size: 3, color: 'rgba(183,216,204,0.3)', dur: 9,  delay: 3.5, dy: -25, dx: -10 },
+  { x: '10%', y: '90%', size: 6, color: 'rgba(47,125,107,0.4)',   dur: 7,  delay: 1.2, dy: -20, dx: 18  },
+  { x: '30%', y: '55%', size: 3, color: 'rgba(183,216,204,0.3)', dur: 6,  delay: 4.5, dy: 15,  dx: -8  },
+  { x: '50%', y: '80%', size: 5, color: 'rgba(47,125,107,0.4)',   dur: 8,  delay: 2.8, dy: -28, dx: 12  },
+  { x: '70%', y: '15%', size: 4, color: 'rgba(183,216,204,0.3)', dur: 5,  delay: 0.3, dy: 22,  dx: -14 },
+  { x: '88%', y: '65%', size: 3, color: 'rgba(47,125,107,0.4)',   dur: 9,  delay: 3.2, dy: -15, dx: 8   },
+]
+
 const cardBgs = ['#DCEFE8', '#E8F4F0', '#F0FAF5', '#E4F2EC']
 
 const institutionalCards = [
@@ -105,7 +123,7 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
     return () => clearInterval(id)
   }, [])
 
-  const title    = config.hero_title    ?? 'Un espacio para construir posibilidades.'
+  const title    = config.hero_title    ?? 'Cuerpo, voz y palabra.'
   const subtitle = config.hero_subtitle ?? 'Acompañamos a personas, familias, profesionales e instituciones a través de la clínica, la educación, la formación y el trabajo interdisciplinario.'
   const brief    = config.hero_brief    ?? 'Creemos en el valor de la escucha, el encuentro y la construcción conjunta de respuestas frente a los desafíos de cada trayectoria.'
 
@@ -204,6 +222,83 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
           transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
         />
 
+        {/* Partículas flotantes */}
+        {PARTICLES.map((p, i) => (
+          <motion.div
+            key={i}
+            className="absolute pointer-events-none rounded-full"
+            style={{
+              left: p.x, top: p.y,
+              width: p.size, height: p.size,
+              background: p.color,
+              zIndex: 1,
+            }}
+            animate={{
+              y: [0, p.dy, 0],
+              x: [0, p.dx, 0],
+              opacity: [0.3, 0.8, 0.3],
+            }}
+            transition={{ duration: p.dur, repeat: Infinity, ease: 'easeInOut', delay: p.delay }}
+          />
+        ))}
+
+        {/* SVG líneas que fluyen */}
+        <svg
+          className="absolute inset-0 w-full h-full pointer-events-none"
+          style={{ zIndex: 1 }}
+          xmlns="http://www.w3.org/2000/svg"
+          preserveAspectRatio="none"
+        >
+          <motion.path
+            d="M -100 300 Q 400 80 900 350 Q 1200 500 1700 250"
+            stroke="rgba(47,125,107,0.12)" strokeWidth="1.5" fill="none"
+            strokeDasharray="2000 2000"
+            animate={{ strokeDashoffset: [2000, 0, -2000] }}
+            transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+          />
+          <motion.path
+            d="M 0 600 Q 500 200 1000 500 Q 1300 650 1700 400"
+            stroke="rgba(47,125,107,0.10)" strokeWidth="1.5" fill="none"
+            strokeDasharray="2000 2000"
+            animate={{ strokeDashoffset: [2000, 0, -2000] }}
+            transition={{ duration: 11, repeat: Infinity, ease: 'linear', delay: 3 }}
+          />
+          <motion.path
+            d="M 200 -50 Q 700 350 1100 150 Q 1400 0 1700 350"
+            stroke="rgba(183,216,204,0.08)" strokeWidth="1.5" fill="none"
+            strokeDasharray="2000 2000"
+            animate={{ strokeDashoffset: [2000, 0, -2000] }}
+            transition={{ duration: 14, repeat: Infinity, ease: 'linear', delay: 6 }}
+          />
+        </svg>
+
+        {/* Gradiente que respira */}
+        <motion.div
+          className="absolute pointer-events-none"
+          style={{
+            width: '120%', height: '120%',
+            top: '-10%', left: '-10%',
+            background: 'radial-gradient(ellipse at 30% 50%, rgba(47,125,107,0.2) 0%, transparent 60%)',
+            zIndex: 1,
+          }}
+          animate={{ x: ['0%', '40%', '0%'] }}
+          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+        />
+
+        {/* Glow central */}
+        <motion.div
+          className="absolute pointer-events-none"
+          style={{
+            width: 800, height: 400,
+            top: '50%', left: '50%',
+            transform: 'translate(-50%, -50%)',
+            background: 'radial-gradient(ellipse, rgba(47,125,107,0.08) 0%, transparent 70%)',
+            zIndex: 1,
+          }}
+          animate={{ opacity: [0.5, 1, 0.5], scale: [1, 1.1, 1] }}
+          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+        />
+
         {/* Overlay inferior — fusión suave con la sección siguiente */}
         <div
           className="absolute inset-0 pointer-events-none"
@@ -241,9 +336,14 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
               <motion.h1
                 initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.9, delay: 0.18, ease: [0.16, 1, 0.3, 1] }}
-                className="text-[clamp(2.6rem,6.5vw,4.4rem)] font-semibold leading-[1.04] tracking-tight text-white mb-6"
+                className="text-[clamp(2.6rem,6.5vw,4.4rem)] leading-[1.04] tracking-tight mb-6"
               >
-                {title}
+                <span className="block text-white" style={{ fontWeight: 800 }}>
+                  {title}
+                </span>
+                <span className="block" style={{ fontWeight: 300, color: 'rgba(255,255,255,0.85)' }}>
+                  Un lugar para cada uno.
+                </span>
               </motion.h1>
 
               {/* Subtítulo */}
