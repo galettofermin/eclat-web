@@ -3,12 +3,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import Link from 'next/link'
-import { WHATSAPP_URL } from '@/lib/constants'
 import { useDirector } from '@/hooks/useDirector'
 import EditDrawer, { EditField } from './admin/EditDrawer'
 import EditBtn from './admin/EditBtn'
 import { createClient } from '@/lib/supabase/client'
 import type { Course } from '@/lib/types'
+import HeroBg from './HeroBg'
 
 interface HeroProps {
   siteConfig?: Record<string, string>
@@ -126,41 +126,26 @@ export default function Hero({ siteConfig: initialConfig, featuredCourse }: Hero
         id="inicio"
         className="relative min-h-screen flex flex-col justify-center overflow-hidden bg-[#FAFAF8] px-5 pt-16"
       >
-        {/* Fondo orgánico animado — Blob 1 verde principal */}
-        <div
-          className="absolute pointer-events-none"
-          style={{
-            top: '-10%', right: '-5%', width: '55vw', height: '55vw',
-            maxWidth: 700, maxHeight: 700,
-            background: 'radial-gradient(ellipse at 60% 40%, rgba(47,125,107,0.12) 0%, rgba(47,125,107,0.04) 50%, transparent 75%)',
-            borderRadius: '60% 40% 70% 30% / 50% 60% 40% 50%',
-            transform: `translate(${mouse.x * -30}px, ${mouse.y * -20}px)`,
-            transition: 'transform 0.8s cubic-bezier(0.16,1,0.3,1)',
-          }}
-        />
-        {/* Blob 2 crema/cálido */}
-        <div
-          className="absolute pointer-events-none"
-          style={{
-            bottom: '5%', left: '-8%', width: '40vw', height: '40vw',
-            maxWidth: 500, maxHeight: 500,
-            background: 'radial-gradient(ellipse at 40% 60%, rgba(220,239,232,0.5) 0%, rgba(220,239,232,0.15) 50%, transparent 75%)',
-            borderRadius: '40% 60% 30% 70% / 60% 40% 70% 30%',
-            transform: `translate(${mouse.x * 20}px, ${mouse.y * 15}px)`,
+        {/* Fondo abstracto animado — canvas con blobs de color ÉCLAT */}
+        <HeroBg opacity={0.6} />
+
+        {/* Capa parallax cursor encima del canvas */}
+        <div className="absolute pointer-events-none inset-0 overflow-hidden">
+          <div style={{
+            position: 'absolute', top: '10%', right: '5%',
+            width: '35vw', height: '35vw', maxWidth: 500, maxHeight: 500,
+            background: 'radial-gradient(ellipse, rgba(47,125,107,0.08) 0%, transparent 70%)',
+            transform: `translate(${mouse.x * -25}px, ${mouse.y * -18}px)`,
+            transition: 'transform 0.9s cubic-bezier(0.16,1,0.3,1)',
+          }} />
+          <div style={{
+            position: 'absolute', bottom: '10%', left: '5%',
+            width: '25vw', height: '25vw', maxWidth: 360, maxHeight: 360,
+            background: 'radial-gradient(ellipse, rgba(220,239,232,0.4) 0%, transparent 70%)',
+            transform: `translate(${mouse.x * 18}px, ${mouse.y * 14}px)`,
             transition: 'transform 1.2s cubic-bezier(0.16,1,0.3,1)',
-          }}
-        />
-        {/* Blob 3 muy sutil centro */}
-        <div
-          className="absolute pointer-events-none"
-          style={{
-            top: '30%', left: '35%', width: '30vw', height: '30vw',
-            maxWidth: 400, maxHeight: 400,
-            background: 'radial-gradient(ellipse, rgba(47,125,107,0.05) 0%, transparent 70%)',
-            transform: `translate(${mouse.x * -10}px, ${mouse.y * -8}px)`,
-            transition: 'transform 1.5s cubic-bezier(0.16,1,0.3,1)',
-          }}
-        />
+          }} />
+        </div>
 
         <motion.div
           style={{ opacity: heroOpacity, y: heroY }}
