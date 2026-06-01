@@ -13,6 +13,13 @@ import { useRouter } from 'next/navigation'
 
 const spring = { type: 'spring', stiffness: 260, damping: 24 }
 
+const COURSE_IMAGES = [
+  'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800',
+  'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800',
+  'https://images.unsplash.com/photo-1551190822-a9333d879b1f?w=800',
+  'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800',
+]
+
 const DEFAULT_COURSES: Omit<Course, 'id'>[] = [
   { title:'Educación Inclusiva', description:'Recursos y estrategias para acompañar trayectorias educativas diversas desde un enfoque inclusivo.', badge:'Descarga gratuita', badge_type:'free', link:'https://drive.google.com/file/d/1GXOx9nWtOgjW1Ve22DXjH6mP9495t0yy/view', cta:'Descargar gratis', sort_order:1, published:true, price:0, price_original:0, is_free:true, long_description:'', target_audience:'', learnings:'', syllabus:'', duration:'', modality:'', level:'' },
   { title:'Intervención Psicopedagógica', description:'Herramientas clínicas y pedagógicas para el abordaje de las dificultades de aprendizaje.', badge:'Próximamente', badge_type:'soon', link:null, cta:null, sort_order:2, published:true, price:49999, price_original:85000, is_free:false, long_description:'', target_audience:'', learnings:'', syllabus:'', duration:'', modality:'', level:'' },
@@ -99,9 +106,29 @@ export default function Formation({ courses: initialCourses, siteConfig }: Forma
             const hasId = !!c.id
             const href = hasId ? `/cursos/${c.id}` : undefined
 
+            const coverImage = COURSE_IMAGES[i]
+
             const CardInner = (
               <>
-                <div className={`h-1.5 ${isFree ? 'bg-[#2F7D6B]' : 'bg-[#E8E8E8]'}`} />
+                {coverImage && (
+                  <div className="relative h-44 overflow-hidden bg-[#E8F4F0]">
+                    <img
+                      src={coverImage}
+                      alt={course.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20" />
+                    {isFree && (
+                      <div className="absolute top-3 left-3">
+                        <span className="text-[10px] font-bold uppercase tracking-wider bg-[#2F7D6B] text-white px-2.5 py-1 rounded-full shadow">
+                          Gratuito
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
+                <div className={`h-1 ${isFree ? 'bg-[#2F7D6B]' : 'bg-gradient-to-r from-[#DCEFE8] to-[#E8F4F0]'}`} />
                 <div className="p-6 md:p-7 flex flex-col gap-3 flex-1">
                   <div className="flex items-start justify-between gap-3">
                     <span className={`inline-block text-[11px] font-bold tracking-[0.12em] uppercase px-3 py-1 rounded-full ${isFree ? 'bg-[#DCEFE8] text-[#2F7D6B]' : 'bg-[#F5F5F7] text-[#86868b]'}`}>

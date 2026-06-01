@@ -42,8 +42,11 @@ export default function HeroBg({ opacity = 0.55 }: { opacity?: number }) {
       const h = canvas.offsetHeight
       ctx.clearRect(0, 0, w, h)
 
-      // Fondo base cálido
-      ctx.fillStyle = '#FAFAF8'
+      // Fondo gradiente cálido ÉCLAT
+      const bgGrad = ctx.createLinearGradient(0, 0, w, h)
+      bgGrad.addColorStop(0, '#F0F7F4')
+      bgGrad.addColorStop(1, '#DCEFE8')
+      ctx.fillStyle = bgGrad
       ctx.fillRect(0, 0, w, h)
 
       blobs.forEach((blob) => {

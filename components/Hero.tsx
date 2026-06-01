@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
+import { AnimatePresence } from 'framer-motion'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import Link from 'next/link'
 import { useDirector } from '@/hooks/useDirector'
@@ -13,12 +14,15 @@ import HeroBg from './HeroBg'
 interface HeroProps {
   siteConfig?: Record<string, string>
   featuredCourse?: Course | null
+  courses?: Course[]
 }
 
 const formatPrice = (p: number) =>
   new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(p)
 
 const keywords = ['Clínica', 'Educación', 'Formación', 'Instituciones', 'Trayectorias', 'Comunidad']
+
+const cardBgs = ['#DCEFE8', '#E8F4F0', '#F0FAF5', '#E4F2EC']
 
 const institutionalCards = [
   {
@@ -75,10 +79,30 @@ const institutionalCards = [
   },
 ]
 
-export default function Hero({ siteConfig: initialConfig, featuredCourse }: HeroProps) {
+export default function Hero({ siteConfig: initialConfig, featuredCourse, courses }: HeroProps) {
   const heroRef = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
   const heroY = useTransform(scrollYProgress, [0, 1], [0, -80])
+
+  // Carrusel de cursos en la tarjeta del hero
+  const allCourses = courses?.length ? courses : (featuredCourse ? [featuredCourse] : [])
+  const [cardIdx, setCardIdx] = useState(0)
+  const [cardDir, setCardDir] = useState(1)
+  const cardTimerRef = useRef<ReturnType<typeof setInterval>>()
+
+  const nextCard = useCallback(() => {
+    if (allCourses.length <= 1) return
+    setCardDir(1)
+    setCardIdx(i => (i + 1) % allCourses.length)
+  }, [allCourses.length])
+
+  useEffect(() => {
+    if (allCourses.length <= 1) return
+    cardTimerRef.current = setInterval(nextCard, 3500)
+    return () => clearInterval(cardTimerRef.current)
+  }, [nextCard, allCourses.length])
+
+  const activeCourse = allCourses[cardIdx] ?? featuredCourse
   const heroOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0])
 
   const [mouse, setMouse] = useState({ x: 0, y: 0 })
@@ -124,10 +148,10 @@ export default function Hero({ siteConfig: initialConfig, featuredCourse }: Hero
       <section
         ref={heroRef}
         id="inicio"
-        className="relative min-h-screen flex flex-col justify-center overflow-hidden bg-[#FAFAF8] px-5 pt-16"
+        className="relative min-h-screen flex flex-col justify-center overflow-hidden bg-[#F0F7F4] px-5 pt-16"
       >
         {/* Fondo abstracto animado — canvas con blobs de color ÉCLAT */}
-        <HeroBg opacity={0.6} />
+        <HeroBg opacity={0.92} />
 
         {/* Capa parallax cursor encima del canvas */}
         <div className="absolute pointer-events-none inset-0 overflow-hidden">
@@ -368,7 +392,7 @@ export default function Hero({ siteConfig: initialConfig, featuredCourse }: Hero
       </section>
 
       {/* ══ CUATRO TARJETAS INSTITUCIONALES ══ */}
-      <section className="py-16 md:py-24 px-5 bg-[#FAFAF8] border-t border-black/[0.04]">
+      <section className="py-16 md:py-24 px-5 bg-white border-t border-black/[0.04]">
         <div className="max-w-6xl mx-auto">
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {institutionalCards.map((card, i) => (
@@ -378,15 +402,18 @@ export default function Hero({ siteConfig: initialConfig, featuredCourse }: Hero
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-60px' }}
                 transition={{ type: 'spring', stiffness: 260, damping: 24, delay: i * 0.08 }}
-                whileHover={{ y: -5, scale: 1.02 }}
+                whileHover={{ y: -6, scale: 1.02 }}
               >
                 <Link href={card.href}
-                  className="group block bg-white rounded-2xl md:rounded-3xl p-6 border border-black/[0.06] shadow-sm hover:shadow-lg hover:shadow-[#2F7D6B]/8 hover:border-[#2F7D6B]/20 transition-all h-full relative overflow-hidden">
+                  style={{ backgroundColor: cardBgs[i] }}
+                  className="group block rounded-2xl md:rounded-3xl p-6 border border-transparent hover:border-[#2F7D6B]/25 shadow-sm hover:shadow-xl hover:shadow-[#2F7D6B]/12 transition-all duration-300 h-full relative overflow-hidden">
                   {/* Accent line animada */}
                   <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#2F7D6B] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
 
-                  <div className="w-11 h-11 text-[#2F7D6B] mb-5 transition-transform duration-300 group-hover:scale-110">
-                    {card.icon}
+                  <div className="w-14 h-14 rounded-2xl bg-white/70 shadow-sm mb-5 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+                    <div className="w-8 h-8 text-[#2F7D6B]">
+                      {card.icon}
+                    </div>
                   </div>
                   <h3 className="text-[16px] font-semibold text-[#0A0A0A] mb-2 group-hover:text-[#2F7D6B] transition-colors">
                     {card.title}
