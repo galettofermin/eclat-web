@@ -67,6 +67,12 @@ function LoginForm() {
       >
         {loading ? 'Ingresando...' : 'Ingresar'}
       </button>
+
+      <p className="text-center text-[13px] text-[#6E6E73] pt-1">
+        <Link href="/olvide-contrasena" className="text-[#2F7D6B] hover:text-[#245f52] transition-colors">
+          ¿Olvidaste tu contraseña?
+        </Link>
+      </p>
     </form>
   )
 }
