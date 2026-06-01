@@ -31,6 +31,24 @@ const keywords = ['Clínica', 'Educación', 'Formación', 'Instituciones', 'Tray
 
 const cardBgs = ['#DCEFE8', '#E8F4F0', '#F0FAF5', '#E4F2EC']
 
+// Animación sincronizada: bar + clip-path del texto, 6s loop
+const SWEEP = {
+  animate: {
+    clipPath: [
+      'inset(0 100% 0 0)',
+      'inset(0 0% 0 0)',
+      'inset(0 0% 0 100%)',
+      'inset(0 100% 0 0)',
+    ],
+  },
+  transition: {
+    duration: 6,
+    repeat: Infinity,
+    ease: 'easeInOut' as const,
+    times: [0, 0.5, 0.95, 1],
+  },
+}
+
 const institutionalCards = [
   {
     title: 'Atención clínica',
@@ -86,6 +104,32 @@ const institutionalCards = [
   },
 ]
 
+// Texto pintado — capa base + capa coloreada sincronizada con la barra
+function PaintText({
+  children,
+  className,
+  style,
+}: {
+  children: React.ReactNode
+  className?: string
+  style?: React.CSSProperties
+}) {
+  return (
+    <span className={`relative inline-block ${className ?? ''}`} style={style}>
+      {/* Base — verde muy oscuro */}
+      <span style={{ color: '#1B2B26' }}>{children}</span>
+      {/* Revelado — verde ÉCLAT, sigue la barra */}
+      <motion.span
+        className="absolute inset-0 overflow-hidden"
+        style={{ color: '#2F7D6B', zIndex: 6 }}
+        {...SWEEP}
+      >
+        {children}
+      </motion.span>
+    </span>
+  )
+}
+
 export default function Hero({ siteConfig: initialConfig }: HeroProps) {
   const heroRef = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
@@ -97,7 +141,6 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
   const isDirector = useDirector()
   const [editing, setEditing] = useState(false)
 
-  // Rotación automática de servicios
   useEffect(() => {
     const id = setInterval(() => {
       setActiveIdx(i => (i + 1) % SERVICES.length)
@@ -105,14 +148,12 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
     return () => clearInterval(id)
   }, [])
 
-  const title    = config.hero_title    ?? 'Cuerpo, voz y palabra.'
   const subtitle = config.hero_subtitle ?? 'Acompañamos a personas, familias, profesionales e instituciones a través de la clínica, la educación, la formación y el trabajo interdisciplinario.'
   const brief    = config.hero_brief    ?? 'Creemos en el valor de la escucha, el encuentro y la construcción conjunta de respuestas frente a los desafíos de cada trayectoria.'
 
   const editFields: EditField[] = [
-    { key: 'hero_title',    label: 'Título principal', type: 'text',     value: title    },
-    { key: 'hero_subtitle', label: 'Subtítulo',        type: 'textarea', rows: 3, value: subtitle },
-    { key: 'hero_brief',    label: 'Texto breve',      type: 'textarea', rows: 3, value: brief    },
+    { key: 'hero_subtitle', label: 'Subtítulo',   type: 'textarea', rows: 3, value: subtitle },
+    { key: 'hero_brief',    label: 'Texto breve', type: 'textarea', rows: 3, value: brief    },
   ]
 
   const saveConfig = async (data: Record<string, string>) => {
@@ -131,139 +172,50 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
       <section
         ref={heroRef}
         id="inicio"
-        className="relative min-h-screen flex flex-col justify-center overflow-hidden px-5 pt-16"
-        style={{ background: '#F0F7F4' }}
+        className="relative min-h-screen flex flex-col justify-center overflow-hidden px-5 pt-16 bg-white"
       >
-        {/* Línea ondulada 1 — verde ÉCLAT */}
-        <svg
-          className="absolute inset-0 w-full h-full pointer-events-none"
-          style={{ zIndex: 2, overflow: 'visible' }}
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <motion.path
-            d="M -200 350 Q 300 150 700 380 Q 1000 550 1400 250 Q 1600 150 1900 300"
-            stroke="#2F7D6B" strokeWidth="2.5" fill="none" strokeLinecap="round"
-            style={{ opacity: 0.6 }}
-            animate={{ pathLength: [0, 1] }}
-            transition={{ duration: 4, repeat: Infinity, repeatType: 'loop', ease: 'easeInOut', repeatDelay: 2 }}
-          />
-        </svg>
-
-        {/* Línea ondulada 2 — verde agua */}
-        <svg
-          className="absolute inset-0 w-full h-full pointer-events-none"
-          style={{ zIndex: 2, overflow: 'visible' }}
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <motion.path
-            d="M -200 500 Q 400 300 800 480 Q 1100 600 1500 350 Q 1700 250 1900 420"
-            stroke="#B7D8CC" strokeWidth="1.5" fill="none" strokeLinecap="round"
-            style={{ opacity: 0.4 }}
-            animate={{ pathLength: [0, 1] }}
-            transition={{ duration: 5, repeat: Infinity, repeatType: 'loop', ease: 'easeInOut', delay: 2, repeatDelay: 1 }}
-          />
-        </svg>
-
-        {/* Blob 1 — grande, arriba derecha */}
+        {/* Rastro verde — fondo que avanza con la barra */}
         <motion.div
-          className="absolute pointer-events-none"
+          className="absolute top-0 left-0 pointer-events-none"
           style={{
-            width: 600, height: 600,
-            top: -200, right: -100,
-            background: 'radial-gradient(circle, rgba(47,125,107,0.12) 0%, transparent 70%)',
-            borderRadius: '60% 40% 70% 30% / 50% 60% 40% 50%',
+            height: '100%',
+            background: 'linear-gradient(to right, #DCEFE8 0%, #F0F7F4 100%)',
             zIndex: 1,
           }}
-          animate={{
-            scale: [1, 1.15, 1],
-            rotate: [0, 8, 0],
-            borderRadius: [
-              '60% 40% 70% 30% / 50% 60% 40% 50%',
-              '40% 60% 30% 70% / 60% 40% 50% 60%',
-              '60% 40% 70% 30% / 50% 60% 40% 50%',
-            ],
-          }}
-          transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+          animate={{ width: ['0%', '100%', '0%'] }}
+          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', times: [0, 0.5, 1] }}
         />
 
-        {/* Blob 2 — mediano, abajo izquierda */}
+        {/* Barra vertical luminosa */}
         <motion.div
-          className="absolute pointer-events-none"
+          className="absolute top-0 pointer-events-none"
           style={{
-            width: 400, height: 400,
-            bottom: -100, left: -50,
-            background: 'radial-gradient(circle, rgba(183,216,204,0.25) 0%, transparent 70%)',
-            zIndex: 1,
+            width: 3,
+            height: '100%',
+            background: 'linear-gradient(to bottom, transparent 0%, #2F7D6B 20%, #2F7D6B 80%, transparent 100%)',
+            boxShadow: '0 0 20px rgba(47,125,107,0.4), 0 0 60px rgba(47,125,107,0.2)',
+            zIndex: 5,
           }}
-          animate={{ scale: [1, 1.2, 1], rotate: [0, -10, 0] }}
-          transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut', delay: 4 }}
+          animate={{ x: ['-5vw', '105vw', '-5vw'] }}
+          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', times: [0, 0.5, 1] }}
         />
 
-        {/* Blob 3 — pequeño, centro flotante */}
-        <motion.div
-          className="absolute pointer-events-none"
-          style={{
-            width: 300, height: 300,
-            top: '40%', left: '40%',
-            background: 'radial-gradient(circle, rgba(47,125,107,0.08) 0%, transparent 70%)',
-            zIndex: 1,
-          }}
-          animate={{ scale: [1, 1.3, 1], x: [0, 30, 0], y: [0, -20, 0] }}
-          transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
-        />
-
-
-
-        {/* Gradiente que respira */}
-        <motion.div
-          className="absolute pointer-events-none"
-          style={{
-            width: '120%', height: '120%',
-            top: '-10%', left: '-10%',
-            background: 'radial-gradient(ellipse at 30% 50%, rgba(47,125,107,0.12) 0%, transparent 60%)',
-            zIndex: 1,
-          }}
-          animate={{ x: ['0%', '40%', '0%'] }}
-          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-        />
-
-        {/* Glow central */}
-        <motion.div
-          className="absolute pointer-events-none"
-          style={{
-            width: 800, height: 400,
-            top: '50%', left: '50%',
-            transform: 'translate(-50%, -50%)',
-            background: 'radial-gradient(ellipse, rgba(47,125,107,0.1) 0%, transparent 70%)',
-            zIndex: 1,
-          }}
-          animate={{ opacity: [0.5, 1, 0.5], scale: [1, 1.1, 1] }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-        />
-
-        {/* Overlay inferior — fusión suave con la sección siguiente */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: 'linear-gradient(to bottom, transparent 60%, rgba(240,247,244,0.9) 100%)',
-            zIndex: 2,
-          }}
-        />
-
+        {/* Contenido del hero */}
         <motion.div
           style={{ opacity: heroOpacity, y: heroY }}
           className="relative z-10 max-w-6xl mx-auto w-full"
         >
           {isDirector && (
-            <div className="absolute -top-8 right-0">
+            <div className="absolute -top-8 right-0 z-20">
               <EditBtn onClick={() => setEditing(true)} label="Editar hero" variant="section" />
             </div>
           )}
 
-          <div className="grid lg:grid-cols-[55%_45%] gap-8 lg:gap-12 items-center">
+          <div className="grid lg:grid-cols-[55%_45%] gap-8 lg:gap-12 items-center" style={{ zIndex: 10, position: 'relative' }}>
 
             {/* ── COLUMNA IZQUIERDA ── */}
-            <div>
+            <div style={{ zIndex: 10, position: 'relative' }}>
+
               {/* Badge */}
               <motion.div
                 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
@@ -274,57 +226,39 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
                 ÉCLAT — Institución interdisciplinaria
               </motion.div>
 
-              {/* Título */}
+              {/* Título — 3 líneas con efecto pintura */}
               <motion.h1
                 initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.9, delay: 0.18, ease: [0.16, 1, 0.3, 1] }}
-                className="text-[clamp(2.6rem,6.5vw,4.4rem)] leading-[1.04] tracking-tight mb-6"
+                className="leading-[1.04] tracking-tight mb-6"
+                style={{ fontSize: 'clamp(2.6rem,6.5vw,4.4rem)' }}
               >
-                {/* Primera línea: capa base + capa revelada con clip-path */}
-                <span className="block relative" style={{ fontWeight: 800 }}>
-                  {/* Capa base — verde muy oscuro */}
-                  <span style={{ color: '#1B2B26' }}>{title}</span>
-                  {/* Capa revelada — verde ÉCLAT, se pinta de izquierda a derecha */}
-                  <motion.span
-                    className="absolute inset-0 overflow-hidden"
-                    style={{ color: '#2F7D6B' }}
-                    animate={{
-                      clipPath: [
-                        'inset(0 100% 0 0)',
-                        'inset(0 0% 0 0)',
-                        'inset(0 0% 0 100%)',
-                      ],
-                    }}
-                    transition={{
-                      duration: 4,
-                      repeat: Infinity,
-                      repeatDelay: 2,
-                      ease: 'easeInOut',
-                    }}
-                  >
-                    {title}
-                  </motion.span>
+                <span className="block">
+                  <PaintText style={{ fontWeight: 800 }}>Cuerpo, voz</PaintText>
                 </span>
-                {/* Segunda línea */}
-                <span className="block" style={{ fontWeight: 300, color: '#4B6B5E' }}>
-                  Un lugar para cada uno.
+                <span className="block">
+                  <PaintText style={{ fontWeight: 800 }}>y palabra.</PaintText>
+                </span>
+                <span className="block mt-1">
+                  <PaintText style={{ fontWeight: 300, fontSize: '0.85em' }}>Un lugar para cada uno.</PaintText>
                 </span>
               </motion.h1>
 
-              {/* Subtítulo */}
-              <motion.p
+              {/* Subtítulo con efecto pintura */}
+              <motion.div
                 initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.28, ease: [0.16, 1, 0.3, 1] }}
-                className="text-[17px] md:text-[18px] leading-relaxed mb-4 max-w-xl font-light" style={{ color: '#4B6B5E' }}
+                className="text-[17px] md:text-[18px] leading-relaxed mb-4 max-w-xl font-light"
               >
-                {subtitle}
-              </motion.p>
+                <PaintText>{subtitle}</PaintText>
+              </motion.div>
 
               {/* Texto breve */}
               <motion.p
                 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.36 }}
-                className="text-[14px] leading-relaxed mb-10 max-w-lg" style={{ color: 'rgba(75,107,94,0.7)' }}
+                className="text-[14px] leading-relaxed mb-10 max-w-lg"
+                style={{ color: 'rgba(75,107,94,0.7)' }}
               >
                 {brief}
               </motion.p>
@@ -349,7 +283,8 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
                 <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                   transition={{ type: 'spring', stiffness: 400, damping: 25 }}>
                   <Link href="/servicios"
-                    className="inline-flex items-center justify-center gap-2 bg-white text-[#2F7D6B] font-semibold text-[15px] px-7 py-3.5 rounded-full hover:bg-[#F0F7F4] transition-colors w-full sm:w-auto" style={{ border: '1.5px solid #2F7D6B' }}>
+                    className="inline-flex items-center justify-center gap-2 bg-white text-[#2F7D6B] font-semibold text-[15px] px-7 py-3.5 rounded-full hover:bg-[#F0F7F4] transition-colors w-full sm:w-auto"
+                    style={{ border: '1.5px solid #2F7D6B' }}>
                     Conocé nuestros servicios
                   </Link>
                 </motion.div>
@@ -366,7 +301,7 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
                     key={word}
                     animate={{ y: [0, -3, 0] }}
                     transition={{ duration: 3.5 + i * 0.4, repeat: Infinity, ease: 'easeInOut', delay: i * 0.5 }}
-                    className="text-[12px] font-medium text-[#4B6B5E] bg-white/70 border border-[#2F7D6B]/15 px-3 py-1.5 rounded-full cursor-default"
+                    className="text-[12px] font-medium text-[#4B6B5E] bg-white border border-[#2F7D6B]/15 px-3 py-1.5 rounded-full cursor-default shadow-sm"
                   >
                     {word}
                   </motion.span>
@@ -380,12 +315,12 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 1, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
               className="hidden lg:flex flex-col gap-1.5 py-4"
+              style={{ zIndex: 10, position: 'relative' }}
             >
               {SERVICES.map((service, i) => {
                 const isActive = i === activeIdx
                 return (
                   <div key={service} className="flex items-center gap-3 overflow-hidden">
-                    {/* Triángulo / espaciador */}
                     <AnimatePresence mode="popLayout" initial={false}>
                       {isActive ? (
                         <motion.span
@@ -407,16 +342,13 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
                       )}
                     </AnimatePresence>
 
-                    {/* Texto del servicio */}
                     <motion.span
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.4 }}
                       style={{
-                        fontSize: isActive
-                          ? 'clamp(1.3rem, 2.2vw, 1.8rem)'
-                          : 'clamp(0.9rem, 1.5vw, 1.2rem)',
+                        fontSize: isActive ? 'clamp(1.3rem, 2.2vw, 1.8rem)' : 'clamp(0.9rem, 1.5vw, 1.2rem)',
                         fontWeight: isActive ? 700 : 400,
-                        color: isActive ? '#0A1F1A' : 'rgba(10,31,26,0.3)',
+                        color: isActive ? '#1B2B26' : 'rgba(27,43,38,0.3)',
                         lineHeight: 1.25,
                         transition: 'font-size 0.4s ease',
                         cursor: 'default',
@@ -437,6 +369,7 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
         <motion.div
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8 }}
           className="absolute bottom-8 left-1/2 -translate-x-1/2"
+          style={{ zIndex: 10 }}
         >
           <motion.div
             animate={{ y: [0, 8, 0] }}
