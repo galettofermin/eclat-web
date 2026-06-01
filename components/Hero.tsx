@@ -29,24 +29,6 @@ const SERVICES = [
 
 const keywords = ['Clínica', 'Educación', 'Formación', 'Instituciones', 'Trayectorias', 'Comunidad']
 
-const PARTICLES = [
-  { x: '5%',  y: '15%', size: 4, color: 'rgba(47,125,107,0.35)',  dur: 6,  delay: 0,   dy: -30, dx: 15  },
-  { x: '15%', y: '70%', size: 3, color: 'rgba(183,216,204,0.6)',  dur: 8,  delay: 1,   dy: 20,  dx: -10 },
-  { x: '25%', y: '40%', size: 5, color: 'rgba(47,125,107,0.35)',  dur: 5,  delay: 2,   dy: -25, dx: 10  },
-  { x: '35%', y: '85%', size: 3, color: 'rgba(183,216,204,0.6)',  dur: 9,  delay: 0.5, dy: -20, dx: -15 },
-  { x: '45%', y: '20%', size: 6, color: 'rgba(47,125,107,0.35)',  dur: 7,  delay: 3,   dy: 30,  dx: 12  },
-  { x: '55%', y: '60%', size: 4, color: 'rgba(183,216,204,0.6)',  dur: 6,  delay: 1.5, dy: -18, dx: -8  },
-  { x: '65%', y: '30%', size: 3, color: 'rgba(47,125,107,0.35)',  dur: 10, delay: 4,   dy: 25,  dx: 15  },
-  { x: '75%', y: '75%', size: 5, color: 'rgba(183,216,204,0.6)',  dur: 8,  delay: 2,   dy: -30, dx: -12 },
-  { x: '85%', y: '45%', size: 4, color: 'rgba(47,125,107,0.35)',  dur: 5,  delay: 0.8, dy: 20,  dx: 10  },
-  { x: '92%', y: '10%', size: 3, color: 'rgba(183,216,204,0.6)',  dur: 9,  delay: 3.5, dy: -25, dx: -10 },
-  { x: '10%', y: '90%', size: 6, color: 'rgba(47,125,107,0.35)',  dur: 7,  delay: 1.2, dy: -20, dx: 18  },
-  { x: '30%', y: '55%', size: 3, color: 'rgba(183,216,204,0.6)',  dur: 6,  delay: 4.5, dy: 15,  dx: -8  },
-  { x: '50%', y: '80%', size: 5, color: 'rgba(47,125,107,0.35)',  dur: 8,  delay: 2.8, dy: -28, dx: 12  },
-  { x: '70%', y: '15%', size: 4, color: 'rgba(183,216,204,0.6)',  dur: 5,  delay: 0.3, dy: 22,  dx: -14 },
-  { x: '88%', y: '65%', size: 3, color: 'rgba(47,125,107,0.35)',  dur: 9,  delay: 3.2, dy: -15, dx: 8   },
-]
-
 const cardBgs = ['#DCEFE8', '#E8F4F0', '#F0FAF5', '#E4F2EC']
 
 const institutionalCards = [
@@ -150,44 +132,35 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
         ref={heroRef}
         id="inicio"
         className="relative min-h-screen flex flex-col justify-center overflow-hidden px-5 pt-16"
-        style={{ background: 'linear-gradient(135deg, #F0F7F4 0%, #E8F2EE 40%, #F2F4F3 70%, #EAEFF0 100%)' }}
+        style={{ background: '#F0F7F4' }}
       >
-        {/* Dot grid sutil */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage: 'radial-gradient(rgba(47,125,107,0.15) 1px, transparent 1px)',
-            backgroundSize: '40px 40px',
-            opacity: 0.4,
-            zIndex: 0,
-          }}
-        />
-
-        {/* Trazo orgánico 1 */}
+        {/* Línea ondulada 1 — verde ÉCLAT */}
         <svg
           className="absolute inset-0 w-full h-full pointer-events-none"
-          style={{ zIndex: 1, overflow: 'visible' }}
+          style={{ zIndex: 2, overflow: 'visible' }}
           xmlns="http://www.w3.org/2000/svg"
         >
           <motion.path
-            d="M -100 300 Q 200 100 500 400 Q 700 600 1000 200 Q 1200 50 1500 350"
-            stroke="rgba(47,125,107,0.25)" strokeWidth="2" fill="none" strokeLinecap="round"
-            animate={{ pathLength: [0, 1, 0], opacity: [0, 0.6, 0] }}
-            transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 0 }}
+            d="M -200 350 Q 300 150 700 380 Q 1000 550 1400 250 Q 1600 150 1900 300"
+            stroke="#2F7D6B" strokeWidth="2.5" fill="none" strokeLinecap="round"
+            style={{ opacity: 0.6 }}
+            animate={{ pathLength: [0, 1] }}
+            transition={{ duration: 4, repeat: Infinity, repeatType: 'loop', ease: 'easeInOut', repeatDelay: 2 }}
           />
         </svg>
 
-        {/* Trazo orgánico 2 */}
+        {/* Línea ondulada 2 — verde agua */}
         <svg
           className="absolute inset-0 w-full h-full pointer-events-none"
-          style={{ zIndex: 1, overflow: 'visible' }}
+          style={{ zIndex: 2, overflow: 'visible' }}
           xmlns="http://www.w3.org/2000/svg"
         >
           <motion.path
-            d="M 1600 100 Q 1200 300 900 150 Q 600 0 300 250 Q 100 400 -100 200"
-            stroke="rgba(183,216,204,0.3)" strokeWidth="1.5" fill="none" strokeLinecap="round"
-            animate={{ pathLength: [0, 1, 0], opacity: [0, 0.5, 0] }}
-            transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut', delay: 3 }}
+            d="M -200 500 Q 400 300 800 480 Q 1100 600 1500 350 Q 1700 250 1900 420"
+            stroke="#B7D8CC" strokeWidth="1.5" fill="none" strokeLinecap="round"
+            style={{ opacity: 0.4 }}
+            animate={{ pathLength: [0, 1] }}
+            transition={{ duration: 5, repeat: Infinity, repeatType: 'loop', ease: 'easeInOut', delay: 2, repeatDelay: 1 }}
           />
         </svg>
 
@@ -239,25 +212,6 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
           transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
         />
 
-        {/* Partículas flotantes */}
-        {PARTICLES.map((p, i) => (
-          <motion.div
-            key={i}
-            className="absolute pointer-events-none rounded-full"
-            style={{
-              left: p.x, top: p.y,
-              width: p.size, height: p.size,
-              background: p.color,
-              zIndex: 1,
-            }}
-            animate={{
-              y: [0, p.dy, 0],
-              x: [0, p.dx, 0],
-              opacity: [0.3, 0.8, 0.3],
-            }}
-            transition={{ duration: p.dur, repeat: Infinity, ease: 'easeInOut', delay: p.delay }}
-          />
-        ))}
 
 
         {/* Gradiente que respira */}
@@ -326,9 +280,32 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
                 transition={{ duration: 0.9, delay: 0.18, ease: [0.16, 1, 0.3, 1] }}
                 className="text-[clamp(2.6rem,6.5vw,4.4rem)] leading-[1.04] tracking-tight mb-6"
               >
-                <span className="block" style={{ fontWeight: 800, color: '#0A1F1A' }}>
-                  {title}
+                {/* Primera línea: capa base + capa revelada con clip-path */}
+                <span className="block relative" style={{ fontWeight: 800 }}>
+                  {/* Capa base — verde muy oscuro */}
+                  <span style={{ color: '#1B2B26' }}>{title}</span>
+                  {/* Capa revelada — verde ÉCLAT, se pinta de izquierda a derecha */}
+                  <motion.span
+                    className="absolute inset-0 overflow-hidden"
+                    style={{ color: '#2F7D6B' }}
+                    animate={{
+                      clipPath: [
+                        'inset(0 100% 0 0)',
+                        'inset(0 0% 0 0)',
+                        'inset(0 0% 0 100%)',
+                      ],
+                    }}
+                    transition={{
+                      duration: 4,
+                      repeat: Infinity,
+                      repeatDelay: 2,
+                      ease: 'easeInOut',
+                    }}
+                  >
+                    {title}
+                  </motion.span>
                 </span>
+                {/* Segunda línea */}
                 <span className="block" style={{ fontWeight: 300, color: '#4B6B5E' }}>
                   Un lugar para cada uno.
                 </span>
