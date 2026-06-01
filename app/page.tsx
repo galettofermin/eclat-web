@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import Navbar from '@/components/Navbar'
 import Hero from '@/components/Hero'
 import CoursesCarousel from '@/components/course/CoursesCarousel'
+import GradientBanner from '@/components/GradientBanner'
 import About from '@/components/About'
 import Services from '@/components/Services'
 import Formation from '@/components/Formation'
@@ -42,6 +43,7 @@ export default async function Home() {
     <main className="min-h-screen bg-[#FAFAF8]">
       <Navbar />
       <Hero siteConfig={siteConfig} featuredCourse={featuredCourse} />
+      <GradientBanner />
       <CoursesCarousel courses={courses} />
       <About siteConfig={siteConfig} />
       <Services services={services} siteConfig={siteConfig} />
