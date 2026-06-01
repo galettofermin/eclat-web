@@ -34,10 +34,13 @@ export default async function Home() {
     }
   } catch { /* fallback a datos hardcodeados */ }
 
+  // Curso destacado: el primero con precio > 0 (pago) o el primero disponible
+  const featuredCourse = courses?.find(c => !c.is_free && c.price > 0) ?? courses?.[0] ?? null
+
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-[#FAFAF8]">
       <Navbar />
-      <Hero siteConfig={siteConfig} />
+      <Hero siteConfig={siteConfig} featuredCourse={featuredCourse} />
       <About siteConfig={siteConfig} />
       <Services services={services} siteConfig={siteConfig} />
       <Formation courses={courses} siteConfig={siteConfig} />
