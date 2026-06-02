@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useParams, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
@@ -10,10 +10,10 @@ import type { Course } from '@/lib/types'
 const formatPrice = (p: number) =>
   new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(p)
 
-export default function InscripcionPage() {
+function InscripcionContent() {
   const { courseId } = useParams<{ courseId: string }>()
   const searchParams = useSearchParams()
-  const payoError = searchParams.get('pago') === 'error'
+  const pagoError = searchParams.get('pago') === 'error'
   const router = useRouter()
 
   const [course, setCourse] = useState<Course | null>(null)
@@ -35,7 +35,6 @@ export default function InscripcionPage() {
       if (!courseData) { router.push('/formacion'); return }
       if (courseData.is_free) { router.push(`/cursos/${courseId}`); return }
 
-      // Check existing enrollment (maybeSingle no da 406 si no hay filas)
       const { data: enr } = await supabase
         .from('enrollments')
         .select('status')
@@ -135,21 +134,18 @@ export default function InscripcionPage() {
         </div>
 
         <div className="bg-white rounded-2xl border border-black/5 overflow-hidden shadow-sm">
-          {/* Course summary */}
           <div className="px-7 py-6 border-b border-black/5 bg-[#F5F5F7]/50">
             <p className="text-[13px] text-[#6E6E73] mb-1">Estás comprando</p>
             <p className="text-[17px] font-semibold text-[#0A0A0A]">{course.title}</p>
             <p className="text-[26px] font-bold text-[#0A0A0A] mt-2">{formatPrice(course.price)}</p>
           </div>
 
-          {/* Error banner */}
-          {payoError && (
+          {pagoError && (
             <div className="mx-7 mt-5 bg-red-50 border border-red-100 text-red-600 text-[13px] px-4 py-3 rounded-xl">
               El pago no se completó. Podés intentarlo de nuevo.
             </div>
           )}
 
-          {/* Tabs */}
           <div className="px-7 pt-6">
             <div className="flex gap-2 mb-6 bg-[#F5F5F7] p-1 rounded-xl">
               <button
@@ -179,12 +175,7 @@ export default function InscripcionPage() {
                   {mpLoading ? (
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                   ) : (
-                    <>
-                      <svg width="22" height="22" viewBox="0 0 40 40" fill="white">
-                        <path d="M20 4C11.16 4 4 11.16 4 20s7.16 16 16 16 16-7.16 16-16S28.84 4 20 4zm-1.5 22.5h-3v-9h3v9zm-1.5-10.5c-1 0-1.5-.67-1.5-1.5s.5-1.5 1.5-1.5 1.5.67 1.5 1.5-.5 1.5-1.5 1.5zm9 10.5h-3V20c0-1.1-.4-1.5-1.5-1.5s-1.5.4-1.5 1.5v6.5h-3v-9h3v1.5c.5-.9 1.4-1.5 2.5-1.5 2 0 3.5 1.3 3.5 3.5v5.5z" />
-                      </svg>
-                      Pagar con Mercado Pago
-                    </>
+                    'Pagar con Mercado Pago'
                   )}
                 </button>
                 <p className="text-[12px] text-[#86868b] text-center mt-3">
@@ -230,5 +221,17 @@ export default function InscripcionPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function InscripcionPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#F5F5F7] flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-[#2F7D6B] border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <InscripcionContent />
+    </Suspense>
   )
 }

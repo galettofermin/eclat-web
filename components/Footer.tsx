@@ -63,7 +63,7 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href={`https://${WEBSITE_URL}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 text-[14px] text-white/60 hover:text-white transition-colors">
+                <a href={WEBSITE_URL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 text-[14px] text-white/60 hover:text-white transition-colors">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="shrink-0">
                     <circle cx="12" cy="12" r="10" />
                     <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
