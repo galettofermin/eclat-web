@@ -7,11 +7,8 @@ const SECTIONS = [
   {
     title: 'Inicio — Hero',
     fields: [
-      { key: 'hero_title', label: 'Slogan principal', rows: 2, hint: 'Ej: "Cuerpo, voz y palabra. Un lugar para cada uno."' },
-      { key: 'hero_subtitle', label: 'Subtítulo del hero', rows: 3, hint: 'Texto descriptivo debajo del slogan' },
-      { key: 'hero_quote', label: 'Frase destacada (sección blanca)', rows: 2, hint: 'La cita que aparece entre el hero y el CTA negro' },
-      { key: 'cta_title', label: 'Título del bloque negro (CTA)', rows: 2, hint: 'Ej: "¿Querés saber si podemos ayudarte?"' },
-      { key: 'cta_subtitle', label: 'Subtítulo del bloque negro', rows: 2, hint: 'Texto debajo del título del CTA' },
+      { key: 'hero_subtitle', label: 'Subtítulo del hero', rows: 3, hint: 'Texto descriptivo debajo del slogan principal' },
+      { key: 'hero_team_image', label: 'Foto del equipo (URL)', rows: 1, hint: 'URL de la imagen. Subila a Supabase Storage o usá cualquier URL pública.' },
     ],
   },
   {

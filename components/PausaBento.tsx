@@ -4,6 +4,7 @@ import { useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
 import Link from 'next/link'
 import type { Article } from '@/lib/types'
+import { createClient } from '@/lib/supabase/client'
 
 const FEATURED_IMAGE = 'https://images.unsplash.com/photo-1573497019418-b400bb3ab074?w=800'
 
@@ -59,7 +60,7 @@ export default function PausaBento({ articles: initialArticles }: PausaBentoProp
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
   const [email, setEmail] = useState('')
-  const [subscribed, setSubscribed] = useState(false)
+  const [subStatus, setSubStatus] = useState<'idle' | 'loading' | 'ok' | 'duplicate' | 'error'>('idle')
 
   const data = (initialArticles?.length ? initialArticles : DEFAULT_ARTICLES) as Article[]
   const featured = data.find((a) => a.featured) ?? data[0]
@@ -67,9 +68,21 @@ export default function PausaBento({ articles: initialArticles }: PausaBentoProp
   const card1 = rest[0]
   const card3 = rest[1]
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (email.trim()) setSubscribed(true)
+    if (!email.trim()) return
+    setSubStatus('loading')
+    const supabase = createClient()
+    const { error } = await supabase
+      .from('suscriptores')
+      .insert({ email: email.trim().toLowerCase(), lista: 'pausa' })
+    if (!error) {
+      setSubStatus('ok')
+    } else if (error.code === '23505') {
+      setSubStatus('duplicate')
+    } else {
+      setSubStatus('error')
+    }
   }
 
   return (
@@ -270,9 +283,13 @@ export default function PausaBento({ articles: initialArticles }: PausaBentoProp
               </p>
             </div>
 
-            {subscribed ? (
+            {subStatus === 'ok' ? (
               <p className="text-[#2F7D6B] font-semibold text-[15px] shrink-0">
-                ¡Gracias! Te tenemos en cuenta.
+                ¡Bienvenido/a a Pausa! 🌿
+              </p>
+            ) : subStatus === 'duplicate' ? (
+              <p className="text-[#4B6B5E] font-semibold text-[15px] shrink-0">
+                Ya estás suscripto/a a Pausa.
               </p>
             ) : (
               <form
@@ -285,7 +302,8 @@ export default function PausaBento({ articles: initialArticles }: PausaBentoProp
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="tu@email.com"
                   required
-                  className="text-[14px] focus:outline-none focus:ring-2 focus:ring-[#2F7D6B]/40 transition-all"
+                  disabled={subStatus === 'loading'}
+                  className="text-[14px] focus:outline-none focus:ring-2 focus:ring-[#2F7D6B]/40 transition-all disabled:opacity-60"
                   style={{
                     background: 'white',
                     border: '1px solid #B7D8CC',
@@ -296,7 +314,8 @@ export default function PausaBento({ articles: initialArticles }: PausaBentoProp
                 />
                 <button
                   type="submit"
-                  className="font-semibold text-white text-[14px] hover:bg-[#245f52] transition-colors"
+                  disabled={subStatus === 'loading'}
+                  className="font-semibold text-white text-[14px] hover:bg-[#245f52] transition-colors disabled:opacity-60"
                   style={{
                     background: '#2F7D6B',
                     borderRadius: 100,
@@ -304,8 +323,11 @@ export default function PausaBento({ articles: initialArticles }: PausaBentoProp
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  Suscribirme
+                  {subStatus === 'loading' ? 'Enviando…' : 'Suscribirme'}
                 </button>
+                {subStatus === 'error' && (
+                  <p className="text-red-500 text-[12px] mt-1 w-full">Algo salió mal. Intentá de nuevo.</p>
+                )}
               </form>
             )}
           </motion.div>
