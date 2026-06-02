@@ -1,12 +1,13 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
-import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion'
+import { useState } from 'react'
+import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { useDirector } from '@/hooks/useDirector'
 import EditDrawer, { EditField } from './admin/EditDrawer'
 import EditBtn from './admin/EditBtn'
 import { createClient } from '@/lib/supabase/client'
+import { WHATSAPP_URL } from '@/lib/constants'
 import type { Course } from '@/lib/types'
 
 interface HeroProps {
@@ -15,42 +16,14 @@ interface HeroProps {
   courses?: Course[]
 }
 
-const SERVICES = [
-  'Psicología',
-  'Psicopedagogía',
-  'Fonoaudiología',
-  'Psicomotricidad',
-  'Docente de Apoyo',
-  'Acompañante Terapéutico',
-  'Arteterapia',
-  'Habilidades Sociales',
-  'Evaluaciones Diagnósticas',
-]
-
-const keywords = ['Clínica', 'Educación', 'Formación', 'Instituciones', 'Trayectorias', 'Comunidad']
+// Fade-up escalonado al cargar — sin loops
+const fadeUp = (delay = 0) => ({
+  initial: { opacity: 0, y: 16 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const, delay },
+})
 
 const cardBgs = ['#DCEFE8', '#E8F4F0', '#F0FAF5', '#E4F2EC']
-
-// Animación sincronizada: bar + clip-path del texto, 14s loop
-const EASE = [0.45, 0, 0.55, 1] as const
-
-const SWEEP = {
-  animate: {
-    clipPath: [
-      'inset(0 100% 0 0)',
-      'inset(0 0% 0 0)',
-      'inset(0 0% 0 100%)',
-      'inset(0 100% 0 0)',
-    ],
-  },
-  transition: {
-    duration: 14,
-    repeat: Infinity,
-    ease: EASE,
-    times: [0, 0.5, 0.95, 1],
-    repeatDelay: 1.5,
-  },
-}
 
 const institutionalCards = [
   {
@@ -107,56 +80,17 @@ const institutionalCards = [
   },
 ]
 
-// Texto pintado — capa base + capa coloreada sincronizada con la barra
-function PaintText({
-  children,
-  className,
-  style,
-}: {
-  children: React.ReactNode
-  className?: string
-  style?: React.CSSProperties
-}) {
-  return (
-    <span className={`relative inline-block ${className ?? ''}`} style={style}>
-      {/* Base — verde oscuro suave */}
-      <span style={{ color: '#2D4A42' }}>{children}</span>
-      {/* Revelado — verde ÉCLAT, sigue la barra */}
-      <motion.span
-        className="absolute inset-0 overflow-hidden"
-        style={{ color: '#2F7D6B', zIndex: 6 }}
-        {...SWEEP}
-      >
-        {children}
-      </motion.span>
-    </span>
-  )
-}
-
 export default function Hero({ siteConfig: initialConfig }: HeroProps) {
-  const heroRef = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
-  const heroY = useTransform(scrollYProgress, [0, 1], [0, -80])
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0])
-
-  const [activeIdx, setActiveIdx] = useState(0)
   const [config, setConfig] = useState(initialConfig ?? {})
   const isDirector = useDirector()
   const [editing, setEditing] = useState(false)
 
-  useEffect(() => {
-    const id = setInterval(() => {
-      setActiveIdx(i => (i + 1) % SERVICES.length)
-    }, 3500)
-    return () => clearInterval(id)
-  }, [])
-
-  const subtitle = config.hero_subtitle ?? 'Acompañamos a personas, familias, profesionales e instituciones a través de la clínica, la educación, la formación y el trabajo interdisciplinario.'
-  const brief    = config.hero_brief    ?? 'Creemos en el valor de la escucha, el encuentro y la construcción conjunta de respuestas frente a los desafíos de cada trayectoria.'
+  const subtitle = config.hero_subtitle ?? 'Un espacio donde cada persona es escuchada en su singularidad. Acompañamos el desarrollo de niños, adolescentes y adultos.'
+  const teamImage = config.hero_team_image ?? ''
 
   const editFields: EditField[] = [
-    { key: 'hero_subtitle', label: 'Subtítulo',   type: 'textarea', rows: 3, value: subtitle },
-    { key: 'hero_brief',    label: 'Texto breve', type: 'textarea', rows: 3, value: brief    },
+    { key: 'hero_subtitle',    label: 'Subtítulo',      type: 'textarea', rows: 3, value: subtitle },
+    { key: 'hero_team_image',  label: 'Foto del equipo (URL)', type: 'image', value: teamImage, hint: 'Subí la foto del equipo para la columna derecha' },
   ]
 
   const saveConfig = async (data: Record<string, string>) => {
@@ -173,215 +107,158 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
     <>
       {/* ══ HERO ══ */}
       <section
-        ref={heroRef}
         id="inicio"
-        className="relative min-h-screen flex flex-col justify-center overflow-hidden px-5 pt-16 bg-white"
+        className="relative overflow-hidden"
+        style={{ background: '#FAF8F2' }}
       >
-        {/* Rastro verde — fondo suave que avanza con la barra */}
-        <motion.div
-          className="absolute top-0 left-0 pointer-events-none"
-          style={{
-            height: '100%',
-            background: 'linear-gradient(to right, #F0F7F4 0%, #F7FAF8 100%)',
-            zIndex: 1,
-          }}
-          animate={{ width: ['0%', '100%', '0%'] }}
-          transition={{ duration: 14, repeat: Infinity, ease: EASE, times: [0, 0.5, 1], repeatDelay: 1.5 }}
-        />
+        {isDirector && (
+          <div className="absolute top-20 right-5 z-20">
+            <EditBtn onClick={() => setEditing(true)} label="Editar hero" variant="section" />
+          </div>
+        )}
 
-        {/* Barra vertical luminosa — sutil */}
-        <motion.div
-          className="absolute top-0 pointer-events-none"
-          style={{
-            width: 1.5,
-            height: '100%',
-            background: 'linear-gradient(to bottom, transparent 0%, rgba(47,125,107,0.4) 15%, rgba(47,125,107,0.6) 50%, rgba(47,125,107,0.4) 85%, transparent 100%)',
-            boxShadow: '0 0 8px rgba(47,125,107,0.15), 0 0 24px rgba(47,125,107,0.08)',
-            zIndex: 5,
-          }}
-          animate={{ x: ['-5vw', '105vw', '-5vw'] }}
-          transition={{ duration: 14, repeat: Infinity, ease: EASE, times: [0, 0.5, 1], repeatDelay: 1.5 }}
-        />
+        <div className="max-w-6xl mx-auto px-5 grid lg:grid-cols-[55%_45%] gap-12 lg:gap-16 items-center min-h-screen pt-24 pb-16">
 
-        {/* Contenido del hero */}
-        <motion.div
-          style={{ opacity: heroOpacity, y: heroY }}
-          className="relative z-10 max-w-6xl mx-auto w-full"
-        >
-          {isDirector && (
-            <div className="absolute -top-8 right-0 z-20">
-              <EditBtn onClick={() => setEditing(true)} label="Editar hero" variant="section" />
-            </div>
-          )}
+          {/* ── COLUMNA IZQUIERDA ── */}
+          <div>
 
-          <div className="grid lg:grid-cols-[55%_45%] gap-8 lg:gap-12 items-center" style={{ zIndex: 10, position: 'relative' }}>
-
-            {/* ── COLUMNA IZQUIERDA ── */}
-            <div style={{ zIndex: 10, position: 'relative' }}>
-
-              {/* Badge */}
-              <motion.div
-                initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                className="inline-flex items-center gap-2 text-[12px] font-semibold text-[#2F7D6B] mb-8 tracking-wide"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-[#2F7D6B] animate-pulse" />
-                ÉCLAT — Institución interdisciplinaria
-              </motion.div>
-
-              {/* Título — 3 líneas con efecto pintura */}
-              <motion.h1
-                initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.9, delay: 0.18, ease: [0.16, 1, 0.3, 1] }}
-                className="leading-[1.04] tracking-tight mb-6"
-                style={{ fontSize: 'clamp(2.6rem,6.5vw,4.4rem)' }}
-              >
-                <span className="block">
-                  <PaintText style={{ fontWeight: 800 }}>Cuerpo, voz</PaintText>
-                </span>
-                <span className="block">
-                  <PaintText style={{ fontWeight: 800 }}>y palabra.</PaintText>
-                </span>
-                <span className="block mt-1">
-                  <PaintText style={{ fontWeight: 300, fontSize: '0.85em' }}>Un lugar para cada uno.</PaintText>
-                </span>
-              </motion.h1>
-
-              {/* Subtítulo con efecto pintura */}
-              <motion.div
-                initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.28, ease: [0.16, 1, 0.3, 1] }}
-                className="text-[17px] md:text-[18px] leading-relaxed mb-4 max-w-xl font-light"
-              >
-                <PaintText>{subtitle}</PaintText>
-              </motion.div>
-
-              {/* Texto breve */}
-              <motion.p
-                initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.36 }}
-                className="text-[14px] leading-relaxed mb-10 max-w-lg"
-                style={{ color: 'rgba(75,107,94,0.7)' }}
-              >
-                {brief}
-              </motion.p>
-
-              {/* CTAs */}
-              <motion.div
-                initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.44 }}
-                className="flex flex-col sm:flex-row gap-3 mb-12"
-              >
-                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 25 }}>
-                  <Link href="/formacion"
-                    className="inline-flex items-center justify-center gap-2 bg-[#2F7D6B] text-white font-semibold text-[15px] px-7 py-3.5 rounded-full shadow-lg shadow-[#2F7D6B]/30 hover:bg-[#245f52] transition-colors w-full sm:w-auto">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M12 2L2 7l10 5 10-5-10-5Z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
-                    </svg>
-                    Explorá nuestras formaciones
-                  </Link>
-                </motion.div>
-
-                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 25 }}>
-                  <Link href="/servicios"
-                    className="inline-flex items-center justify-center gap-2 bg-white text-[#2F7D6B] font-semibold text-[15px] px-7 py-3.5 rounded-full hover:bg-[#F0F7F4] transition-colors w-full sm:w-auto"
-                    style={{ border: '1.5px solid #2F7D6B' }}>
-                    Conocé nuestros servicios
-                  </Link>
-                </motion.div>
-              </motion.div>
-
-              {/* Keyword chips */}
-              <motion.div
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.6 }}
-                className="flex flex-wrap gap-2"
-              >
-                {keywords.map((word, i) => (
-                  <motion.span
-                    key={word}
-                    animate={{ y: [0, -3, 0] }}
-                    transition={{ duration: 3.5 + i * 0.4, repeat: Infinity, ease: 'easeInOut', delay: i * 0.5 }}
-                    className="text-[12px] font-medium text-[#4B6B5E] bg-white border border-[#2F7D6B]/15 px-3 py-1.5 rounded-full cursor-default shadow-sm"
-                  >
-                    {word}
-                  </motion.span>
-                ))}
-              </motion.div>
-            </div>
-
-            {/* ── COLUMNA DERECHA: Lista animada de servicios ── */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 1, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="hidden lg:flex flex-col gap-1.5 py-4"
-              style={{ zIndex: 10, position: 'relative' }}
-            >
-              {SERVICES.map((service, i) => {
-                const isActive = i === activeIdx
-                return (
-                  <div key={service} className="flex items-center gap-3 overflow-hidden">
-                    <AnimatePresence mode="popLayout" initial={false}>
-                      {isActive ? (
-                        <motion.span
-                          key="tri"
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          exit={{ opacity: 0, x: -10 }}
-                          transition={{ duration: 0.3 }}
-                          className="shrink-0 select-none leading-none"
-                          style={{ color: '#2F7D6B', fontSize: 14 }}
-                        >
-                          ▶
-                        </motion.span>
-                      ) : (
-                        <motion.span
-                          key="gap"
-                          style={{ width: 20, display: 'inline-block', flexShrink: 0 }}
-                        />
-                      )}
-                    </AnimatePresence>
-
-                    <motion.span
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.4 }}
-                      style={{
-                        fontSize: isActive ? 'clamp(1.3rem, 2.2vw, 1.8rem)' : 'clamp(0.9rem, 1.5vw, 1.2rem)',
-                        fontWeight: isActive ? 700 : 400,
-                        color: isActive ? '#1B2B26' : 'rgba(27,43,38,0.3)',
-                        lineHeight: 1.25,
-                        transition: 'font-size 0.4s ease',
-                        cursor: 'default',
-                        userSelect: 'none',
-                      }}
-                    >
-                      {service}
-                    </motion.span>
-                  </div>
-                )
-              })}
+            {/* Tag institucional */}
+            <motion.div {...fadeUp(0)} className="flex items-center gap-3 mb-10">
+              <div style={{ width: 24, height: 1, background: '#2F7D6B', flexShrink: 0 }} />
+              <span style={{
+                fontSize: '0.78rem',
+                letterSpacing: '0.15em',
+                textTransform: 'uppercase' as const,
+                color: '#2F7D6B',
+                fontWeight: 500,
+              }}>
+                Centro de Atención Integral · Rosario
+              </span>
             </motion.div>
 
-          </div>
-        </motion.div>
+            {/* Título en Cormorant */}
+            <motion.h1
+              {...fadeUp(0.1)}
+              style={{
+                fontFamily: 'var(--font-cormorant), Georgia, serif',
+                fontSize: 'clamp(3rem, 6vw, 5.5rem)',
+                fontWeight: 300,
+                lineHeight: 1.05,
+                letterSpacing: '-0.02em',
+                color: '#1B2B26',
+              }}
+            >
+              Cuerpo, voz
+              <br />
+              y palabra.
+              <br />
+              <em style={{ color: '#2F7D6B', fontStyle: 'italic' }}>
+                Un lugar para cada uno.
+              </em>
+            </motion.h1>
 
-        {/* Scroll indicator */}
-        <motion.div
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
-          style={{ zIndex: 10 }}
-        >
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
-            className="w-5 h-8 rounded-full border-2 border-[#2F7D6B]/30 flex items-start justify-center pt-1.5"
-          >
-            <div className="w-1 h-2 rounded-full bg-[#2F7D6B]/40" />
+            {/* Subtítulo */}
+            <motion.p
+              {...fadeUp(0.2)}
+              style={{
+                fontSize: '1rem',
+                fontWeight: 300,
+                color: '#4B6B5E',
+                lineHeight: 1.8,
+                maxWidth: 420,
+                marginTop: '1.5rem',
+                marginBottom: '2.5rem',
+              }}
+            >
+              {subtitle}
+            </motion.p>
+
+            {/* Botones */}
+            <motion.div {...fadeUp(0.3)} className="flex flex-col sm:flex-row gap-3 mb-8">
+              <a
+                href={WHATSAPP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center hover:opacity-90 transition-opacity"
+                style={{
+                  background: '#2F7D6B',
+                  color: 'white',
+                  padding: '0.85rem 2rem',
+                  borderRadius: 4,
+                  fontSize: '0.88rem',
+                  fontWeight: 500,
+                  textDecoration: 'none',
+                }}
+              >
+                Reservar turno
+              </a>
+              <Link
+                href="/servicios"
+                className="inline-flex items-center justify-center hover:bg-[#F0F7F4] transition-colors"
+                style={{
+                  background: 'transparent',
+                  color: '#2F7D6B',
+                  border: '1px solid #2F7D6B',
+                  padding: '0.85rem 2rem',
+                  borderRadius: 4,
+                  fontSize: '0.88rem',
+                  fontWeight: 500,
+                }}
+              >
+                Conocer servicios
+              </Link>
+            </motion.div>
+
+            {/* Stats */}
+            <motion.p
+              {...fadeUp(0.4)}
+              style={{ fontSize: '0.78rem', color: '#4B6B5E', letterSpacing: '0.02em' }}
+            >
+              8 especialidades · Atención interdisciplinaria · Rosario
+            </motion.p>
+
+          </div>
+
+          {/* ── COLUMNA DERECHA — imagen o placeholder ── */}
+          <motion.div {...fadeUp(0.15)} className="hidden lg:block">
+            {teamImage ? (
+              <div
+                style={{
+                  height: 520,
+                  borderRadius: 4,
+                  overflow: 'hidden',
+                  position: 'relative',
+                }}
+              >
+                <img
+                  src={teamImage}
+                  alt="Equipo ÉCLAT"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ) : (
+              <div
+                className="flex flex-col items-center justify-center gap-3"
+                style={{
+                  height: 520,
+                  background: '#DCEFE8',
+                  borderRadius: 4,
+                }}
+              >
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2F7D6B" strokeWidth="1" opacity={0.4}>
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                <span style={{ fontSize: '0.78rem', color: '#2F7D6B', opacity: 0.45, fontFamily: 'monospace' }}>
+                  /* Foto del equipo */
+                </span>
+              </div>
+            )}
           </motion.div>
-        </motion.div>
+
+        </div>
       </section>
 
       {/* ══ CUATRO TARJETAS INSTITUCIONALES ══ */}
