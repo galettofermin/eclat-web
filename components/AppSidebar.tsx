@@ -3,6 +3,8 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { motion } from 'framer-motion'
+import LogoImage from './LogoImage'
 import {
   Home, BookOpen, Library, Briefcase, Users, MessageSquare,
   Settings, LogOut, ChevronRight, GraduationCap,
@@ -21,7 +23,7 @@ const navMain = [
 ]
 
 const navCentro = [
-  { label: 'Áreas de trabajo', href: '/servicios', icon: Briefcase },
+  { label: 'Servicios', href: '/servicios', icon: Briefcase },
   { label: 'Primera consulta', href: '/turnos', icon: Users },
   { label: 'Comunidad', href: '/escritos', icon: MessageSquare },
 ]
@@ -52,22 +54,11 @@ export default function AppSidebar({ userEmail, userName, isDirector }: AppSideb
       style={{ width: 210, background: 'var(--eclat-dark)', borderRight: '1px solid rgba(255,255,255,0.06)' }}
     >
       {/* Logo */}
-      <div className="px-5 pt-6 pb-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
-        <Link href="/" className="flex items-center gap-2.5 mb-2">
-          <div
-            className="w-7 h-7 rounded-md flex items-center justify-center shrink-0"
-            style={{ background: 'var(--eclat-mid)' }}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-              <circle cx="12" cy="12" r="4" fill="white" opacity="0.9"/>
-              <path d="M12 2v3M12 19v3M2 12h3M19 12h3" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.6"/>
-            </svg>
-          </div>
+      <div className="px-5 pt-5 pb-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+        <Link href="/" className="flex items-center gap-2.5">
+          <LogoImage size={28} className="rounded-md shrink-0" />
           <span className="text-white font-semibold tracking-widest text-[11px] uppercase">ÉCLAT</span>
         </Link>
-        <p className="text-[10px] pl-[38px]" style={{ color: 'rgba(255,255,255,0.35)', letterSpacing: '0.04em' }}>
-          Centro de atención integral
-        </p>
         {isDirector && (
           <span
             className="ml-[38px] mt-1.5 inline-block text-[9px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full"
@@ -84,7 +75,7 @@ export default function AppSidebar({ userEmail, userName, isDirector }: AppSideb
           <Link
             key={item.href}
             href={item.href}
-            className={`flex items-center gap-2.5 px-2.5 py-2 rounded-lg mb-0.5 group transition-colors ${
+            className={`flex items-center gap-2.5 px-2.5 py-2 rounded-lg mb-0.5 group transition-all ${
               isActive(item.href)
                 ? 'text-white'
                 : 'hover:text-white'
