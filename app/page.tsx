@@ -40,7 +40,7 @@ export default async function Home() {
   const featuredCourse = courses?.find(c => !c.is_free && c.price > 0) ?? courses?.[0] ?? null
 
   return (
-    <main className="min-h-screen bg-[#FAFAF8]">
+    <main className="min-h-screen" style={{ background: 'var(--eclat-cream)' }}>
       <Navbar />
       <Hero siteConfig={siteConfig} featuredCourse={featuredCourse} />
       <GradientBanner />

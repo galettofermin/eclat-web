@@ -109,7 +109,7 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
       <section
         id="inicio"
         className="relative overflow-hidden"
-        style={{ background: '#FAF8F2' }}
+        style={{ background: 'var(--eclat-hero-bg)' }}
       >
         {isDirector && (
           <div className="absolute top-20 right-5 z-20">
@@ -148,12 +148,12 @@ export default function Hero({ siteConfig: initialConfig }: HeroProps) {
                 color: '#1B2B26',
               }}
             >
-              Cuerpo, voz
+              Salud mental,
               <br />
-              y palabra.
+              educación y acompañamiento
               <br />
               <em style={{ color: '#2F7D6B', fontStyle: 'italic' }}>
-                Un lugar para cada uno.
+                interdisciplinario.
               </em>
             </motion.h1>
 

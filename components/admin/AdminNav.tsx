@@ -37,14 +37,14 @@ export default function AdminNav({
   const handleLink = () => { if (onClose) onClose() }
 
   return (
-    <aside className="w-[232px] h-screen bg-white border-r border-black/[0.06] flex flex-col">
+    <aside className="w-[232px] h-screen flex flex-col" style={{ background: 'var(--eclat-sidebar)' }}>
       {/* Marca */}
-      <div className="px-5 py-4 border-b border-black/[0.06]">
+      <div className="px-5 py-4 border-b border-white/[0.08]">
         <div className="flex items-center gap-2.5">
           <LogoImage size={32} />
           <div className="min-w-0">
-            <p className="text-[13px] font-semibold text-[#0A0A0A] leading-tight">ÉCLAT Admin</p>
-            <p className="text-[11px] text-[#6E6E73] truncate leading-tight mt-0.5" title={userEmail}>{userEmail}</p>
+            <p className="text-[13px] font-semibold text-white leading-tight">ÉCLAT Admin</p>
+            <p className="text-[11px] text-white/50 truncate leading-tight mt-0.5" title={userEmail}>{userEmail}</p>
           </div>
         </div>
       </div>
@@ -59,7 +59,7 @@ export default function AdminNav({
               href={item.href}
               onClick={handleLink}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-[14px] font-medium transition-colors ${
-                isActive ? 'bg-[#2F7D6B] text-white' : 'text-[#424245] hover:bg-[#F5F5F7] hover:text-[#0A0A0A]'
+                isActive ? 'bg-[#2F7D6B] text-white' : 'text-white/70 hover:bg-white/10 hover:text-white'
               }`}
             >
               {item.icon}
@@ -70,12 +70,12 @@ export default function AdminNav({
       </nav>
 
       {/* Footer */}
-      <div className="px-3 py-3 border-t border-black/[0.06] space-y-0.5">
-        <Link href="/" target="_blank" onClick={handleLink} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium text-[#6E6E73] hover:bg-[#F5F5F7] hover:text-[#0A0A0A] transition-colors">
+      <div className="px-3 py-3 border-t border-white/[0.08] space-y-0.5">
+        <Link href="/" target="_blank" onClick={handleLink} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium text-white/50 hover:bg-white/10 hover:text-white transition-colors">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>
           Ver sitio
         </Link>
-        <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium text-[#6E6E73] hover:bg-[#F5F5F7] hover:text-[#0A0A0A] transition-colors">
+        <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium text-white/50 hover:bg-white/10 hover:text-white transition-colors">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>
           Cerrar sesión
         </button>

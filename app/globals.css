@@ -5,7 +5,10 @@
 :root {
   --eclat-green: #2F7D6B;
   --eclat-green-light: #DCEFE8;
-  --eclat-dark: #0A0A0A;
+  --eclat-dark: #1B2B26;
+  --eclat-cream: #f7f6f2;
+  --eclat-hero-bg: #e8f0ea;
+  --eclat-sidebar: #1e2a24;
 }
 
 html {
@@ -16,7 +19,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #ffffff;
+  background-color: var(--eclat-cream);
   color: #0A0A0A;
   overflow-x: hidden;
 }

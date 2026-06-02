@@ -92,7 +92,7 @@ export default function Services({ services: initialServices, siteConfig }: Serv
   }
 
   return (
-    <section id="servicios" className="py-24 md:py-32 px-5 bg-[#F5F9F7] relative">
+    <section id="servicios" className="py-24 md:py-32 px-5 relative" style={{ background: 'var(--eclat-cream)' }}>
       <div className="max-w-6xl mx-auto">
 
         {/* Header */}

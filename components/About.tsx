@@ -55,7 +55,7 @@ export default function About({ siteConfig: initialConfig }: AboutProps) {
   }
 
   return (
-    <section id="sobre" className="py-24 md:py-32 px-5 bg-[#F5F5F7] overflow-hidden relative">
+    <section id="sobre" className="py-24 md:py-32 px-5 overflow-hidden relative" style={{ background: 'var(--eclat-cream)' }}>
       {isDirector && (
         <div className="absolute top-4 right-4 z-10">
           <EditBtn onClick={() => setEditing(true)} label="Editar sección" variant="section" />

@@ -64,7 +64,7 @@ export default function Navbar() {
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'shadow-[0_4px_24px_rgba(0,0,0,0.09)]' : ''}`}
         style={{
-          background: 'rgba(240,247,244,0.92)',
+          background: 'rgba(247,246,242,0.95)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
           borderBottom: '1px solid rgba(47,125,107,0.12)',

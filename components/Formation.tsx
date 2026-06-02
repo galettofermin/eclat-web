@@ -87,7 +87,7 @@ export default function Formation({ courses: initialCourses, siteConfig }: Forma
   }
 
   return (
-    <section id="formacion" className="py-24 md:py-32 px-5 bg-[#F5F5F7] overflow-hidden">
+    <section id="formacion" className="py-24 md:py-32 px-5 overflow-hidden" style={{ background: 'var(--eclat-cream)' }}>
       <div className="max-w-5xl mx-auto" ref={ref}>
         <motion.p initial={{ opacity: 0, y: 14 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }}
           className="text-[#2F7D6B] text-[12px] font-semibold tracking-[0.2em] uppercase mb-5">Formación</motion.p>

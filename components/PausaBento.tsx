@@ -86,7 +86,7 @@ export default function PausaBento({ articles: initialArticles }: PausaBentoProp
   }
 
   return (
-    <section className="py-24 md:py-32 px-5 bg-[#FAFAF8]">
+    <section className="py-24 md:py-32 px-5" style={{ background: 'var(--eclat-cream)' }}>
       <div className="max-w-6xl mx-auto" ref={ref}>
 
         {/* ── Header ── */}
