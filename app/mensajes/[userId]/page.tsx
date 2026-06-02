@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import AppSidebar from '@/components/AppSidebar'
+import AppLayout from '@/components/AppLayout'
 import { createClient } from '@/lib/supabase/client'
 import { Search, Paperclip, Send, ArrowLeft } from 'lucide-react'
 
@@ -69,8 +69,8 @@ export default function ConversacionPage() {
   let ultimaFecha = ''
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ background: 'var(--eclat-cream)' }}>
-      <AppSidebar userEmail={userEmail} userName={userName} />
+    <AppLayout userEmail={userEmail} userName={userName}>
+      <div className="flex h-screen overflow-hidden">
 
       {/* Bandeja lateral */}
       <div
@@ -205,6 +205,7 @@ export default function ConversacionPage() {
           </form>
         </div>
       </div>
-    </div>
+      </div>
+    </AppLayout>
   )
 }

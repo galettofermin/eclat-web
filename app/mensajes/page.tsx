@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import AppSidebar from '@/components/AppSidebar'
+import AppLayout from '@/components/AppLayout'
 import { createClient } from '@/lib/supabase/client'
 import { Search } from 'lucide-react'
 
@@ -52,8 +52,8 @@ export default function MensajesPage() {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ background: 'var(--eclat-cream)' }}>
-      <AppSidebar userEmail={userEmail} userName={userName} />
+    <AppLayout userEmail={userEmail} userName={userName}>
+      <div className="flex h-[100vh] overflow-hidden">
 
       {/* Panel bandeja */}
       <div
@@ -145,6 +145,7 @@ export default function MensajesPage() {
           <p className="text-[13px]" style={{ color: 'var(--eclat-text-3)' }}>Seleccioná una conversación</p>
         </div>
       </div>
-    </div>
+      </div>
+    </AppLayout>
   )
 }

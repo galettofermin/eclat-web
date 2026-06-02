@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import AppSidebar from '@/components/AppSidebar'
+import AppLayout from '@/components/AppLayout'
 import { DIRECTOR_EMAIL, WHATSAPP_URL } from '@/lib/constants'
 import type { QuizQuestion } from '@/lib/types'
 
@@ -47,10 +47,8 @@ export default async function FormacionPage({ params }: { params: { slug: string
   const userName = user?.user_metadata?.full_name ?? ''
 
   return (
-    <div className="flex min-h-screen" style={{ background: 'var(--eclat-cream)' }}>
-      <AppSidebar userEmail={userEmail} userName={userName} isDirector={isDirector} />
-
-      <main className="flex-1" style={{ marginLeft: 210 }}>
+    <AppLayout userEmail={userEmail} userName={userName} isDirector={isDirector}>
+      <main className="flex-1">
         {/* Hero de la formación */}
         <div style={{ background: 'var(--eclat-bg-green)', borderBottom: '1px solid var(--eclat-border)', padding: '32px 40px 28px' }}>
           {/* Breadcrumb */}
@@ -239,6 +237,6 @@ export default async function FormacionPage({ params }: { params: { slug: string
           </div>
         </div>
       </main>
-    </div>
+    </AppLayout>
   )
 }

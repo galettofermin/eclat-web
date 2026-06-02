@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import AppSidebar from '@/components/AppSidebar'
+import AppLayout from '@/components/AppLayout'
 import HomeMain from '@/components/HomeMain'
 import WhatsAppFloatBtn from '@/components/WhatsAppFloatBtn'
 import { WHATSAPP_URL, DIRECTOR_EMAIL } from '@/lib/constants'
@@ -27,17 +27,12 @@ export default async function Home() {
     }
   } catch {}
 
-  const greeting = userName ? `¡Hola, ${userName.split(' ')[0]}!` : '¡Hola!'
+  const waUrl = process.env.NEXT_PUBLIC_WHATSAPP || WHATSAPP_URL
 
   return (
-    <div className="flex min-h-screen" style={{ background: 'var(--eclat-cream)' }}>
-      <AppSidebar userEmail={userEmail} userName={userName} isDirector={isDirector} />
-      <HomeMain
-        courses={courses}
-        greeting={greeting}
-        whatsappUrl={WHATSAPP_URL}
-      />
+    <AppLayout userEmail={userEmail} userName={userName} isDirector={isDirector}>
+      <HomeMain courses={courses} greeting="" whatsappUrl={waUrl} />
       <WhatsAppFloatBtn />
-    </div>
+    </AppLayout>
   )
 }
