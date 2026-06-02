@@ -2,12 +2,10 @@
 
 import { motion } from 'framer-motion'
 
-const WA_URL = process.env.NEXT_PUBLIC_WHATSAPP || 'https://wa.link/vyi5uv'
-
 export default function WhatsAppFloatBtn() {
   return (
     <motion.a
-      href={WA_URL}
+      href={process.env.NEXT_PUBLIC_WHATSAPP}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Escribir por WhatsApp"
