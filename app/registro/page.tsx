@@ -33,16 +33,22 @@ export default function RegistroPage() {
     if (error) {
       setError(error.message)
       setLoading(false)
-    } else if (data.session) {
-      // Confirmación desactivada → sesión inmediata
-      router.push('/mis-cursos')
-      router.refresh()
-    } else {
-      // Confirmación requerida → mostrar mensaje
-      setError('')
-      setLoading(false)
-      alert('¡Cuenta creada! Revisá tu casilla de email y confirmá tu cuenta para ingresar.')
-      router.push('/login')
+    } else if (data.session || data.user) {
+      // Disparar email de bienvenida (no bloqueante)
+      fetch('/api/email/bienvenida', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, nombre: name }),
+      }).catch(() => {})
+
+      if (data.session) {
+        router.push('/mis-cursos')
+        router.refresh()
+      } else {
+        setLoading(false)
+        alert('¡Cuenta creada! Revisá tu casilla de email y confirmá tu cuenta para ingresar.')
+        router.push('/login')
+      }
     }
   }
 

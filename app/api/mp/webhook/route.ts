@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { MercadoPagoConfig, Payment } from 'mercadopago'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { enviarAccesoCurso } from '@/lib/email'
 
 export async function POST(req: Request) {
   try {
@@ -34,6 +35,23 @@ export async function POST(req: Request) {
           },
           { onConflict: 'user_id,course_id' }
         )
+
+        // Enviar email de acceso si tenemos el email del usuario
+        if (userEmail) {
+          const { data: course } = await supabase
+            .from('courses')
+            .select('title')
+            .eq('id', courseId)
+            .single()
+
+          const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://eclatcentro.com'
+          await enviarAccesoCurso({
+            email: userEmail,
+            nombre: userEmail.split('@')[0],
+            tituloCurso: course?.title ?? 'tu curso',
+            urlCurso: `${siteUrl}/cursos/${courseId}`,
+          }).catch(err => console.error('Email acceso error:', err))
+        }
       }
     }
   } catch (error) {
