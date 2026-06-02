@@ -3,56 +3,50 @@
 @tailwind utilities;
 
 :root {
-  --eclat-green: #2F7D6B;
-  --eclat-green-light: #DCEFE8;
-  --eclat-dark: #1B2B26;
-  --eclat-cream: #f7f6f2;
-  --eclat-hero-bg: #e8f0ea;
-  --eclat-sidebar: #1e2a24;
+  --eclat-dark:     #1e2a24;
+  --eclat-dark-2:   #2d3e35;
+  --eclat-dark-3:   #3a5444;
+  --eclat-green:    #4a6658;
+  --eclat-mid:      #5e8f6e;
+  --eclat-light:    #8fbb9e;
+  --eclat-pale:     #a8c4b0;
+  --eclat-bg-green: #e8f0ea;
+  --eclat-border:   #c2d4c7;
+  --eclat-border-2: #c8d8cc;
+  --eclat-cream:    #f7f6f2;
+  --eclat-text:     #1e2a24;
+  --eclat-text-2:   #4a5e52;
+  --eclat-text-3:   #6b7c74;
+  --eclat-text-4:   #8a9e92;
+  --eclat-sidebar:  #1e2a24;
 }
 
-html {
-  scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; }
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--eclat-cream);
-  color: #0A0A0A;
+  color: var(--eclat-text);
   overflow-x: hidden;
 }
 
 ::selection {
-  background-color: #2F7D6B;
+  background-color: var(--eclat-mid);
   color: #ffffff;
 }
 
-/* Scroll suave para toda la página */
-* {
-  scroll-margin-top: 80px;
-}
-
-/* Transiciones suaves en links e interactivos */
-a, button {
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* Animación de entrada suave para imágenes */
-img {
-  transition: opacity 0.3s ease;
-}
+* { scroll-margin-top: 80px; }
+a, button { -webkit-tap-highlight-color: transparent; }
+img { transition: opacity 0.3s ease; }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-
-  /* Glassmorphism */
+  .text-balance { text-wrap: balance; }
   .glass {
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255,255,255,0.8);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
   }
+  .font-serif { font-family: Georgia, 'Times New Roman', serif; }
 }

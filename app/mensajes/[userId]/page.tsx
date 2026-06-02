@@ -3,22 +3,15 @@
 import { useEffect, useRef, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import Navbar from '@/components/Navbar'
+import AppSidebar from '@/components/AppSidebar'
 import { createClient } from '@/lib/supabase/client'
+import { Search, Paperclip, Send, ArrowLeft } from 'lucide-react'
 
 interface Mensaje {
-  id: string
-  de: string
-  para: string
-  contenido: string
-  leido: boolean
-  created_at: string
+  id: string; de: string; para: string; contenido: string; leido: boolean; created_at: string
 }
-
-interface Otro {
-  id: string
-  nombre: string
-  email: string
+interface Conversacion {
+  otroId: string; nombre: string; email: string; ultimoMensaje: string; ultimaFecha: string; noLeidos: number
 }
 
 export default function ConversacionPage() {
@@ -27,11 +20,14 @@ export default function ConversacionPage() {
   const bottomRef = useRef<HTMLDivElement>(null)
 
   const [mensajes, setMensajes] = useState<Mensaje[]>([])
-  const [otro, setOtro] = useState<Otro | null>(null)
+  const [convs, setConvs] = useState<Conversacion[]>([])
+  const [otro, setOtro] = useState<{ nombre: string; email: string } | null>(null)
   const [miId, setMiId] = useState('')
   const [texto, setTexto] = useState('')
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
+  const [userEmail, setUserEmail] = useState('')
+  const [userName, setUserName] = useState('')
 
   const cargar = async () => {
     const res = await fetch(`/api/mensajes/${otroId}`)
@@ -45,76 +41,108 @@ export default function ConversacionPage() {
   useEffect(() => {
     const supabase = createClient()
     supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) { router.replace('/login?redirect=/mensajes'); return }
+      if (!user) { router.replace('/login'); return }
+      setUserEmail(user.email ?? '')
+      setUserName(user.user_metadata?.full_name ?? '')
       cargar()
+      fetch('/api/mensajes').then(r => r.json()).then(d => setConvs(d.conversaciones ?? []))
     })
-  }, [otroId, router])
+  }, [otroId])
 
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [mensajes])
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [mensajes])
 
   const enviar = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!texto.trim() || sending) return
     setSending(true)
-    const res = await fetch('/api/mensajes', {
+    await fetch('/api/mensajes', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ para: otroId, contenido: texto.trim() }),
     })
-    if (res.ok) {
-      setTexto('')
-      await cargar()
-    }
-    setSending(false)
+    setTexto(''); await cargar(); setSending(false)
   }
 
-  const formatHora = (d: string) =>
-    new Date(d).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
+  const formatHora = (d: string) => new Date(d).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
+  const formatFecha = (d: string) => new Date(d).toLocaleDateString('es-AR', { day: '2-digit', month: 'long' })
 
-  const formatFecha = (d: string) =>
-    new Date(d).toLocaleDateString('es-AR', { day: '2-digit', month: 'long', year: 'numeric' })
-
-  // Agrupar mensajes por fecha
   let ultimaFecha = ''
 
   return (
-    <main className="flex flex-col h-screen bg-[#F5F5F7]">
-      <Navbar />
+    <div className="flex h-screen overflow-hidden" style={{ background: 'var(--eclat-cream)' }}>
+      <AppSidebar userEmail={userEmail} userName={userName} />
 
-      {/* Header de conversación */}
-      <div className="fixed top-[60px] inset-x-0 z-40 bg-white border-b border-black/[0.06] px-5 py-3 flex items-center gap-3 shadow-sm">
-        <Link href="/mensajes" className="text-[#6E6E73] hover:text-[#0A0A0A] transition-colors mr-1">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M19 12H5M12 5l-7 7 7 7"/>
-          </svg>
-        </Link>
-        {otro && (
-          <>
-            <div className="w-9 h-9 rounded-full bg-[#1B2B26] flex items-center justify-center text-white font-semibold text-[14px] shrink-0">
-              {otro.nombre.charAt(0).toUpperCase()}
-            </div>
-            <div>
-              <p className="text-[14px] font-semibold text-[#0A0A0A] leading-tight">{otro.nombre}</p>
-              <p className="text-[12px] text-[#6E6E73]">{otro.email}</p>
-            </div>
-          </>
-        )}
+      {/* Bandeja lateral */}
+      <div
+        className="hidden md:flex flex-col"
+        style={{ marginLeft: 210, width: 260, background: 'white', borderRight: '1px solid var(--eclat-border)', flexShrink: 0 }}
+      >
+        <div className="px-4 py-4" style={{ borderBottom: '1px solid var(--eclat-border)' }}>
+          <p className="text-[13px] font-semibold mb-3" style={{ color: 'var(--eclat-text)' }}>Conversaciones</p>
+          <div className="flex items-center gap-2 px-3 py-2 rounded-lg" style={{ background: 'var(--eclat-bg-green)', border: '1px solid var(--eclat-border)' }}>
+            <Search size={11} style={{ color: 'var(--eclat-text-3)' }} />
+            <input placeholder="Buscar..." className="flex-1 bg-transparent text-[11px] outline-none" style={{ color: 'var(--eclat-text)' }} />
+          </div>
+        </div>
+        <div className="flex-1 overflow-y-auto">
+          {convs.map(conv => (
+            <Link
+              key={conv.otroId}
+              href={`/mensajes/${conv.otroId}`}
+              className="flex items-start gap-3 px-4 py-3 transition-colors"
+              style={{
+                borderBottom: '1px solid var(--eclat-border)',
+                borderLeft: conv.otroId === otroId ? `3px solid var(--eclat-mid)` : '3px solid transparent',
+                background: conv.otroId === otroId ? '#f0f7f2' : 'white',
+              }}
+            >
+              <div className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-semibold shrink-0" style={{ background: 'var(--eclat-dark)', color: 'white' }}>
+                {conv.nombre.charAt(0).toUpperCase()}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[12px] font-semibold truncate" style={{ color: 'var(--eclat-text)' }}>{conv.nombre}</p>
+                <p className="text-[11px] truncate" style={{ color: 'var(--eclat-text-3)' }}>{conv.ultimoMensaje}</p>
+              </div>
+              {conv.noLeidos > 0 && (
+                <span className="w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold shrink-0" style={{ background: 'var(--eclat-mid)', color: 'white' }}>
+                  {conv.noLeidos}
+                </span>
+              )}
+            </Link>
+          ))}
+        </div>
       </div>
 
-      {/* Mensajes */}
-      <div className="flex-1 overflow-y-auto pt-[120px] pb-[80px] px-4 max-w-2xl mx-auto w-full">
-        {loading ? (
-          <div className="flex justify-center py-20">
-            <div className="w-5 h-5 border-2 border-[#2F7D6B] border-t-transparent rounded-full animate-spin" />
-          </div>
-        ) : mensajes.length === 0 ? (
-          <div className="text-center py-16">
-            <p className="text-[14px] text-[#6E6E73]">Iniciá la conversación.</p>
-          </div>
-        ) : (
-          mensajes.map((m) => {
+      {/* Conversación */}
+      <div className="flex-1 flex flex-col overflow-hidden" style={{ marginLeft: window?.innerWidth < 768 ? 210 : 0 }}>
+        {/* Header conversación */}
+        <div
+          className="flex items-center gap-3 px-5 py-3 shrink-0"
+          style={{ background: 'white', borderBottom: '1px solid var(--eclat-border)' }}
+        >
+          <Link href="/mensajes" className="md:hidden" style={{ color: 'var(--eclat-text-3)' }}>
+            <ArrowLeft size={18} />
+          </Link>
+          {otro && (
+            <>
+              <div className="w-9 h-9 rounded-full flex items-center justify-center text-[12px] font-semibold shrink-0" style={{ background: 'var(--eclat-dark)', color: 'white' }}>
+                {otro.nombre.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <p className="text-[13px] font-semibold" style={{ color: 'var(--eclat-text)' }}>{otro.nombre}</p>
+                <p className="text-[11px]" style={{ color: 'var(--eclat-text-3)' }}>{otro.email}</p>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Mensajes */}
+        <div className="flex-1 overflow-y-auto px-5 py-4 space-y-1" style={{ background: 'var(--eclat-cream)' }}>
+          {loading ? (
+            <div className="flex justify-center py-12">
+              <div className="w-5 h-5 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'var(--eclat-light)' }} />
+            </div>
+          ) : mensajes.map(m => {
             const esMio = m.de === miId
             const fecha = formatFecha(m.created_at)
             const mostrarFecha = fecha !== ultimaFecha
@@ -123,56 +151,60 @@ export default function ConversacionPage() {
             return (
               <div key={m.id}>
                 {mostrarFecha && (
-                  <div className="text-center my-4">
-                    <span className="text-[11px] text-[#6E6E73] bg-[#EBEBEB] px-3 py-1 rounded-full">{fecha}</span>
+                  <div className="flex items-center gap-3 my-4">
+                    <div className="flex-1 h-px" style={{ background: 'var(--eclat-border)' }} />
+                    <span className="text-[10px] px-3" style={{ color: 'var(--eclat-text-4)' }}>{fecha}</span>
+                    <div className="flex-1 h-px" style={{ background: 'var(--eclat-border)' }} />
                   </div>
                 )}
-                <div className={`flex mb-2 ${esMio ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[75%] ${esMio ? 'items-end' : 'items-start'} flex flex-col gap-1`}>
-                    <div className={`px-4 py-2.5 rounded-2xl text-[14px] leading-relaxed ${
-                      esMio
-                        ? 'bg-[#2F7D6B] text-white rounded-br-md'
-                        : 'bg-white text-[#0A0A0A] border border-black/[0.06] rounded-bl-md'
-                    }`}>
+                <div className={`flex mb-1 ${esMio ? 'justify-end' : 'justify-start'}`}>
+                  <div className="max-w-[70%]">
+                    <div
+                      className="px-3.5 py-2.5 rounded-2xl text-[13px] leading-relaxed"
+                      style={esMio
+                        ? { background: 'var(--eclat-dark)', color: '#d4e0d8', borderBottomRightRadius: 4 }
+                        : { background: 'white', color: 'var(--eclat-text)', border: '1px solid var(--eclat-border)', borderBottomLeftRadius: 4 }
+                      }
+                    >
                       {m.contenido}
                     </div>
-                    <span className="text-[11px] text-[#6E6E73] px-1">{formatHora(m.created_at)}</span>
+                    <p className={`text-[10px] mt-0.5 px-1 ${esMio ? 'text-right' : 'text-left'}`} style={{ color: 'var(--eclat-text-4)' }}>
+                      {formatHora(m.created_at)}
+                    </p>
                   </div>
                 </div>
               </div>
             )
-          })
-        )}
-        <div ref={bottomRef} />
-      </div>
+          })}
+          <div ref={bottomRef} />
+        </div>
 
-      {/* Input */}
-      <div className="fixed bottom-0 inset-x-0 bg-white border-t border-black/[0.06] px-4 py-3">
-        <form onSubmit={enviar} className="max-w-2xl mx-auto flex gap-2 items-end">
-          <textarea
-            value={texto}
-            onChange={e => setTexto(e.target.value)}
-            onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); enviar(e as any) } }}
-            placeholder="Escribí un mensaje..."
-            rows={1}
-            className="flex-1 resize-none px-4 py-2.5 rounded-xl border border-black/10 text-[14px] focus:outline-none focus:border-[#2F7D6B] transition-colors max-h-32 overflow-y-auto"
-            style={{ lineHeight: '1.5' }}
-          />
-          <button
-            type="submit"
-            disabled={!texto.trim() || sending}
-            className="w-10 h-10 bg-[#2F7D6B] text-white rounded-xl flex items-center justify-center hover:bg-[#245f52] disabled:opacity-50 transition-colors shrink-0"
-          >
-            {sending ? (
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-            ) : (
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
-              </svg>
-            )}
-          </button>
-        </form>
+        {/* Input */}
+        <div className="px-5 py-3 shrink-0" style={{ background: 'white', borderTop: '1px solid var(--eclat-border)' }}>
+          <form onSubmit={enviar} className="flex items-end gap-2">
+            <button type="button" className="shrink-0 p-2" style={{ color: 'var(--eclat-text-4)' }}>
+              <Paperclip size={16} />
+            </button>
+            <textarea
+              value={texto}
+              onChange={e => setTexto(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); enviar(e as any) } }}
+              placeholder="Escribí un mensaje..."
+              rows={1}
+              className="flex-1 resize-none text-[13px] outline-none max-h-28"
+              style={{ color: 'var(--eclat-text)', background: 'transparent' }}
+            />
+            <button
+              type="submit"
+              disabled={!texto.trim() || sending}
+              className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center transition-opacity hover:opacity-80 disabled:opacity-40"
+              style={{ background: 'var(--eclat-dark)', color: 'white' }}
+            >
+              {sending ? <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <Send size={14} />}
+            </button>
+          </form>
+        </div>
       </div>
-    </main>
+    </div>
   )
 }
