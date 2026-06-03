@@ -3,6 +3,11 @@
 @tailwind utilities;
 
 :root {
+  /* Tipografía */
+  --font-serif: var(--font-cormorant), Georgia, serif;
+  --font-sans:  var(--font-dm-sans), system-ui, sans-serif;
+
+  /* Paleta ÉCLAT */
   --eclat-dark:     #1e2a24;
   --eclat-dark-2:   #2d3e35;
   --eclat-dark-3:   #3a5444;
@@ -24,12 +29,17 @@
 html { scroll-behavior: smooth; }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', sans-serif;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--eclat-cream);
   color: var(--eclat-text);
   overflow-x: hidden;
+}
+
+h1, h2 {
+  font-family: var(--font-serif);
+  font-weight: 500;
 }
 
 ::selection {
@@ -48,5 +58,6 @@ img { transition: opacity 0.3s ease; }
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
   }
-  .font-serif { font-family: Georgia, 'Times New Roman', serif; }
+  .font-serif { font-family: var(--font-serif); }
+  .font-sans  { font-family: var(--font-sans); }
 }

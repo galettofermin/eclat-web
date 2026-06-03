@@ -94,7 +94,7 @@ export default function ServicesCarousel() {
                     display: 'flex',
                     alignItems: 'center',
                     paddingLeft: 14,
-                    fontFamily: 'Georgia, serif',
+                    fontFamily: 'var(--font-serif)',
                     fontSize: 17,
                     fontWeight: 500,
                     color: 'white',
@@ -112,7 +112,7 @@ export default function ServicesCarousel() {
                 />
                 <span
                   style={{
-                    fontFamily: 'Georgia, serif',
+                    fontFamily: 'var(--font-serif)',
                     fontSize: 17,
                     fontWeight: 500,
                     color: '#1e2a24',

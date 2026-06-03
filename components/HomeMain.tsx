@@ -137,7 +137,7 @@ export default function HomeMain({ whatsappUrl }: Props) {
               <motion.h1
                 {...fadeUp(0.14)}
                 className="mb-4 leading-tight"
-                style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(20px, 2.8vw, 28px)', fontWeight: 400, color: 'var(--eclat-text)' }}
+                style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(20px, 2.8vw, 28px)', fontWeight: 400, color: 'var(--eclat-text)' }}
               >
                 Salud mental, educación y acompañamiento{' '}
                 <em style={{ color: 'var(--eclat-dark-3)', fontStyle: 'italic' }}>interdisciplinario.</em>

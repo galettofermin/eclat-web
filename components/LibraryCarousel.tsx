@@ -80,7 +80,7 @@ export default function LibraryCarousel({ className }: Props) {
             <p
               className="leading-snug mb-2"
               style={{
-                fontFamily: 'Georgia, serif',
+                fontFamily: 'var(--font-serif)',
                 fontSize: 14,
                 fontWeight: 500,
                 color: '#1e2a24',
