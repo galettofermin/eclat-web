@@ -197,16 +197,23 @@ export default function AppSidebar({
         )}
 
         {/* Botón toggle */}
-        <button
-          onClick={onToggle}
-          className={`flex items-center w-full transition-colors ${collapsed ? 'justify-center px-2 py-3' : 'px-3 py-2.5 gap-2'}`}
-          style={{ color: 'rgba(255,255,255,0.3)', borderTop: '1px solid rgba(255,255,255,0.06)' }}
-          onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.7)')}
-          onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.3)')}
-        >
-          {collapsed ? <ChevronRight size={15} /> : <ChevronLeft size={15} />}
-          {!collapsed && <span className="text-[11px]">Colapsar</span>}
-        </button>
+        <div className="relative group">
+          <button
+            onClick={onToggle}
+            className="flex items-center justify-center w-full py-3 transition-colors"
+            style={{ color: 'rgba(255,255,255,0.3)', borderTop: '1px solid rgba(255,255,255,0.06)' }}
+            onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.7)')}
+            onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.3)')}
+          >
+            {collapsed ? <ChevronRight size={15} /> : <ChevronLeft size={15} />}
+          </button>
+          <div
+            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2.5 py-1.5 rounded-md text-[11px] font-medium pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50"
+            style={{ background: '#1e2a24', color: 'white', boxShadow: '0 2px 10px rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)' }}
+          >
+            {collapsed ? 'Expandir' : 'Colapsar'}
+          </div>
+        </div>
       </div>
     </motion.aside>
   )
