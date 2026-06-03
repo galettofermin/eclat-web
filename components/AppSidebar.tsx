@@ -117,7 +117,6 @@ export default function AppSidebar({
       <div
         className="flex items-center justify-center shrink-0"
         style={{
-          background: '#ffffff',
           borderBottom: '1px solid #e4ede6',
           padding: collapsed ? '16px 0' : '20px 16px',
           minHeight: collapsed ? 72 : 80,
@@ -129,7 +128,7 @@ export default function AppSidebar({
             alt="ÉCLAT"
             width={collapsed ? 40 : 120}
             height={collapsed ? 40 : 120}
-            style={{ objectFit: 'contain' }}
+            style={{ objectFit: 'contain', background: 'transparent' }}
           />
         </Link>
         {isDirector && !collapsed && (
