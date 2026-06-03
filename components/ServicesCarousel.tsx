@@ -42,6 +42,7 @@ export default function ServicesCarousel() {
 
   const currentName = SERVICES[active]
   const currentImg = imageMap[currentName]
+  const hasAnyImage = Object.keys(imageMap).length > 0
 
   return (
     <div
@@ -49,7 +50,10 @@ export default function ServicesCarousel() {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <div className="h-10 flex items-center overflow-hidden mb-2.5">
+      <div
+        className="overflow-hidden mb-2.5"
+        style={{ height: hasAnyImage ? 72 : 40 }}
+      >
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={active}
@@ -57,32 +61,67 @@ export default function ServicesCarousel() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 6 }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="flex items-center gap-3 shrink-0"
+            className="h-full"
           >
             {currentImg ? (
-              <img
-                src={currentImg}
-                alt={currentName}
-                width={36}
-                height={36}
-                style={{ width: 36, height: 36, borderRadius: 8, objectFit: 'cover', flexShrink: 0 }}
-              />
+              /* Imagen de fondo con overlay y nombre encima */
+              <div
+                className="relative w-full h-full rounded-xl overflow-hidden"
+                style={{ borderRadius: 10 }}
+              >
+                <img
+                  src={currentImg}
+                  alt={currentName}
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                  }}
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'rgba(30,42,36,0.52)',
+                  }}
+                />
+                <span
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    paddingLeft: 14,
+                    fontFamily: 'Georgia, serif',
+                    fontSize: 17,
+                    fontWeight: 500,
+                    color: 'white',
+                  }}
+                >
+                  {currentName}
+                </span>
+              </div>
             ) : (
-              <span
-                className="rounded-full shrink-0"
-                style={{ width: 6, height: 6, background: '#5e8f6e', display: 'inline-block' }}
-              />
+              /* Sin imagen: punto verde + nombre */
+              <div className="flex items-center gap-3 h-full">
+                <span
+                  className="rounded-full shrink-0"
+                  style={{ width: 6, height: 6, background: '#5e8f6e', display: 'inline-block' }}
+                />
+                <span
+                  style={{
+                    fontFamily: 'Georgia, serif',
+                    fontSize: 17,
+                    fontWeight: 500,
+                    color: '#1e2a24',
+                  }}
+                >
+                  {currentName}
+                </span>
+              </div>
             )}
-            <span
-              style={{
-                fontFamily: 'Georgia, serif',
-                fontSize: 17,
-                fontWeight: 500,
-                color: '#1e2a24',
-              }}
-            >
-              {currentName}
-            </span>
           </motion.div>
         </AnimatePresence>
       </div>
