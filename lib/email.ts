@@ -5,15 +5,13 @@ import EmailAccesoCurso from '@/emails/EmailAccesoCurso'
 import EmailModuloCompletado from '@/emails/EmailModuloCompletado'
 import EmailMensajeNuevo from '@/emails/EmailMensajeNuevo'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
-
 const FROM = 'ÉCLAT <hola@eclatcentro.com>'
 
-// ── Bienvenida al registrarse ────────────────────────────
 export async function enviarBienvenida(params: {
   email: string
   nombre: string
 }) {
+  const resend = new Resend(process.env.RESEND_API_KEY)
   const html = await render(EmailBienvenida({ nombre: params.nombre }))
   return resend.emails.send({
     from: FROM,
@@ -23,13 +21,13 @@ export async function enviarBienvenida(params: {
   })
 }
 
-// ── Acceso al curso activado (pago confirmado) ───────────
 export async function enviarAccesoCurso(params: {
   email: string
   nombre: string
   tituloCurso: string
   urlCurso: string
 }) {
+  const resend = new Resend(process.env.RESEND_API_KEY)
   const html = await render(EmailAccesoCurso(params))
   return resend.emails.send({
     from: FROM,
@@ -39,7 +37,6 @@ export async function enviarAccesoCurso(params: {
   })
 }
 
-// ── Módulo completado ─────────────────────────────────────
 export async function enviarModuloCompletado(params: {
   email: string
   nombre: string
@@ -48,6 +45,7 @@ export async function enviarModuloCompletado(params: {
   puntaje: number
   urlSiguienteModulo?: string
 }) {
+  const resend = new Resend(process.env.RESEND_API_KEY)
   const html = await render(EmailModuloCompletado(params))
   return resend.emails.send({
     from: FROM,
@@ -57,7 +55,6 @@ export async function enviarModuloCompletado(params: {
   })
 }
 
-// ── Mensaje interno nuevo ────────────────────────────────
 export async function enviarNotificacionMensaje(params: {
   email: string
   nombreDestinatario: string
@@ -65,6 +62,7 @@ export async function enviarNotificacionMensaje(params: {
   preview: string
   urlBandeja: string
 }) {
+  const resend = new Resend(process.env.RESEND_API_KEY)
   const html = await render(EmailMensajeNuevo(params))
   return resend.emails.send({
     from: FROM,
