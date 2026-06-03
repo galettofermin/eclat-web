@@ -33,8 +33,8 @@ export const metadata: Metadata = {
     follow: true,
   },
   icons: {
-    icon: '/logo-eclat.png',
-    apple: '/logo-eclat.png',
+    icon: '/LOGO.png',
+    apple: '/LOGO.png',
   },
   openGraph: {
     title: 'ÉCLAT | Centro de Atención Integral — Rosario',
