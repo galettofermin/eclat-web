@@ -80,13 +80,13 @@ export default function HomeMain({ whatsappUrl }: Props) {
       {/* ── TOPBAR ── */}
       <div
         className="hidden md:flex sticky top-0 z-30 items-center justify-between px-8 py-4"
-        style={{ background: 'var(--eclat-cream)', borderBottom: '1px solid var(--eclat-border)' }}
+        style={{ background: '#e8f0ea', borderBottom: '1px solid #c2d4c7' }}
       >
         <div>
-          <p className="font-semibold text-[18px]" style={{ color: 'var(--eclat-text)' }}>
+          <p className="font-semibold text-[18px]" style={{ color: '#1e2a24' }}>
             {fecha || '—'}
           </p>
-          <p className="text-[12px]" style={{ color: 'var(--eclat-text-3)' }}>
+          <p className="text-[12px]" style={{ color: '#4a5e52' }}>
             Bienvenido al Centro ÉCLAT
           </p>
         </div>
