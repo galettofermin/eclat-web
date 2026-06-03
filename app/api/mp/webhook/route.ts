@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { MercadoPagoConfig, Payment } from 'mercadopago'
 import { createAdminClient } from '@/lib/supabase/admin'
+
+export const dynamic = 'force-dynamic'
 import { enviarAccesoCurso } from '@/lib/email'
 
 export async function POST(req: Request) {

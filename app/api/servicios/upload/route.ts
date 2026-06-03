@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(req: Request) {
   const formData = await req.formData()
   const file = formData.get('file') as File | null

@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   const mpToken = process.env.MERCADOPAGO_ACCESS_TOKEN ?? 'NO DEFINIDA'
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? 'NO DEFINIDA'
