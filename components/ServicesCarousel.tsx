@@ -20,10 +20,10 @@ export default function ServicesCarousel() {
   const timerRef = useRef<ReturnType<typeof setInterval>>()
 
   useEffect(() => {
-    if (paused) return
+    if (paused) { clearInterval(timerRef.current); return }
     timerRef.current = setInterval(() => {
       setActive(i => (i + 1) % SERVICES.length)
-    }, 3000)
+    }, 2500)
     return () => clearInterval(timerRef.current)
   }, [paused])
 
@@ -33,24 +33,27 @@ export default function ServicesCarousel() {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      {/* Item activo */}
-      <div className="h-7 flex items-center overflow-hidden mb-3">
+      <div className="h-9 flex items-center overflow-hidden mb-3">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={active}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -16 }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="flex items-center gap-2 shrink-0"
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 6 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="flex items-center gap-3 shrink-0"
           >
             <span
-              className="w-1.5 h-1.5 rounded-full shrink-0"
-              style={{ background: 'var(--eclat-mid)' }}
+              className="rounded-full shrink-0"
+              style={{ width: 6, height: 6, background: '#5e8f6e', display: 'inline-block' }}
             />
             <span
-              className="text-[14px] font-medium"
-              style={{ color: 'var(--eclat-text)' }}
+              style={{
+                fontFamily: 'Georgia, serif',
+                fontSize: 22,
+                fontWeight: 500,
+                color: '#1e2a24',
+              }}
             >
               {SERVICES[active]}
             </span>
@@ -58,7 +61,6 @@ export default function ServicesCarousel() {
         </AnimatePresence>
       </div>
 
-      {/* Dots */}
       <div className="flex gap-1.5">
         {SERVICES.map((_, i) => (
           <button
@@ -68,7 +70,7 @@ export default function ServicesCarousel() {
             style={{
               width: i === active ? 16 : 5,
               height: 5,
-              background: i === active ? 'var(--eclat-mid)' : 'var(--eclat-border)',
+              background: i === active ? '#5e8f6e' : 'var(--eclat-border)',
             }}
           />
         ))}

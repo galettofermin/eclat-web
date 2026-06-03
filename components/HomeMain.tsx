@@ -3,22 +3,45 @@
 import { useRef, useState, useEffect } from 'react'
 import Link from 'next/link'
 import { motion, useInView } from 'framer-motion'
+import { Brain, BookOpen, MessageCircle, Activity, School, Heart, ClipboardList, Palette } from 'lucide-react'
 import ServicesCarousel from './ServicesCarousel'
-import CourseCarousel from './CourseCarousel'
+import LibraryCarousel from './LibraryCarousel'
 import type { Course } from '@/lib/types'
 
 const SERVICIOS = [
-  { nombre: 'Psicología', desc: 'Atención individual, familiar y grupal', icon: '🧠' },
-  { nombre: 'Psicopedagogía', desc: 'Aprendizaje y subjetividad', icon: '📖' },
-  { nombre: 'Fonoaudiología', desc: 'Lenguaje, voz y comunicación', icon: '🗣️' },
-  { nombre: 'Psicomotricidad', desc: 'Cuerpo y desarrollo', icon: '🤸' },
-  { nombre: 'Docente de apoyo', desc: 'Acompañamiento en lo escolar', icon: '🏫' },
-  { nombre: 'Acompañante terapéutico', desc: 'Presencia en la vida cotidiana', icon: '🤝' },
-  { nombre: 'Evaluaciones', desc: 'Diagnóstico integral y situado', icon: '📋' },
-  { nombre: 'Arteterapia', desc: 'El arte como espacio de elaboración', icon: '🎨' },
+  { nombre: 'Psicología', desc: 'Atención individual, familiar y grupal', Icon: Brain },
+  { nombre: 'Psicopedagogía', desc: 'Aprendizaje y subjetividad', Icon: BookOpen },
+  { nombre: 'Fonoaudiología', desc: 'Lenguaje, voz y comunicación', Icon: MessageCircle },
+  { nombre: 'Psicomotricidad', desc: 'Cuerpo y desarrollo', Icon: Activity },
+  { nombre: 'Docente de apoyo', desc: 'Acompañamiento en lo escolar', Icon: School },
+  { nombre: 'Acompañante terapéutico', desc: 'Presencia en la vida cotidiana', Icon: Heart },
+  { nombre: 'Evaluaciones diagnósticas', desc: 'Diagnóstico integral y situado', Icon: ClipboardList },
+  { nombre: 'Arteterapia', desc: 'El arte como espacio de elaboración', Icon: Palette },
 ]
 
-const CARD_COLORS = ['#4a6658', '#5e8f6e', '#3a5444', '#8fbb9e']
+const FORMACIONES_DESTACADAS = [
+  {
+    banda: '#4a6658',
+    publico: 'Para docentes',
+    titulo: 'Inclusión escolar: una mirada desde el sujeto',
+    desc: 'Pensar la inclusión más allá de la adaptación curricular.',
+    href: '/formaciones',
+  },
+  {
+    banda: '#5e8f6e',
+    publico: 'Para familias',
+    titulo: 'Límites: entre el amor y la ley',
+    desc: 'El límite no como castigo sino como función estructurante.',
+    href: '/formaciones',
+  },
+  {
+    banda: '#3a5444',
+    publico: 'Para profesionales',
+    titulo: 'El informe como acto clínico',
+    desc: 'Escribir sobre un sujeto sin reducirlo al diagnóstico.',
+    href: '/formaciones',
+  },
+]
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 18 },
@@ -44,17 +67,19 @@ interface Props {
   whatsappUrl: string
 }
 
-export default function HomeMain({ courses, whatsappUrl }: Props) {
-  const fraseRef = useRef(null)
-  const fraseInView = useInView(fraseRef, { once: true, margin: '-60px' })
+export default function HomeMain({ whatsappUrl }: Props) {
   const fecha = useFormattedDate()
+  const formacionesRef = useRef(null)
+  const serviciosRef = useRef(null)
+  const formacionesInView = useInView(formacionesRef, { once: true, margin: '-60px' })
+  const serviciosInView = useInView(serviciosRef, { once: true, margin: '-60px' })
 
   return (
     <main className="flex flex-col" style={{ minHeight: '100vh' }}>
 
       {/* ── TOPBAR ── */}
       <div
-        className="sticky top-0 z-30 flex items-center justify-between px-8 py-4"
+        className="hidden md:flex sticky top-0 z-30 items-center justify-between px-8 py-4"
         style={{ background: 'var(--eclat-cream)', borderBottom: '1px solid var(--eclat-border)' }}
       >
         <div>
@@ -82,7 +107,7 @@ export default function HomeMain({ courses, whatsappUrl }: Props) {
       {/* ── BODY ── */}
       <div className="px-8 py-7 flex-1">
 
-        {/* ── HERO — grid 2 columnas ── */}
+        {/* ── HERO ── */}
         <motion.div
           {...fadeUp(0)}
           className="relative overflow-hidden mb-7"
@@ -93,7 +118,6 @@ export default function HomeMain({ courses, whatsappUrl }: Props) {
             padding: '36px 40px',
           }}
         >
-          {/* Decoración SVG */}
           <svg className="absolute right-0 top-0 pointer-events-none" width="180" height="180" viewBox="0 0 220 220" style={{ opacity: 0.06 }}>
             <circle cx="180" cy="40" r="60" fill="none" stroke="#3a5444" strokeWidth="1.5"/>
             <circle cx="180" cy="40" r="35" fill="none" stroke="#3a5444" strokeWidth="1"/>
@@ -101,16 +125,10 @@ export default function HomeMain({ courses, whatsappUrl }: Props) {
             <line x1="140" y1="0" x2="220" y2="80" stroke="#3a5444" strokeWidth="0.8"/>
           </svg>
 
-          <div className="flex gap-8 items-start">
-            {/* Carrusel de cursos — izquierda */}
-            <motion.div {...fadeUp(0.1)} className="hidden lg:block">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] mb-3" style={{ color: 'var(--eclat-green)' }}>
-                Formaciones
-              </p>
-              <CourseCarousel />
-            </motion.div>
+          {/* Grid 60/40 desktop, columna en mobile */}
+          <div className="flex flex-col lg:flex-row gap-8 lg:gap-10 items-start">
 
-            {/* Texto institucional — derecha */}
+            {/* Columna izquierda — texto + servicios + CTA */}
             <div className="flex-1 min-w-0">
               <motion.p {...fadeUp(0.08)} className="text-[10px] font-semibold uppercase tracking-[0.18em] mb-4" style={{ color: 'var(--eclat-green)' }}>
                 ÉCLAT · Centro de atención integral
@@ -132,7 +150,7 @@ export default function HomeMain({ courses, whatsappUrl }: Props) {
               <motion.div {...fadeUp(0.24)} className="mb-4" style={{ height: 1, background: '#b8cec0', maxWidth: 440 }} />
 
               {/* Tres pilares */}
-              <motion.div {...fadeUp(0.28)} className="flex gap-0 mb-4" style={{ maxWidth: 440 }}>
+              <motion.div {...fadeUp(0.28)} className="flex gap-0 mb-5" style={{ maxWidth: 440 }}>
                 {[
                   { titulo: 'Atención', desc: 'Clínica interdisciplinaria' },
                   { titulo: 'Formación', desc: 'Cursos con fundamento clínico' },
@@ -145,7 +163,7 @@ export default function HomeMain({ courses, whatsappUrl }: Props) {
                 ))}
               </motion.div>
 
-              {/* Carrusel de servicios — dentro del bloque de texto, debajo de pilares */}
+              {/* Carrusel servicios */}
               <motion.div {...fadeUp(0.33)}>
                 <ServicesCarousel />
               </motion.div>
@@ -168,76 +186,94 @@ export default function HomeMain({ courses, whatsappUrl }: Props) {
                 <p className="text-[12px] italic" style={{ color: 'var(--eclat-text-4)' }}>Cada uno encuentra lo suyo.</p>
               </motion.div>
             </div>
+
+            {/* Columna derecha — Biblioteca (solo desktop) */}
+            <motion.div
+              {...fadeUp(0.12)}
+              className="hidden lg:flex flex-col shrink-0"
+              style={{ width: '38%', minWidth: 220 }}
+            >
+              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] mb-3" style={{ color: 'var(--eclat-green)' }}>
+                Biblioteca
+              </p>
+              <LibraryCarousel />
+            </motion.div>
+          </div>
+
+          {/* Biblioteca mobile — debajo del texto */}
+          <div className="lg:hidden mt-6">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] mb-3" style={{ color: 'var(--eclat-green)' }}>
+              Biblioteca
+            </p>
+            <LibraryCarousel />
           </div>
         </motion.div>
 
-        {/* ── FORMACIONES EN CURSO ── */}
-        {courses && courses.length > 0 && (
-          <div className="mb-7">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-[14px] font-semibold" style={{ color: 'var(--eclat-text)' }}>Formaciones en curso</h2>
-              <Link href="/formaciones" className="text-[11px] hover:opacity-70" style={{ color: 'var(--eclat-mid)' }}>Ver todas →</Link>
-            </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              {courses.map((c, i) => (
-                <motion.div
-                  key={c.id}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.1 * i, ease: [0.22, 1, 0.36, 1] }}
-                  whileHover={{ y: -3, boxShadow: '0 6px 20px rgba(30,42,36,0.1)' }}
+        {/* ── FORMACIONES ── */}
+        <div className="mb-7" ref={formacionesRef}>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-[14px] font-semibold" style={{ color: 'var(--eclat-text)' }}>Formaciones</h2>
+            <Link href="/formaciones" className="text-[11px] hover:opacity-70 transition-opacity" style={{ color: 'var(--eclat-mid)' }}>
+              Ver todas las formaciones →
+            </Link>
+          </div>
+          {/* Flex horizontal con scroll en mobile, grid en desktop */}
+          <div className="flex sm:grid sm:grid-cols-3 gap-3 overflow-x-auto sm:overflow-visible pb-2 sm:pb-0" style={{ scrollSnapType: 'x mandatory' }}>
+            {FORMACIONES_DESTACADAS.map((f, i) => (
+              <motion.div
+                key={f.titulo}
+                initial={{ opacity: 0, y: 16 }}
+                animate={formacionesInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.5, delay: 0.1 * i, ease: [0.22, 1, 0.36, 1] }}
+                className="shrink-0 sm:shrink"
+                style={{ scrollSnapAlign: 'start', minWidth: 240 }}
+              >
+                <Link
+                  href={f.href}
+                  className="block bg-white rounded-xl overflow-hidden h-full transition-shadow hover:shadow-md"
+                  style={{ border: '1px solid var(--eclat-border)' }}
                 >
-                  <Link
-                    href={c.id ? `/formaciones/${c.id}` : '/formaciones'}
-                    className="block bg-white rounded-xl overflow-hidden"
-                    style={{ border: '1px solid var(--eclat-border)' }}
-                  >
-                    <div style={{ height: 4, background: CARD_COLORS[i % CARD_COLORS.length] }} />
-                    <div className="p-4">
-                      <p className="text-[9px] font-semibold uppercase tracking-[0.14em] mb-2" style={{ color: 'var(--eclat-mid)' }}>{c.badge || 'Formación'}</p>
-                      <p className="text-[13px] font-medium mb-1 leading-snug" style={{ color: 'var(--eclat-text)' }}>{c.title}</p>
-                      <p className="text-[11px] leading-relaxed mb-3 line-clamp-2" style={{ color: 'var(--eclat-text-3)' }}>{c.description}</p>
-                      <div style={{ height: 2, background: 'var(--eclat-border)', borderRadius: 1 }} />
-                    </div>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
+                  <div style={{ height: 4, background: f.banda }} />
+                  <div className="p-4">
+                    <p className="text-[9px] font-semibold uppercase tracking-[0.14em] mb-2" style={{ color: 'var(--eclat-mid)' }}>{f.publico}</p>
+                    <p className="text-[13px] font-medium mb-1.5 leading-snug" style={{ color: 'var(--eclat-text)' }}>{f.titulo}</p>
+                    <p className="text-[11px] leading-relaxed mb-3" style={{ color: 'var(--eclat-text-3)' }}>{f.desc}</p>
+                    <span
+                      className="inline-block text-[11px] font-medium px-3 py-1.5 rounded-md"
+                      style={{ border: '1px solid var(--eclat-dark-3)', color: 'var(--eclat-dark-3)' }}
+                    >
+                      Ver formación
+                    </span>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
           </div>
-        )}
-
-        {/* ── FRASE SEPARADORA ── */}
-        <motion.div
-          ref={fraseRef}
-          initial={{ opacity: 0, y: 14 }}
-          animate={fraseInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="mb-7 px-6 py-5 bg-white rounded-xl"
-          style={{ borderLeft: '2.5px solid var(--eclat-dark-3)', border: '1px solid var(--eclat-border)', borderLeftWidth: 2.5 }}
-        >
-          <p className="text-[15px] leading-relaxed mb-1" style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', color: 'var(--eclat-text)' }}>
-            "Cada situación merece una mirada. Cada persona, un tiempo."
-          </p>
-          <p className="text-[11px]" style={{ color: 'var(--eclat-text-4)' }}>— Mirada clínica · Ética profesional · Caso por caso</p>
-        </motion.div>
+        </div>
 
         {/* ── SERVICIOS ── */}
-        <div>
+        <div ref={serviciosRef}>
           <h2 className="text-[14px] font-semibold mb-4" style={{ color: 'var(--eclat-text)' }}>Servicios</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
             {SERVICIOS.map((s, i) => (
               <motion.div
                 key={s.nombre}
                 initial={{ opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
+                animate={serviciosInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.4, delay: 0.08 * i, ease: [0.22, 1, 0.36, 1] }}
-                whileHover={{ y: -3, boxShadow: '0 4px 14px rgba(30,42,36,0.08)' }}
+                whileHover={{ scale: 1.02, boxShadow: '0 4px 14px rgba(30,42,36,0.08)' }}
               >
-                <Link href="/servicios" className="block bg-white rounded-xl p-4 text-center" style={{ border: '1px solid var(--eclat-border)' }}>
-                  <div className="w-9 h-9 rounded-full flex items-center justify-center mx-auto mb-2.5 text-[17px]" style={{ background: '#e4efe6' }}>
-                    {s.icon}
+                <Link
+                  href="/servicios"
+                  className="block bg-white rounded-xl p-4 text-center transition-colors"
+                  style={{ border: '1px solid var(--eclat-border)' }}
+                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = '#3a5444'}
+                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = 'var(--eclat-border)'}
+                >
+                  <div className="w-9 h-9 rounded-full flex items-center justify-center mx-auto mb-2.5" style={{ background: '#e4efe6' }}>
+                    <s.Icon size={16} color="#3a5444" />
                   </div>
-                  <p className="text-[12px] font-semibold mb-0.5" style={{ color: 'var(--eclat-text)' }}>{s.nombre}</p>
+                  <p className="text-[12px] font-medium mb-0.5" style={{ color: 'var(--eclat-text)' }}>{s.nombre}</p>
                   <p className="text-[10px] leading-snug" style={{ color: 'var(--eclat-text-3)' }}>{s.desc}</p>
                 </Link>
               </motion.div>
