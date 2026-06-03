@@ -100,16 +100,20 @@ export default function AppSidebar({
     >
       {/* Logo */}
       <div
-        className={`flex items-center shrink-0 ${collapsed ? 'justify-center px-0 py-5' : 'px-4 pt-5 pb-4 gap-2.5'}`}
+        className={`flex items-center shrink-0 ${collapsed ? 'justify-center px-0 py-5' : 'px-4 pt-5 pb-4'}`}
         style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}
       >
         <Link href="/" className={`flex items-center ${collapsed ? 'justify-center' : 'gap-2.5'}`}>
           <img
-            src="/4.png"
+            src="/LOGO.png"
             alt="ÉCLAT"
-            width={collapsed ? 36 : 32}
-            height={collapsed ? 36 : 32}
-            style={{ mixBlendMode: 'screen', objectFit: 'contain', flexShrink: 0 }}
+            width={40}
+            height={40}
+            style={{
+              objectFit: 'contain',
+              flexShrink: 0,
+              filter: 'brightness(0) invert(1)',
+            }}
           />
           <AnimatePresence>
             {!collapsed && (

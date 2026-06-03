@@ -180,10 +180,9 @@ export default function HomeMain({ whatsappUrl }: Props) {
                     className="inline-flex text-[12px] font-medium px-5 py-2.5 rounded-lg"
                     style={{ background: 'var(--eclat-dark)', color: '#d4e0d8' }}
                   >
-                    Explorar formaciones
+                    Conocer el centro
                   </Link>
                 </motion.div>
-                <p className="text-[12px] italic" style={{ color: 'var(--eclat-text-4)' }}>Cada uno encuentra lo suyo.</p>
               </motion.div>
             </div>
 
