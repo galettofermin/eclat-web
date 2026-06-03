@@ -83,6 +83,14 @@ export interface Service {
   published: boolean
 }
 
+export interface Servicio {
+  id: number
+  nombre: string
+  descripcion: string | null
+  imagen_url: string | null
+  orden: number
+}
+
 export interface SiteConfig {
   key: string
   value: string

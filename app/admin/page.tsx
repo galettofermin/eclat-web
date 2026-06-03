@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import Link from 'next/link'
+import ServiciosImageEditor from '@/components/admin/ServiciosImageEditor'
 
 export const dynamic = 'force-dynamic'
 
@@ -157,6 +158,8 @@ export default async function AdminDashboard() {
           </div>
         )}
       </div>
+      {/* Servicios — editor de imágenes */}
+      <ServiciosImageEditor />
     </div>
   )
 }
