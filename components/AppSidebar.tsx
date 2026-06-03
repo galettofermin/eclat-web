@@ -49,7 +49,7 @@ function NavItem({
       <Link
         href={item.href}
         className={`flex items-center rounded-lg mb-0.5 transition-colors ${
-          collapsed ? 'justify-center px-0 py-2.5' : 'gap-2.5 px-2.5 py-2'
+          collapsed ? 'justify-center px-0 py-[7px]' : 'gap-2.5 px-2.5 py-[7px]'
         }`}
         style={isActive
           ? {
@@ -118,18 +118,30 @@ export default function AppSidebar({
         className="flex items-center justify-center shrink-0"
         style={{
           borderBottom: '1px solid #e4ede6',
-          padding: collapsed ? '16px 0' : '20px 16px',
-          minHeight: collapsed ? 72 : 80,
+          padding: '12px 16px',
+          maxHeight: 100,
         }}
       >
         <Link href="/" className="flex items-center justify-center">
-          <Image
-            src="/logo-eclat.png"
-            alt="ÉCLAT"
-            width={collapsed ? 40 : 120}
-            height={collapsed ? 40 : 120}
-            style={{ objectFit: 'contain', background: 'transparent' }}
-          />
+          {collapsed ? (
+            <Image
+              src="/LOGO.png"
+              alt="ÉCLAT"
+              width={36}
+              height={36}
+              priority
+              style={{ objectFit: 'contain', background: 'transparent' }}
+            />
+          ) : (
+            <Image
+              src="/logo-eclat.png"
+              alt="ÉCLAT Centro de Atención Integral"
+              width={100}
+              height={90}
+              priority
+              style={{ objectFit: 'contain', background: 'transparent' }}
+            />
+          )}
         </Link>
         {isDirector && !collapsed && (
           <span

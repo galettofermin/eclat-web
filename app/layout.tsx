@@ -12,28 +12,37 @@ const cormorant = Cormorant_Garamond({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://eclatcentro.com'),
-  title: 'Centro ÉCLAT — Un espacio para construir posibilidades',
+  title: 'ÉCLAT | Centro de Atención Integral — Rosario',
   description:
-    'ÉCLAT acompaña a personas, familias, profesionales e instituciones a través de la clínica, la educación, la formación y el trabajo interdisciplinario.',
+    'Centro de atención integral en Rosario. Psicología, Psicopedagogía, Fonoaudiología, Psicomotricidad, Docente de apoyo, Acompañante terapéutico, Evaluaciones diagnósticas y Arteterapia.',
   keywords: [
-    'psicología',
-    'psicopedagogía',
+    'psicología Rosario',
+    'psicopedagogía Rosario',
     'fonoaudiología',
+    'centro de atención integral',
+    'ÉCLAT',
+    'salud mental niños',
     'psicomotricidad',
-    'arteterapia',
-    'centro eclat',
-    'salud mental',
+    'acompañante terapéutico Rosario',
   ],
+  alternates: {
+    canonical: 'https://eclatcentro.com',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
   icons: {
-    icon: '/LOGO.png',
-    apple: '/LOGO.png',
+    icon: '/logo-eclat.png',
+    apple: '/logo-eclat.png',
   },
   openGraph: {
-    title: 'Centro ÉCLAT',
-    description: 'Un espacio para construir posibilidades. Clínica, educación, formación e instituciones.',
+    title: 'ÉCLAT | Centro de Atención Integral — Rosario',
+    description:
+      'Centro de atención integral en Rosario. Psicología, Psicopedagogía, Fonoaudiología, Psicomotricidad, Docente de apoyo, Acompañante terapéutico, Evaluaciones diagnósticas y Arteterapia.',
     url: 'https://eclatcentro.com',
-    siteName: 'Centro ÉCLAT',
-    images: [{ url: '/LOGO CON NOMBRE.png' }],
+    siteName: 'ÉCLAT Centro de Atención Integral',
+    images: [{ url: '/logo-eclat.png', width: 512, height: 512, alt: 'ÉCLAT Centro de Atención Integral' }],
     locale: 'es_AR',
     type: 'website',
   },

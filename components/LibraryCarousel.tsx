@@ -31,7 +31,11 @@ const ARTICLES = [
   },
 ]
 
-export default function LibraryCarousel() {
+interface Props {
+  className?: string
+}
+
+export default function LibraryCarousel({ className }: Props) {
   const [active, setActive] = useState(0)
   const [paused, setPaused] = useState(false)
   const timerRef = useRef<ReturnType<typeof setInterval>>()
@@ -48,65 +52,67 @@ export default function LibraryCarousel() {
 
   return (
     <div
-      className="w-full"
+      className={`w-full flex flex-col flex-1 ${className ?? ''}`}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.div
-          key={active}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="bg-white w-full"
-          style={{
-            border: '1px solid #c8d8cc',
-            borderRadius: 10,
-            padding: 18,
-          }}
-        >
-          <p
-            className="uppercase tracking-[0.12em] mb-2"
-            style={{ fontSize: 9, color: '#5e8f6e', fontWeight: 600 }}
-          >
-            {article.categoria}
-          </p>
-          <p
-            className="leading-snug mb-2"
+      <div className="flex-1 relative" style={{ minHeight: 0 }}>
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={active}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            className="bg-white w-full h-full flex flex-col absolute inset-0"
             style={{
-              fontFamily: 'Georgia, serif',
-              fontSize: 14,
-              fontWeight: 500,
-              color: '#1e2a24',
+              border: '1px solid #c8d8cc',
+              borderRadius: 10,
+              padding: 18,
             }}
           >
-            {article.titulo}
-          </p>
-          <p
-            className="mb-4"
-            style={{ fontSize: 12, color: '#6b7c74', lineHeight: 1.5 }}
-          >
-            {article.desc}
-          </p>
-          <button
-            className="text-[11px] font-medium px-3 py-1.5 rounded-md transition-colors"
-            style={{ border: '1px solid #3a5444', color: '#3a5444', background: 'transparent' }}
-            onMouseEnter={e => {
-              (e.currentTarget as HTMLElement).style.background = '#3a5444'
-              ;(e.currentTarget as HTMLElement).style.color = 'white'
-            }}
-            onMouseLeave={e => {
-              (e.currentTarget as HTMLElement).style.background = 'transparent'
-              ;(e.currentTarget as HTMLElement).style.color = '#3a5444'
-            }}
-          >
-            Leer
-          </button>
-        </motion.div>
-      </AnimatePresence>
+            <p
+              className="uppercase tracking-[0.12em] mb-2"
+              style={{ fontSize: 9, color: '#5e8f6e', fontWeight: 600 }}
+            >
+              {article.categoria}
+            </p>
+            <p
+              className="leading-snug mb-2"
+              style={{
+                fontFamily: 'Georgia, serif',
+                fontSize: 14,
+                fontWeight: 500,
+                color: '#1e2a24',
+              }}
+            >
+              {article.titulo}
+            </p>
+            <p
+              className="mb-4 flex-1"
+              style={{ fontSize: 12, color: '#6b7c74', lineHeight: 1.5 }}
+            >
+              {article.desc}
+            </p>
+            <button
+              className="text-[11px] font-medium px-3 py-1.5 rounded-md transition-colors self-start"
+              style={{ border: '1px solid #3a5444', color: '#3a5444', background: 'transparent' }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLElement).style.background = '#3a5444'
+                ;(e.currentTarget as HTMLElement).style.color = 'white'
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLElement).style.background = 'transparent'
+                ;(e.currentTarget as HTMLElement).style.color = '#3a5444'
+              }}
+            >
+              Leer
+            </button>
+          </motion.div>
+        </AnimatePresence>
+      </div>
 
-      <div className="flex gap-1.5 mt-3 justify-center">
+      <div className="flex gap-1.5 mt-3 justify-center shrink-0">
         {ARTICLES.map((_, i) => (
           <button
             key={i}

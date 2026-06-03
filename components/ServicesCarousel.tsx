@@ -29,11 +29,11 @@ export default function ServicesCarousel() {
 
   return (
     <div
-      className="mb-6"
+      className="mb-4"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <div className="h-9 flex items-center overflow-hidden mb-3">
+      <div className="h-7 flex items-center overflow-hidden mb-2.5">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={active}
@@ -50,7 +50,7 @@ export default function ServicesCarousel() {
             <span
               style={{
                 fontFamily: 'Georgia, serif',
-                fontSize: 22,
+                fontSize: 17,
                 fontWeight: 500,
                 color: '#1e2a24',
               }}

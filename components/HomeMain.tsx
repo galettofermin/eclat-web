@@ -79,7 +79,7 @@ export default function HomeMain({ whatsappUrl }: Props) {
 
       {/* ── TOPBAR ── */}
       <div
-        className="hidden md:flex sticky top-0 z-30 items-center justify-between px-8 py-4"
+        className="hidden md:flex sticky top-0 z-30 items-center justify-between px-8 py-3"
         style={{ background: '#e8f0ea', borderBottom: '1px solid #c2d4c7' }}
       >
         <div>
@@ -115,7 +115,7 @@ export default function HomeMain({ whatsappUrl }: Props) {
             background: 'var(--eclat-bg-green)',
             border: '1px solid var(--eclat-border)',
             borderRadius: 10,
-            padding: '36px 40px',
+            padding: '32px 36px',
           }}
         >
           <svg className="absolute right-0 top-0 pointer-events-none" width="180" height="180" viewBox="0 0 220 220" style={{ opacity: 0.06 }}>
@@ -126,7 +126,7 @@ export default function HomeMain({ whatsappUrl }: Props) {
           </svg>
 
           {/* Grid 60/40 desktop, columna en mobile */}
-          <div className="flex flex-col lg:flex-row gap-8 lg:gap-10 items-start">
+          <div className="flex flex-col lg:flex-row gap-8 lg:gap-10 items-stretch">
 
             {/* Columna izquierda — texto + servicios + CTA */}
             <div className="flex-1 min-w-0">
@@ -192,10 +192,10 @@ export default function HomeMain({ whatsappUrl }: Props) {
               className="hidden lg:flex flex-col shrink-0"
               style={{ width: '38%', minWidth: 220 }}
             >
-              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] mb-3" style={{ color: 'var(--eclat-green)' }}>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] mb-3 shrink-0" style={{ color: 'var(--eclat-green)' }}>
                 Biblioteca
               </p>
-              <LibraryCarousel />
+              <LibraryCarousel className="flex-1" />
             </motion.div>
           </div>
 
@@ -216,7 +216,6 @@ export default function HomeMain({ whatsappUrl }: Props) {
               Ver todas las formaciones →
             </Link>
           </div>
-          {/* Flex horizontal con scroll en mobile, grid en desktop */}
           <div className="flex sm:grid sm:grid-cols-3 gap-3 overflow-x-auto sm:overflow-visible pb-2 sm:pb-0" style={{ scrollSnapType: 'x mandatory' }}>
             {FORMACIONES_DESTACADAS.map((f, i) => (
               <motion.div
@@ -231,6 +230,7 @@ export default function HomeMain({ whatsappUrl }: Props) {
                   href={f.href}
                   className="block bg-white rounded-xl overflow-hidden h-full transition-shadow hover:shadow-md"
                   style={{ border: '1px solid var(--eclat-border)' }}
+                  aria-label={`Ver formación: ${f.titulo}`}
                 >
                   <div style={{ height: 4, background: f.banda }} />
                   <div className="p-4">
@@ -266,11 +266,12 @@ export default function HomeMain({ whatsappUrl }: Props) {
                   href="/servicios"
                   className="block bg-white rounded-xl p-4 text-center transition-colors"
                   style={{ border: '1px solid var(--eclat-border)' }}
+                  aria-label={`Ver información sobre ${s.nombre}`}
                   onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = '#3a5444'}
                   onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = 'var(--eclat-border)'}
                 >
                   <div className="w-9 h-9 rounded-full flex items-center justify-center mx-auto mb-2.5" style={{ background: '#e4efe6' }}>
-                    <s.Icon size={16} color="#3a5444" />
+                    <s.Icon size={16} color="#3a5444" aria-hidden="true" />
                   </div>
                   <p className="text-[12px] font-medium mb-0.5" style={{ color: 'var(--eclat-text)' }}>{s.nombre}</p>
                   <p className="text-[10px] leading-snug" style={{ color: 'var(--eclat-text-3)' }}>{s.desc}</p>
