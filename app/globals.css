@@ -1,11 +1,112 @@
+/* ── LabGrotesque local fonts ─────────────────────────────── */
+@font-face {
+  font-family: 'LabGrotesque';
+  src: url('/fonts/LabGrotesque-Thin.woff2') format('woff2');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'LabGrotesque';
+  src: url('/fonts/LabGrotesque-ThinItalic.woff2') format('woff2');
+  font-weight: 100;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'LabGrotesque';
+  src: url('/fonts/LabGrotesque-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'LabGrotesque';
+  src: url('/fonts/LabGrotesque-LightItalic.woff2') format('woff2');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'LabGrotesque';
+  src: url('/fonts/LabGrotesque-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'LabGrotesque';
+  src: url('/fonts/LabGrotesque-Italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'LabGrotesque';
+  src: url('/fonts/LabGrotesque-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'LabGrotesque';
+  src: url('/fonts/LabGrotesque-MediumItalic.woff2') format('woff2');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'LabGrotesque';
+  src: url('/fonts/LabGrotesque-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'LabGrotesque';
+  src: url('/fonts/LabGrotesque-BoldItalic.woff2') format('woff2');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'LabGrotesque';
+  src: url('/fonts/LabGrotesque-Black.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'LabGrotesque';
+  src: url('/fonts/LabGrotesque-BlackItalic.woff2') format('woff2');
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'LabGrotesqueMono';
+  src: url('/fonts/LabGrotesqueMono.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'LabGrotesqueMono';
+  src: url('/fonts/LabGrotesqueMono-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
   /* Tipografía */
-  --font-serif: var(--font-cormorant), Georgia, serif;
-  --font-sans:  var(--font-dm-sans), system-ui, sans-serif;
+  --font-sans:  'LabGrotesque', system-ui, sans-serif;
+  --font-serif: var(--font-cormorant), 'Cormorant Garamond', Georgia, serif;
+  --font-mono:  'LabGrotesqueMono', monospace;
 
   /* Paleta ÉCLAT */
   --eclat-dark:     #1e2a24;
@@ -60,4 +161,5 @@ img { transition: opacity 0.3s ease; }
   }
   .font-serif { font-family: var(--font-serif); }
   .font-sans  { font-family: var(--font-sans); }
+  .font-mono  { font-family: var(--font-mono); }
 }
