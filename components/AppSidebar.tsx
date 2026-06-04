@@ -4,93 +4,133 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { motion, AnimatePresence } from 'framer-motion'
 import {
   Home, BookOpen, Library, Briefcase, Users, MessageSquare,
-  Settings, LogOut, ChevronRight, ChevronLeft, GraduationCap,
+  Settings, LogOut, GraduationCap,
 } from 'lucide-react'
 
 interface AppSidebarProps {
-  collapsed?: boolean
-  onToggle?: () => void
   userEmail?: string
   userName?: string
   isDirector?: boolean
+  onClose?: () => void
 }
 
-const navMain = [
-  { label: 'Inicio', href: '/', icon: Home, exact: true },
-  { label: 'Formaciones', href: '/formaciones', icon: GraduationCap, exact: false },
-  { label: 'Biblioteca', href: '/biblioteca', icon: Library, exact: false },
+const navGroups = [
+  [
+    { label: 'Inicio', href: '/', icon: Home, exact: true },
+    { label: 'Formaciones', href: '/formaciones', icon: GraduationCap, exact: false },
+    { label: 'Biblioteca', href: '/biblioteca', icon: Library, exact: false },
+  ],
+  [
+    { label: 'Servicios', href: '/servicios', icon: Briefcase, exact: false },
+    { label: 'Primera consulta', href: '/turnos', icon: Users, exact: false },
+    { label: 'Comunidad', href: '/escritos', icon: MessageSquare, exact: false },
+  ],
+  [
+    { label: 'Mis formaciones', href: '/mis-cursos', icon: BookOpen, exact: false },
+    { label: 'Mensajes', href: '/mensajes', icon: MessageSquare, exact: false },
+    { label: 'Configuración', href: '/mi-cuenta/perfil', icon: Settings, exact: false },
+  ],
 ]
 
-const navCentro = [
-  { label: 'Servicios', href: '/servicios', icon: Briefcase, exact: false },
-  { label: 'Primera consulta', href: '/turnos', icon: Users, exact: false },
-  { label: 'Comunidad', href: '/escritos', icon: MessageSquare, exact: false },
-]
-
-const navUser = [
-  { label: 'Mis formaciones', href: '/mis-cursos', icon: BookOpen, exact: false },
-  { label: 'Mensajes', href: '/mensajes', icon: MessageSquare, exact: false },
-  { label: 'Configuración', href: '/mi-cuenta/perfil', icon: Settings, exact: false },
-]
-
-function NavItem({
-  item, isActive, collapsed,
+function IconBtn({
+  icon: Icon,
+  label,
+  isActive,
+  onClick,
 }: {
-  item: { label: string; href: string; icon: React.ElementType }
+  icon: React.ElementType
+  label: string
   isActive: boolean
-  collapsed: boolean
+  onClick?: () => void
 }) {
-  const Icon = item.icon
   return (
-    <div className="relative group">
-      <Link
-        href={item.href}
-        className={`flex items-center rounded-lg mb-0.5 transition-colors ${
-          collapsed ? 'justify-center px-0 py-[7px]' : 'gap-2.5 px-2.5 py-[7px]'
-        }`}
-        style={isActive
-          ? {
-              background: '#e8f0ea',
-              color: '#1e2a24',
-              borderLeft: collapsed ? 'none' : '3px solid #3a5444',
-              paddingLeft: collapsed ? undefined : '9px',
-            }
-          : { color: '#2d3e35' }
-        }
+    <div className="relative group flex items-center justify-center">
+      <button
+        onClick={onClick}
+        className="flex items-center justify-center rounded-[10px] transition-colors"
+        style={{
+          width: 40, height: 40,
+          background: isActive ? '#e8f0ea' : 'transparent',
+          color: isActive ? '#3a5444' : '#8a9e92',
+        }}
         onMouseEnter={e => {
           if (!isActive) {
-            (e.currentTarget as HTMLElement).style.background = '#f3f8f4'
-            ;(e.currentTarget as HTMLElement).style.color = '#1e2a24'
+            (e.currentTarget as HTMLElement).style.background = '#f0f7f2'
+            ;(e.currentTarget as HTMLElement).style.color = '#3a5444'
           }
         }}
         onMouseLeave={e => {
           if (!isActive) {
             (e.currentTarget as HTMLElement).style.background = 'transparent'
-            ;(e.currentTarget as HTMLElement).style.color = '#2d3e35'
+            ;(e.currentTarget as HTMLElement).style.color = '#8a9e92'
           }
         }}
       >
-        <Icon size={15} strokeWidth={1.7} className="shrink-0" />
-        {!collapsed && <span className="text-[12.5px] font-medium">{item.label}</span>}
-      </Link>
-      {collapsed && (
-        <div
-          className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2.5 py-1.5 rounded-md text-[11px] font-medium pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50"
-          style={{ background: '#1e2a24', color: 'white', boxShadow: '0 2px 10px rgba(0,0,0,0.15)', border: '1px solid #e4ede6' }}
-        >
-          {item.label}
-        </div>
-      )}
+        <Icon size={16} strokeWidth={1.8} />
+      </button>
+      {/* Tooltip */}
+      <div
+        className="absolute left-full ml-3 px-2.5 py-1.5 rounded-md text-[11px] font-medium pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50"
+        style={{
+          background: '#1e2a24', color: 'white',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+        }}
+      >
+        {label}
+      </div>
     </div>
   )
 }
 
-export default function AppSidebar({
-  collapsed = false, onToggle, userEmail, userName, isDirector,
-}: AppSidebarProps) {
+function NavIconLink({
+  item,
+  isActive,
+}: {
+  item: { label: string; href: string; icon: React.ElementType }
+  isActive: boolean
+}) {
+  const Icon = item.icon
+  return (
+    <div className="relative group flex items-center justify-center">
+      <Link
+        href={item.href}
+        className="flex items-center justify-center rounded-[10px] transition-colors"
+        style={{
+          width: 40, height: 40,
+          background: isActive ? '#e8f0ea' : 'transparent',
+          color: isActive ? '#3a5444' : '#8a9e92',
+        }}
+        onMouseEnter={e => {
+          if (!isActive) {
+            (e.currentTarget as HTMLElement).style.background = '#f0f7f2'
+            ;(e.currentTarget as HTMLElement).style.color = '#3a5444'
+          }
+        }}
+        onMouseLeave={e => {
+          if (!isActive) {
+            (e.currentTarget as HTMLElement).style.background = 'transparent'
+            ;(e.currentTarget as HTMLElement).style.color = '#8a9e92'
+          }
+        }}
+      >
+        <Icon size={16} strokeWidth={1.8} />
+      </Link>
+      <div
+        className="absolute left-full ml-3 px-2.5 py-1.5 rounded-md text-[11px] font-medium pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50"
+        style={{
+          background: '#1e2a24', color: 'white',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+        }}
+      >
+        {item.label}
+      </div>
+    </div>
+  )
+}
+
+export default function AppSidebar({ userEmail, userName, isDirector, onClose: _onClose }: AppSidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
 
@@ -107,133 +147,89 @@ export default function AppSidebar({
   const displayName = userName || (userEmail ? userEmail.split('@')[0] : '')
 
   return (
-    <motion.aside
-      className="fixed top-0 left-0 h-screen flex flex-col z-40 overflow-hidden"
-      animate={{ width: collapsed ? 64 : 210 }}
-      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-      style={{ background: '#ffffff', borderRight: '1px solid #e4ede6' }}
+    <aside
+      className="fixed top-0 left-0 h-screen flex flex-col z-40"
+      style={{
+        width: 64,
+        background: '#ffffff',
+        borderRight: '0.5px solid #e8ede9',
+      }}
     >
       {/* Logo */}
       <div
         className="flex items-center justify-center shrink-0"
-        style={{
-          borderBottom: '1px solid #e4ede6',
-          padding: '12px 16px',
-          maxHeight: 100,
-        }}
+        style={{ height: 64, borderBottom: '0.5px solid #e8ede9' }}
       >
         <Link href="/" className="flex items-center justify-center">
-          {collapsed ? (
-            <Image
-              src="/LOGO.png"
-              alt="ÉCLAT"
-              width={36}
-              height={36}
-              priority
-              style={{ objectFit: 'contain', background: 'transparent' }}
-            />
-          ) : (
-            <Image
-              src="/logo-eclat.png"
-              alt="ÉCLAT Centro de Atención Integral"
-              width={100}
-              height={90}
-              priority
-              style={{ objectFit: 'contain', background: 'transparent' }}
-            />
-          )}
+          <Image
+            src="/LOGO.png"
+            alt="ÉCLAT"
+            width={32}
+            height={32}
+            priority
+            style={{ objectFit: 'contain' }}
+          />
         </Link>
-        {isDirector && !collapsed && (
-          <span
-            className="ml-auto text-[9px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded-full shrink-0"
-            style={{ background: '#e8f0ea', color: '#3a5444' }}
-          >
-            Dir.
-          </span>
-        )}
       </div>
 
       {/* Nav */}
-      <nav className={`flex-1 overflow-y-auto overflow-x-hidden py-3 ${collapsed ? 'px-2' : 'px-2.5'}`}>
-        {navMain.map(item => (
-          <NavItem key={item.href} item={item} isActive={isActive(item.href, item.exact)} collapsed={collapsed} />
-        ))}
-
-        {!collapsed && (
-          <p className="px-2.5 py-1.5 mt-1 uppercase tracking-[0.12em] font-semibold" style={{ fontSize: 10, color: '#8aab94' }}>
-            Centro ÉCLAT
-          </p>
-        )}
-        {collapsed && <div className="my-2 mx-1" style={{ height: 1, background: '#e4ede6' }} />}
-
-        {navCentro.map(item => (
-          <NavItem key={item.href} item={item} isActive={isActive(item.href, item.exact)} collapsed={collapsed} />
-        ))}
-
-        <div className="my-2 mx-1" style={{ height: 1, background: '#e4ede6' }} />
-
-        {navUser.map(item => (
-          <NavItem key={item.href} item={item} isActive={isActive(item.href, item.exact)} collapsed={collapsed} />
+      <nav className="flex-1 overflow-y-auto overflow-x-hidden flex flex-col items-center py-3 gap-0.5">
+        {navGroups.map((group, gi) => (
+          <div key={gi} className="w-full flex flex-col items-center gap-0.5">
+            {group.map(item => (
+              <NavIconLink
+                key={item.href}
+                item={item}
+                isActive={isActive(item.href, item.exact)}
+              />
+            ))}
+            {gi < navGroups.length - 1 && (
+              <div className="my-2" style={{ width: 24, height: '0.5px', background: '#e8ede9' }} />
+            )}
+          </div>
         ))}
 
         {isDirector && (
-          <NavItem
-            item={{ label: 'Panel director', href: '/admin', icon: Settings }}
-            isActive={isActive('/admin', false)}
-            collapsed={collapsed}
-          />
+          <>
+            <div className="my-2" style={{ width: 24, height: '0.5px', background: '#e8ede9' }} />
+            <NavIconLink
+              item={{ label: 'Panel director', href: '/admin', icon: Settings }}
+              isActive={isActive('/admin', false)}
+            />
+          </>
         )}
       </nav>
 
-      {/* Footer: usuario + toggle */}
-      <div className="shrink-0" style={{ background: '#f7f6f2', borderTop: '1px solid #e4ede6' }}>
+      {/* Footer */}
+      <div
+        className="shrink-0 flex flex-col items-center py-3 gap-1"
+        style={{ borderTop: '0.5px solid #e8ede9' }}
+      >
         {userEmail && (
-          <div className={`flex items-center ${collapsed ? 'justify-center px-2 py-2.5' : 'px-3 py-2.5 gap-2'}`}>
+          <div className="relative group flex items-center justify-center">
             <div
-              className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-[11px] font-semibold"
-              style={{ background: '#3a5444', color: 'white' }}
+              className="flex items-center justify-center rounded-[10px] text-[12px] font-medium cursor-default"
+              style={{ width: 40, height: 40, background: '#e8f0ea', color: '#3a5444' }}
             >
               {displayName.charAt(0).toUpperCase()}
             </div>
-            {!collapsed && (
-              <div className="flex-1 min-w-0">
-                <p className="text-[11px] font-medium truncate" style={{ color: '#1e2a24' }}>{displayName}</p>
-                <p className="text-[10px] truncate" style={{ color: '#3a5444' }}>{userEmail}</p>
-              </div>
-            )}
-            {!collapsed && (
-              <button
-                onClick={handleLogout}
-                className="transition-colors shrink-0"
-                style={{ color: '#8aab94' }}
-                onMouseEnter={e => (e.currentTarget.style.color = '#1e2a24')}
-                onMouseLeave={e => (e.currentTarget.style.color = '#8aab94')}
-              >
-                <LogOut size={13} />
-              </button>
-            )}
+            <div
+              className="absolute left-full ml-3 px-2.5 py-1.5 rounded-md text-[11px] font-medium pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50"
+              style={{ background: '#1e2a24', color: 'white', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
+            >
+              {displayName}
+              {userEmail && <span style={{ color: 'rgba(255,255,255,0.5)', marginLeft: 6 }}>{userEmail}</span>}
+            </div>
           </div>
         )}
 
-        {/* Botón toggle */}
-        <div className="relative group">
-          <button
-            onClick={onToggle}
-            className="flex items-center justify-center w-full py-3 transition-colors"
-            style={{ color: '#6b8c77', borderTop: '1px solid #e4ede6' }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#1e2a24')}
-            onMouseLeave={e => (e.currentTarget.style.color = '#6b8c77')}
-          >
-            {collapsed ? <ChevronRight size={15} /> : <ChevronLeft size={15} />}
-          </button>
-          <div
-            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2.5 py-1.5 rounded-md text-[11px] font-medium pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50"
-            style={{ background: '#1e2a24', color: 'white', boxShadow: '0 2px 10px rgba(0,0,0,0.15)', border: '1px solid #e4ede6' }}
-          >
-            {collapsed ? 'Expandir' : 'Colapsar'}
-          </div>
-        </div>
+        <IconBtn
+          icon={LogOut}
+          label="Cerrar sesión"
+          isActive={false}
+          onClick={handleLogout}
+        />
       </div>
-    </motion.aside>
+    </aside>
   )
 }

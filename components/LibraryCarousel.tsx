@@ -60,28 +60,29 @@ export default function LibraryCarousel({ className }: Props) {
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={active}
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
+            exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="bg-white w-full h-full flex flex-col absolute inset-0"
+            className="absolute inset-0 flex flex-col"
             style={{
-              border: '1px solid #c8d8cc',
+              border: '0.5px solid #e4ede6',
               borderRadius: 10,
-              padding: 18,
+              padding: 20,
+              background: '#ffffff',
             }}
           >
             <p
-              className="uppercase tracking-[0.12em] mb-2"
-              style={{ fontSize: 9, color: '#5e8f6e', fontWeight: 600 }}
+              className="uppercase mb-2"
+              style={{ fontSize: 9, color: '#5e8f6e', fontWeight: 500, letterSpacing: '1.4px' }}
             >
               {article.categoria}
             </p>
             <p
-              className="leading-snug mb-2"
+              className="leading-snug mb-2.5 flex-1"
               style={{
                 fontFamily: 'var(--font-serif)',
-                fontSize: 14,
+                fontSize: 16,
                 fontWeight: 500,
                 color: '#1e2a24',
               }}
@@ -89,14 +90,18 @@ export default function LibraryCarousel({ className }: Props) {
               {article.titulo}
             </p>
             <p
-              className="mb-4 flex-1"
-              style={{ fontSize: 12, color: '#6b7c74', lineHeight: 1.5 }}
+              className="mb-4"
+              style={{ fontSize: 12, color: '#8a9e92', lineHeight: 1.6 }}
             >
               {article.desc}
             </p>
             <button
               className="text-[11px] font-medium px-3 py-1.5 rounded-md transition-colors self-start"
-              style={{ border: '1px solid #3a5444', color: '#3a5444', background: 'transparent' }}
+              style={{
+                border: '0.5px solid #3a5444',
+                color: '#3a5444',
+                background: 'transparent',
+              }}
               onMouseEnter={e => {
                 (e.currentTarget as HTMLElement).style.background = '#3a5444'
                 ;(e.currentTarget as HTMLElement).style.color = 'white'
@@ -119,9 +124,9 @@ export default function LibraryCarousel({ className }: Props) {
             onClick={() => { setActive(i); setPaused(true); setTimeout(() => setPaused(false), 6000) }}
             className="rounded-full transition-all"
             style={{
-              width: i === active ? 16 : 5,
-              height: 5,
-              background: i === active ? '#5e8f6e' : '#c8d8cc',
+              width: i === active ? 14 : 4,
+              height: 4,
+              background: i === active ? '#5e8f6e' : '#e4ede6',
             }}
           />
         ))}
