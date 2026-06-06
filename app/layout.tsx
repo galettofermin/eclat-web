@@ -15,20 +15,33 @@ const cormorant = Cormorant_Garamond({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://eclatcentro.com"),
-  title: "ÉCLAT · Centro de Atención Integral — Oncativo, Córdoba",
-  description: "ÉCLAT es un centro de atención integral en Oncativo, Córdoba. Salud mental, educación y formación desde una mirada interdisciplinaria.",
-  keywords: ["psicología Oncativo", "psicopedagogía Córdoba", "fonoaudiología", "centro de atención integral", "ÉCLAT", "salud mental niños", "psicomotricidad", "inclusión escolar"],
+  title: {
+    default: "ÉCLAT · Centro de Atención Integral — Oncativo, Córdoba",
+    template: "%s · ÉCLAT",
+  },
+  description: "ÉCLAT es un centro de atención integral en Oncativo, Córdoba. Psicología, psicopedagogía, fonoaudiología, psicomotricidad e inclusión escolar desde una mirada interdisciplinaria.",
+  keywords: [
+    "psicología Oncativo", "psicopedagogía Córdoba", "fonoaudiología", "psicomotricidad",
+    "centro de atención integral", "ÉCLAT", "salud mental niños", "inclusión escolar",
+    "terapia Oncativo", "salud mental Córdoba", "evaluación interdisciplinaria",
+  ],
   alternates: { canonical: "https://eclatcentro.com" },
-  robots: { index: true, follow: true },
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
   icons: { icon: "/LOGO.png", apple: "/LOGO.png" },
   openGraph: {
     title: "ÉCLAT · Centro de Atención Integral — Oncativo, Córdoba",
-    description: "Centro de atención integral en Oncativo, Córdoba. Salud mental, educación y formación interdisciplinaria.",
+    description: "Psicología, psicopedagogía, fonoaudiología, psicomotricidad e inclusión escolar en Oncativo, Córdoba. Equipo interdisciplinario.",
     url: "https://eclatcentro.com",
     siteName: "ÉCLAT Centro de Atención Integral",
-    images: [{ url: "/LOGO.png", width: 512, height: 512, alt: "ÉCLAT" }],
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "ÉCLAT · Centro de Atención Integral" }],
     locale: "es_AR",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ÉCLAT · Centro de Atención Integral — Oncativo, Córdoba",
+    description: "Psicología, psicopedagogía, fonoaudiología y más en Oncativo, Córdoba.",
+    images: ["/og-image.png"],
   },
 };
 
@@ -44,6 +57,48 @@ const NAV_LINKS = [
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es" className={cormorant.variable}>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "MedicalOrganization",
+              "name": "ÉCLAT Centro de Atención Integral",
+              "alternateName": "ÉCLAT",
+              "url": "https://eclatcentro.com",
+              "logo": "https://eclatcentro.com/LOGO.png",
+              "image": "https://eclatcentro.com/og-image.png",
+              "description": "Centro de atención integral en Oncativo, Córdoba. Psicología, psicopedagogía, fonoaudiología, psicomotricidad e inclusión escolar.",
+              "foundingDate": "2022-07-09",
+              "telephone": "+54-9-3572-44-1454",
+              "email": "centrointegraleclat@gmail.com",
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "Castelli 260",
+                "addressLocality": "Oncativo",
+                "addressRegion": "Córdoba",
+                "addressCountry": "AR",
+              },
+              "geo": {
+                "@type": "GeoCoordinates",
+                "latitude": -31.9167,
+                "longitude": -63.6833,
+              },
+              "openingHoursSpecification": {
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"],
+                "opens": "08:00",
+                "closes": "20:00",
+              },
+              "sameAs": [
+                "https://instagram.com/eclatcentro",
+                "https://wa.me/5493572441454",
+              ],
+            }),
+          }}
+        />
+      </head>
       <body>
         <div className="pageload"><i></i></div>
 

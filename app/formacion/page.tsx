@@ -2,8 +2,14 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Formación · ÉCLAT — Oncativo, Córdoba",
-  description: "Formación ÉCLAT: cursos, seminarios, jornadas y trayectos formativos sobre inclusión escolar, salud mental infantil, trabajo interdisciplinario y educación.",
+  title: "Formación",
+  description: "Cursos, seminarios, jornadas y trayectos formativos de ÉCLAT sobre inclusión escolar, salud mental infantil, trabajo interdisciplinario y educación.",
+  alternates: { canonical: "https://eclatcentro.com/formacion" },
+  openGraph: {
+    title: "Formación · ÉCLAT",
+    description: "Cursos, seminarios y jornadas sobre inclusión escolar, salud mental y trabajo interdisciplinario.",
+    url: "https://eclatcentro.com/formacion",
+  },
 };
 
 const EJES = [
