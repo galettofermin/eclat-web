@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond } from "next/font/google";
 import Link from "next/link";
+import AdminBar from "@/components/AdminBar";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -114,6 +115,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </svg>
           <span className="wa-label">Escribinos</span>
         </a>
+
+        <AdminBar />
 
         {/* Reveal al scroll + nav activo + hamburguesa */}
         <script dangerouslySetInnerHTML={{ __html: `

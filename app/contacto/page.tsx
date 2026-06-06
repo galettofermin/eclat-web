@@ -94,13 +94,17 @@ export default function ContactoPage() {
                 </p>
               </form>
 
-              <div className="map">
-                <div style={{ textAlign: "center" }}>
-                  <div style={{ fontWeight: 600, color: "var(--slate-900)", fontSize: "16px" }}>Castelli 260 · Oncativo, Córdoba</div>
-                  <a href="https://www.google.com/maps/search/?api=1&query=Castelli+260+Oncativo+C%C3%B3rdoba" target="_blank" rel="noopener" style={{ display: "inline-block", marginTop: "8px", fontWeight: 600, color: "var(--sage-deep)" }}>
-                    Ver en Google Maps →
-                  </a>
-                </div>
+              <div className="map" style={{ padding: 0, minHeight: 0 }}>
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3385.5!2d-63.6833!3d-31.9167!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sCastelli+260%2C+Oncativo%2C+C%C3%B3rdoba!5e0!3m2!1ses!2sar!4v1"
+                  width="100%"
+                  height="320"
+                  style={{ border: 'none', borderRadius: 16, display: 'block' }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="ÉCLAT — Castelli 260, Oncativo, Córdoba"
+                />
               </div>
             </div>
           </div>
