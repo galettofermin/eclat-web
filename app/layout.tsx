@@ -73,7 +73,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="wrap">
             <div className="foot__grid">
               <div>
-                <img className="foot__logo" src="/LOGO_ECLAT_5_.png" alt="ÉCLAT" />
+                <img className="foot__logo" src="/LOGO.png" alt="ÉCLAT" style={{ width: "52px", height: "auto", filter: "brightness(0) invert(1)" }} />
                 <p className="foot__tag">Centro de atención integral en Oncativo, Córdoba. Salud mental, educación y formación desde una mirada interdisciplinaria.</p>
               </div>
               <div>
