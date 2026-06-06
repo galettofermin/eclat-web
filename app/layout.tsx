@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond } from "next/font/google";
 import Link from "next/link";
 import AdminBar from "@/components/AdminBar";
+import { RevealScript } from "@/components/RevealScript";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -172,50 +173,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </a>
 
         <AdminBar />
-
-        {/* Reveal al scroll + nav activo + hamburguesa */}
-        <script dangerouslySetInnerHTML={{ __html: `
-          (function(){
-            var els = document.querySelectorAll('.reveal');
-            if('IntersectionObserver' in window){
-              var io = new IntersectionObserver(function(entries){
-                entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
-              }, { threshold:0.08 });
-              els.forEach(function(el){ io.observe(el); });
-            } else {
-              els.forEach(function(el){ el.classList.add('in'); });
-            }
-            setTimeout(function(){ els.forEach(function(el){ el.classList.add('in'); }); }, 1500);
-            var page = (location.pathname.replace(/\\/$/,'').split('/').pop() || '').toLowerCase();
-            document.querySelectorAll('.nav__links a').forEach(function(a){
-              var href = (a.getAttribute('href')||'').replace(/\\/$/,'').split('/').pop()||'';
-              if(href && href === page) a.classList.add('is-active');
-            });
-            var ham = document.querySelector('.nav__ham');
-            var navLinks = document.querySelector('.nav__links');
-            if(ham && navLinks){
-              ham.addEventListener('click', function(){
-                var open = navLinks.classList.toggle('is-open');
-                ham.classList.toggle('is-open', open);
-                ham.setAttribute('aria-expanded', open ? 'true' : 'false');
-              });
-              document.addEventListener('click', function(e){
-                if(!e.target.closest('.nav__in')){
-                  navLinks.classList.remove('is-open');
-                  ham.classList.remove('is-open');
-                  ham.setAttribute('aria-expanded', 'false');
-                }
-              });
-              navLinks.querySelectorAll('a').forEach(function(a){
-                a.addEventListener('click', function(){
-                  navLinks.classList.remove('is-open');
-                  ham.classList.remove('is-open');
-                  ham.setAttribute('aria-expanded', 'false');
-                });
-              });
-            }
-          })();
-        `}} />
+        <RevealScript />
       </body>
     </html>
   );
