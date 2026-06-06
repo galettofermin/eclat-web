@@ -777,3 +777,37 @@ p { margin: 0; text-wrap: pretty; }
 }
 .admin-photo-wrap:hover .admin-photo-overlay { opacity: 1; }
 .admin-photo-overlay:disabled { opacity: .7 !important; cursor: default; }
+
+@media (max-width: 768px) {
+  /* Kicker hero — se achica para no cortarse */
+  .hero3 .kicker {
+    font-size: 10px;
+    letter-spacing: .10em;
+    padding: 5px 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  /* Caja servicios — centrada y sin overflow */
+  .hero3 .wrap {
+    overflow-x: hidden;
+    padding-inline: 16px;
+  }
+  .svcbox {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+  .rstage {
+    padding: 14px;
+    min-height: 270px;
+  }
+  .rslide {
+    left: 14px;
+    right: 14px;
+    top: 14px;
+  }
+}
