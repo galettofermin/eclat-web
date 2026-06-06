@@ -23,20 +23,31 @@ const slugify = (s: string) =>
 
 const WA = 'https://wa.me/5493572441454?text='
 
+const Spinner = () => (
+  <div style={{ display: 'flex', justifyContent: 'center', padding: '48px 0' }}>
+    <div style={{ width: 36, height: 36, border: '3px solid var(--line)', borderTop: '3px solid var(--sage-deep)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+  </div>
+)
+
 export default function ServiciosPage() {
   const { isAdmin } = useAdmin()
   const [images, setImages] = useState<Record<string, string>>({})
+  const [loadingImages, setLoadingImages] = useState(true)
 
   useEffect(() => {
     fetch('/api/servicios')
       .then(r => r.json())
-      .then((data: { nombre: string; imagen_url: string | null }[]) => {
-        if (!Array.isArray(data)) return
-        const map: Record<string, string> = {}
-        data.forEach(s => { if (s.imagen_url) map[s.nombre] = s.imagen_url })
-        setImages(map)
-      })
-      .catch(() => {})
+      .then(
+        (data: { nombre: string; imagen_url: string | null }[]) => {
+          if (Array.isArray(data)) {
+            const map: Record<string, string> = {}
+            data.forEach(s => { if (s.imagen_url) map[s.nombre] = s.imagen_url })
+            setImages(map)
+          }
+          setLoadingImages(false)
+        },
+        () => setLoadingImages(false),
+      )
   }, [])
 
   const handleUpdate = (nombre: string, url: string) => {
@@ -65,6 +76,7 @@ export default function ServiciosPage() {
 
       <section className="section">
         <div className="wrap">
+          {loadingImages && <Spinner />}
           <div className="areas reveal">
             {AREAS.map((a) => (
               <article key={a.name} className="area">

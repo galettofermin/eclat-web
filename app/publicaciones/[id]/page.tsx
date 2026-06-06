@@ -8,27 +8,37 @@ export const dynamic = 'force-dynamic'
 type Props = { params: { id: string } }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const supabase = createClient()
-  const { data } = await supabase
-    .from('articles')
-    .select('title, excerpt')
-    .eq('id', params.id)
-    .eq('published', true)
-    .single()
-  return {
-    title: data?.title ? `${data.title} · ÉCLAT` : 'Artículo · ÉCLAT',
-    description: data?.excerpt ?? '',
+  try {
+    const supabase = createClient()
+    const { data } = await supabase
+      .from('articles')
+      .select('title, excerpt')
+      .eq('id', params.id)
+      .eq('published', true)
+      .single()
+    return {
+      title: data?.title ? `${data.title} · ÉCLAT` : 'Artículo · ÉCLAT',
+      description: data?.excerpt ?? '',
+    }
+  } catch {
+    return { title: 'Artículo · ÉCLAT' }
   }
 }
 
 export default async function ArticlePage({ params }: Props) {
-  const supabase = createClient()
-  const { data: article } = await supabase
-    .from('articles')
-    .select('*')
-    .eq('id', params.id)
-    .eq('published', true)
-    .single()
+  let article = null
+  try {
+    const supabase = createClient()
+    const { data } = await supabase
+      .from('articles')
+      .select('*')
+      .eq('id', params.id)
+      .eq('published', true)
+      .single()
+    article = data
+  } catch {
+    notFound()
+  }
 
   if (!article) notFound()
 

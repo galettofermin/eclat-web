@@ -279,6 +279,7 @@ p { margin: 0; text-wrap: pretty; }
 }
 @keyframes plFill { 0%{ width:0; } 55%{ width:64%; } 100%{ width:100%; } }
 @keyframes plFade { to{ opacity:0; visibility:hidden; } }
+@keyframes spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .pageload { display: none; } }
 
 /* ── Navbar ── */

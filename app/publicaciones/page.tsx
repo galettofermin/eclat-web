@@ -24,9 +24,16 @@ const EMPTY_FORM: EditForm = {
   image_url: '', read_time: '5 min', published: true,
 }
 
+const Spinner = () => (
+  <div style={{ display: 'flex', justifyContent: 'center', padding: '48px 0' }}>
+    <div style={{ width: 36, height: 36, border: '3px solid var(--line)', borderTop: '3px solid var(--sage-deep)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+  </div>
+)
+
 export default function PublicacionesPage() {
   const { isAdmin } = useAdmin()
   const [articles, setArticles] = useState<Article[]>([])
+  const [loadingArticles, setLoadingArticles] = useState(true)
   const [editingArticle, setEditingArticle] = useState<Article | null>(null)
   const [editForm, setEditForm] = useState<EditForm>(EMPTY_FORM)
   const [saving, setSaving] = useState(false)
@@ -34,13 +41,17 @@ export default function PublicacionesPage() {
   const fileRef = useRef<HTMLInputElement>(null)
 
   const loadArticles = () => {
+    setLoadingArticles(true)
     const supabase = createClient()
     supabase
       .from('articles')
       .select('*')
       .eq('published', true)
       .order('created_at', { ascending: false })
-      .then(({ data }) => setArticles(data ?? []))
+      .then(
+        ({ data }) => { setArticles(data ?? []); setLoadingArticles(false) },
+        ()         => { setArticles([]);          setLoadingArticles(false) },
+      )
   }
 
   useEffect(loadArticles, [])
@@ -119,7 +130,9 @@ export default function PublicacionesPage() {
 
       <section className="section">
         <div className="wrap">
-          {articles.length === 0 ? (
+          {loadingArticles ? (
+            <Spinner />
+          ) : articles.length === 0 ? (
             <div className="reveal" style={{ textAlign: 'center', padding: '72px 24px', color: 'var(--ink-muted)' }}>
               <p style={{ fontSize: 18, marginBottom: 8 }}>Próximamente.</p>
               <p style={{ fontSize: 15 }}>Estamos preparando los primeros artículos.</p>

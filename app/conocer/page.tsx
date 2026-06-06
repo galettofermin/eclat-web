@@ -10,17 +10,22 @@ const DIRECTOR_KEYS = ['direccion-fermin', 'direccion-constanza']
 export default function ConocerPage() {
   const { isAdmin } = useAdmin()
   const [dirImgs, setDirImgs] = useState<Record<string, string>>({})
+  const [loadingImgs, setLoadingImgs] = useState(true)
 
   useEffect(() => {
     fetch(`/api/admin/site-images?keys=${DIRECTOR_KEYS.join(',')}`)
       .then(r => r.json())
-      .then((data: { key: string; url: string }[]) => {
-        if (!Array.isArray(data)) return
-        const m: Record<string, string> = {}
-        data.forEach(d => { m[d.key] = d.url })
-        setDirImgs(m)
-      })
-      .catch(() => {})
+      .then(
+        (data: { key: string; url: string }[]) => {
+          if (Array.isArray(data)) {
+            const m: Record<string, string> = {}
+            data.forEach(d => { m[d.key] = d.url })
+            setDirImgs(m)
+          }
+          setLoadingImgs(false)
+        },
+        () => setLoadingImgs(false),
+      )
   }, [])
 
   const saveImg = (key: string, url: string) => {
