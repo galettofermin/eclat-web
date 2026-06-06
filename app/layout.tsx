@@ -56,6 +56,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Link key={l.href} href={l.href}>{l.label}</Link>
               ))}
             </nav>
+            <button className="nav__ham" aria-label="Menú" aria-expanded="false">
+              <span></span><span></span><span></span>
+            </button>
             <Link className="btn btn--primary nav__login" href="/login" style={{ padding: "11px 20px", fontSize: "15px" }}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="8" r="4" />
@@ -111,7 +114,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <span className="wa-label">Escribinos</span>
         </a>
 
-        {/* Reveal al scroll + nav activo */}
+        {/* Reveal al scroll + nav activo + hamburguesa */}
         <script dangerouslySetInnerHTML={{ __html: `
           (function(){
             var els = document.querySelectorAll('.reveal');
@@ -129,6 +132,29 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               var href = (a.getAttribute('href')||'').replace(/\\/$/,'').split('/').pop()||'';
               if(href && href === page) a.classList.add('is-active');
             });
+            var ham = document.querySelector('.nav__ham');
+            var navLinks = document.querySelector('.nav__links');
+            if(ham && navLinks){
+              ham.addEventListener('click', function(){
+                var open = navLinks.classList.toggle('is-open');
+                ham.classList.toggle('is-open', open);
+                ham.setAttribute('aria-expanded', open ? 'true' : 'false');
+              });
+              document.addEventListener('click', function(e){
+                if(!e.target.closest('.nav__in')){
+                  navLinks.classList.remove('is-open');
+                  ham.classList.remove('is-open');
+                  ham.setAttribute('aria-expanded', 'false');
+                }
+              });
+              navLinks.querySelectorAll('a').forEach(function(a){
+                a.addEventListener('click', function(){
+                  navLinks.classList.remove('is-open');
+                  ham.classList.remove('is-open');
+                  ham.setAttribute('aria-expanded', 'false');
+                });
+              });
+            }
           })();
         `}} />
       </body>
