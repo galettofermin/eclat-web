@@ -25,7 +25,7 @@ export default function ConocerPage() {
             <b>Conocer ÉCLAT</b>
           </nav>
           <h1>
-            Más que un centro: un espacio de <em>articulación.</em>
+            ÉCLAT, <em>de cerca.</em>
           </h1>
           <p className="phead__lede">
             ÉCLAT articula salud mental, educación y formación para construir

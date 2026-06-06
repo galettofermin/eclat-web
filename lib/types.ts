@@ -4,6 +4,7 @@ export interface Article {
   category: string
   excerpt: string
   content: string
+  image_url: string
   read_time: string
   featured: boolean
   published: boolean

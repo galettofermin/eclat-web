@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import type { Article } from '@/lib/types'
@@ -13,21 +13,45 @@ const CATEGORIES = [
 export default function ArticleForm({ article }: { article?: Article }) {
   const isEditing = !!article
   const router = useRouter()
+  const fileRef = useRef<HTMLInputElement>(null)
 
   const [form, setForm] = useState({
-    title: article?.title ?? '',
-    category: article?.category ?? 'Clínica',
-    excerpt: article?.excerpt ?? '',
-    content: article?.content ?? '',
+    title:     article?.title     ?? '',
+    category:  article?.category  ?? 'Clínica',
+    excerpt:   article?.excerpt   ?? '',
+    content:   article?.content   ?? '',
+    image_url: article?.image_url ?? '',
     read_time: article?.read_time ?? '5 min',
-    featured: article?.featured ?? false,
+    featured:  article?.featured  ?? false,
     published: article?.published ?? true,
   })
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [loading,        setLoading]        = useState(false)
+  const [uploading,      setUploading]      = useState(false)
+  const [error,          setError]          = useState('')
+  const [uploadError,    setUploadError]    = useState('')
 
   const set = (k: keyof typeof form, v: string | boolean) =>
     setForm((f) => ({ ...f, [k]: v }))
+
+  const handleImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploading(true)
+    setUploadError('')
+
+    const fd = new FormData()
+    fd.append('file', file)
+
+    const res  = await fetch('/api/articulos/upload', { method: 'POST', body: fd })
+    const json = await res.json()
+
+    if (!res.ok || json.error) {
+      setUploadError(json.error ?? 'Error al subir la imagen')
+    } else {
+      set('image_url', json.url)
+    }
+    setUploading(false)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -85,6 +109,33 @@ export default function ArticleForm({ article }: { article?: Article }) {
         </div>
       </div>
 
+      {/* Imagen de portada */}
+      <div>
+        <label className="block text-[13px] font-medium text-[#0A0A0A] mb-1.5">Imagen de portada</label>
+        {form.image_url && (
+          <div className="mb-2 relative w-full h-40 rounded-xl overflow-hidden border border-black/10">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={form.image_url} alt="Portada" className="w-full h-full object-cover" />
+            <button
+              type="button"
+              onClick={() => { set('image_url', ''); if (fileRef.current) fileRef.current.value = '' }}
+              className="absolute top-2 right-2 bg-black/60 text-white text-[11px] px-2 py-1 rounded-lg hover:bg-black/80 transition-colors"
+            >
+              Quitar
+            </button>
+          </div>
+        )}
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          onChange={handleImage}
+          className="w-full text-[14px] text-[#6E6E73] file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[13px] file:font-semibold file:bg-[#2F7D6B]/10 file:text-[#2F7D6B] hover:file:bg-[#2F7D6B]/20 transition-colors cursor-pointer"
+        />
+        {uploading && <p className="text-[13px] text-[#6E6E73] mt-1">Subiendo imagen...</p>}
+        {uploadError && <p className="text-[13px] text-red-500 mt-1">{uploadError}</p>}
+      </div>
+
       <div>
         <label className="block text-[13px] font-medium text-[#0A0A0A] mb-1.5">Bajada / Resumen *</label>
         <textarea
@@ -136,7 +187,7 @@ export default function ArticleForm({ article }: { article?: Article }) {
       <div className="flex items-center gap-4 pt-2 border-t border-black/5">
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || uploading}
           className="bg-[#2F7D6B] text-white font-semibold px-8 py-3 rounded-full text-[15px] hover:bg-[#245f52] disabled:opacity-60 transition-colors"
         >
           {loading ? 'Guardando...' : isEditing ? 'Guardar cambios' : 'Publicar escrito'}
