@@ -16,10 +16,10 @@ const cormorant = Cormorant_Garamond({
 export const metadata: Metadata = {
   metadataBase: new URL("https://eclatcentro.com"),
   title: {
-    default: "ÉCLAT · Centro de Atención Integral — Oncativo, Córdoba",
+    default: "Psicólogo en Oncativo · ÉCLAT Centro de Salud Mental y Educación",
     template: "%s · ÉCLAT",
   },
-  description: "ÉCLAT es un centro de atención integral en Oncativo, Córdoba. Psicología, psicopedagogía, fonoaudiología, psicomotricidad e inclusión escolar desde una mirada interdisciplinaria.",
+  description: "Centro interdisciplinario en Oncativo, Córdoba. Psicología, psicopedagogía, fonoaudiología e inclusión escolar. Pedí tu entrevista hoy.",
   keywords: [
     "psicología Oncativo", "psicopedagogía Córdoba", "fonoaudiología", "psicomotricidad",
     "centro de atención integral", "ÉCLAT", "salud mental niños", "inclusión escolar",

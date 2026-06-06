@@ -139,6 +139,19 @@ export default function HomePage() {
           <cite>Nuestra filosofía</cite>
         </div>
       </section>
+
+      {/* Contenido SEO indexable */}
+      <section style={{ padding: '48px 0' }}>
+        <div className="wrap">
+          <h2 style={{ fontSize: '24px', color: 'var(--slate-900)' }}>Psicólogos y especialistas en Oncativo, Córdoba</h2>
+          <p style={{ color: 'var(--ink-muted)', marginTop: '12px', maxWidth: '72ch' }}>
+            ÉCLAT es un centro de atención integral ubicado en Castelli 260, Oncativo, Córdoba.
+            Contamos con psicólogos, psicopedagogas, fonoaudiólogos, especialistas en psicomotricidad
+            y docentes de apoyo para la inclusión escolar. Atendemos niños, adolescentes, adultos y familias
+            de manera presencial en Oncativo y de forma virtual para toda la provincia de Córdoba y el país.
+          </p>
+        </div>
+      </section>
     </>
   );
 }

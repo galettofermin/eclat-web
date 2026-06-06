@@ -6,6 +6,12 @@ const nextConfig = {
       { protocol: 'https', hostname: 'fwdhtdpzxvvjattbllfl.supabase.co' },
     ],
   },
+  async redirects() {
+    return [
+      { source: '/sobre-éclat', destination: '/conocer', permanent: true },
+      { source: '/sobre-eclat',      destination: '/conocer', permanent: true },
+    ]
+  },
   async headers() {
     const securityHeaders = [
       { key: 'X-Frame-Options',           value: 'SAMEORIGIN' },
