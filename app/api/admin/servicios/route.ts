@@ -11,8 +11,7 @@ export async function POST(req: Request) {
   const supabase = createAdminClient()
   const { error } = await supabase
     .from('servicios')
-    .update({ imagen_url })
-    .eq('nombre', nombre)
+    .upsert({ nombre, imagen_url }, { onConflict: 'nombre' })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ ok: true })
 }

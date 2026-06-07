@@ -10,7 +10,7 @@ export default function AdminServicios() {
   const [editing, setEditing] = useState<Service | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [uploading, setUploading] = useState<number | null>(null)
+  const [uploading, setUploading] = useState<string | null>(null)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -68,13 +68,7 @@ export default function AdminServicios() {
     const file = e.target.files?.[0]
     if (!file) return
 
-    const servicio = getServicio(serviceTitle)
-    if (!servicio) {
-      setError('Este servicio no tiene entrada en la tabla de imágenes. Verificá que el nombre coincida exactamente.')
-      return
-    }
-
-    setUploading(servicio.id)
+    setUploading(serviceTitle)
     setError('')
 
     try {
@@ -86,16 +80,17 @@ export default function AdminServicios() {
       const uploadData = await uploadRes.json()
       if (!uploadRes.ok) throw new Error(uploadData.error)
 
-      const putRes = await fetch('/api/servicios', {
-        method: 'PUT',
+      const saveRes = await fetch('/api/admin/servicios', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: servicio.id, imagen_url: uploadData.url }),
+        body: JSON.stringify({ nombre: serviceTitle, imagen_url: uploadData.url }),
       })
-      if (!putRes.ok) throw new Error('Error al guardar imagen')
+      if (!saveRes.ok) {
+        const saveData = await saveRes.json()
+        throw new Error(saveData.error ?? 'Error al guardar imagen')
+      }
 
-      setServiciosData(prev =>
-        prev.map(s => s.id === servicio.id ? { ...s, imagen_url: uploadData.url } : s)
-      )
+      await fetchAll()
       setSuccess('Imagen actualizada.')
       setTimeout(() => setSuccess(''), 3000)
     } catch (err: any) {
@@ -171,18 +166,13 @@ export default function AdminServicios() {
                           onChange={(e) => handleImageUpload(e, s.title)}
                           className="text-[13px] text-[#6E6E73] file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[12px] file:font-medium file:bg-[#e8f0ea] file:text-[#3a5444] file:cursor-pointer"
                         />
-                        {uploading === servicio?.id && (
+                        {uploading === s.title && (
                           <span className="flex items-center gap-1.5 text-[12px] text-[#2F7D6B]">
                             <span className="w-3.5 h-3.5 border-2 border-[#2F7D6B] border-t-transparent rounded-full animate-spin inline-block" />
                             Subiendo…
                           </span>
                         )}
                       </div>
-                      {!servicio && (
-                        <p className="text-[11px] text-amber-600 mt-1">
-                          Sin entrada en tabla de imágenes. Verificá que el nombre del servicio coincida.
-                        </p>
-                      )}
                     </div>
 
                     {error && <p className="text-[13px] text-red-500">{error}</p>}
