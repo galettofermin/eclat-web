@@ -4,6 +4,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useAdmin } from '@/hooks/useAdmin'
 import AdminImageUpload from '@/components/AdminImageUpload'
+import { AnimatedSection } from '@/components/AnimatedSection'
+import { AnimatedCards, AnimatedCard } from '@/components/AnimatedCards'
 
 const DIRECTOR_KEYS = ['direccion-fermin', 'direccion-constanza']
 
@@ -40,7 +42,7 @@ export default function ConocerPage() {
   return (
     <>
       <section className="phead">
-        <div className="wrap reveal">
+        <AnimatedSection className="wrap">
           <nav className="crumb">
             <Link href="/">Inicio</Link>&nbsp;/&nbsp;<b>Conocer ÉCLAT</b>
           </nav>
@@ -49,19 +51,19 @@ export default function ConocerPage() {
             ÉCLAT articula salud mental, educación y formación para construir respuestas frente a los
             desafíos contemporáneos, reconociendo la singularidad de cada trayectoria.
           </p>
-        </div>
+        </AnimatedSection>
       </section>
 
       {/* HISTORIA */}
       <section className="section">
         <div className="wrap">
           <div className="split">
-            <div className="reveal">
+            <AnimatedSection>
               <span className="kicker">Nuestra historia</span>
               <h2>De una experiencia compartida a una <em>institución</em></h2>
               <span className="grule"></span>
-            </div>
-            <div className="reveal">
+            </AnimatedSection>
+            <AnimatedSection delay={0.1}>
               <p>
                 ÉCLAT fue fundado el 9 de julio de 2022 en Oncativo, Córdoba, a partir de una
                 experiencia compartida en los campos de la salud mental y la educación.
@@ -77,7 +79,7 @@ export default function ConocerPage() {
                 equipo interdisciplinario de más de treinta profesionales comprometidos con prácticas
                 éticas y situadas.
               </p>
-            </div>
+            </AnimatedSection>
           </div>
         </div>
       </section>
@@ -86,7 +88,7 @@ export default function ConocerPage() {
       <section className="section section--tint">
         <div className="wrap">
           <div className="split">
-            <div className="reveal">
+            <AnimatedSection>
               <span className="kicker">Nuestra filosofía</span>
               <h2>No existen respuestas universales para situaciones <em>singulares</em></h2>
               <span className="grule"></span>
@@ -95,8 +97,8 @@ export default function ConocerPage() {
                 respuestas junto a las personas, las familias, los profesionales y las instituciones,
                 respetando la particularidad de cada situación.
               </p>
-            </div>
-            <div className="reveal">
+            </AnimatedSection>
+            <AnimatedSection delay={0.1}>
               <span className="kicker">La época actual</span>
               <h2 style={{ fontSize: 'clamp(22px,2.6vw,30px)' }}>
                 Alojar preguntas en tiempos de <em>transformación</em>
@@ -107,7 +109,7 @@ export default function ConocerPage() {
                 vez más complejos, y la salud mental ocupa un lugar creciente en la vida cotidiana.
                 Por eso construimos espacios capaces de alojar preguntas y generar articulaciones.
               </p>
-            </div>
+            </AnimatedSection>
           </div>
         </div>
       </section>
@@ -115,9 +117,11 @@ export default function ConocerPage() {
       {/* MISIÓN / VISIÓN */}
       <section className="section">
         <div className="wrap">
-          <span className="kicker reveal">Misión y visión</span>
-          <div className="mv reveal" style={{ marginTop: '22px' }}>
-            <div className="mv__card">
+          <AnimatedSection>
+            <span className="kicker">Misión y visión</span>
+          </AnimatedSection>
+          <AnimatedCards className="mv" style={{ marginTop: '22px' }}>
+            <AnimatedCard className="mv__card">
               <span className="k">Misión</span>
               <h3>Acompañar trayectorias singulares</h3>
               <p>
@@ -126,8 +130,8 @@ export default function ConocerPage() {
                 interdisciplinario, construyendo respuestas frente a los desafíos de la salud mental
                 y la educación.
               </p>
-            </div>
-            <div className="mv__card">
+            </AnimatedCard>
+            <AnimatedCard className="mv__card">
               <span className="k">Visión</span>
               <h3>Ser una institución de referencia</h3>
               <p>
@@ -135,8 +139,8 @@ export default function ConocerPage() {
                 formación, reconocida por la calidad de sus prácticas, su compromiso ético y su
                 capacidad de producir conocimiento y construir respuestas en cada época.
               </p>
-            </div>
-          </div>
+            </AnimatedCard>
+          </AnimatedCards>
         </div>
       </section>
 
@@ -144,12 +148,12 @@ export default function ConocerPage() {
       <section className="section section--tint">
         <div className="wrap">
           <div className="split">
-            <div className="reveal">
+            <AnimatedSection>
               <span className="kicker">Principios institucionales</span>
               <h2>Lo que sostiene cada <em>intervención</em></h2>
               <span className="grule"></span>
-            </div>
-            <div className="reveal">
+            </AnimatedSection>
+            <AnimatedSection delay={0.1}>
               <div className="mv__card" style={{ padding: '26px 28px' }}>
                 {[
                   ['Singularidad', 'Cada situación requiere una lectura propia.'],
@@ -163,7 +167,7 @@ export default function ConocerPage() {
                   </p>
                 ))}
               </div>
-            </div>
+            </AnimatedSection>
           </div>
         </div>
       </section>
@@ -171,17 +175,17 @@ export default function ConocerPage() {
       {/* DIRECCIÓN */}
       <section className="section">
         <div className="wrap">
-          <div className="pubs__head reveal" style={{ marginBottom: '40px' }}>
+          <AnimatedSection className="pubs__head" style={{ marginBottom: '40px' }}>
             <div>
               <span className="kicker">Dirección</span>
               <h2 style={{ fontSize: 'clamp(28px,3.6vw,44px)', marginTop: '10px' }}>
                 Quiénes conducen ÉCLAT
               </h2>
             </div>
-          </div>
-          <div className="dirs reveal">
+          </AnimatedSection>
+          <AnimatedCards className="dirs">
             {/* Fermín */}
-            <div className="dir">
+            <AnimatedCard className="dir">
               <AdminImageUpload
                 className="dir__photo"
                 src={dirImgs['direccion-fermin'] ?? null}
@@ -199,9 +203,9 @@ export default function ConocerPage() {
                 <div className="dir__role">Director General · Licenciado en Psicología</div>
                 <p className="dir__desc">Responsable de la orientación institucional y del área de salud mental.</p>
               </div>
-            </div>
+            </AnimatedCard>
             {/* Constanza */}
-            <div className="dir">
+            <AnimatedCard className="dir">
               <AdminImageUpload
                 className="dir__photo"
                 src={dirImgs['direccion-constanza'] ?? null}
@@ -219,14 +223,14 @@ export default function ConocerPage() {
                 <div className="dir__role">Directora del Área Educativa · Licenciada en Psicopedagogía</div>
                 <p className="dir__desc">Responsable de los procesos educativos, la inclusión escolar y la articulación institucional.</p>
               </div>
-            </div>
-          </div>
+            </AnimatedCard>
+          </AnimatedCards>
         </div>
       </section>
 
       {/* DIFERENCIAL */}
       <section className="diff">
-        <div className="wrap reveal">
+        <AnimatedSection className="wrap">
           <Image
             className="diff__mark"
             src="/LOGO.png"
@@ -243,7 +247,7 @@ export default function ConocerPage() {
               a situaciones complejas.
             </p>
           </div>
-        </div>
+        </AnimatedSection>
       </section>
 
       {/* CTA */}

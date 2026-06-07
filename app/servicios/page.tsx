@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useAdmin } from '@/hooks/useAdmin'
 import AdminImageUpload from '@/components/AdminImageUpload'
+import { AnimatedSection } from '@/components/AnimatedSection'
+import { AnimatedCards, AnimatedCard } from '@/components/AnimatedCards'
 
 const AREAS = [
   { name: 'Psicología',                   desc: 'Atención clínica de niños, adolescentes y adultos. Un espacio de escucha para alojar el malestar y construir, caso por caso, una salida posible.' },
@@ -62,7 +64,7 @@ export default function ServiciosPage() {
   return (
     <>
       <section className="phead">
-        <div className="wrap reveal">
+        <AnimatedSection className="wrap">
           <nav className="crumb">
             <Link href="/">Inicio</Link>&nbsp;/&nbsp;<b>Servicios</b>
           </nav>
@@ -71,15 +73,15 @@ export default function ServiciosPage() {
             ÉCLAT desarrolla intervenciones clínicas y educativas articulando distintas disciplinas.
             Cada situación requiere una lectura propia y cada trayectoria, un acompañamiento a su medida.
           </p>
-        </div>
+        </AnimatedSection>
       </section>
 
       <section className="section">
         <div className="wrap">
           {loadingImages && <Spinner />}
-          <div className="areas reveal">
+          <AnimatedCards className="areas">
             {AREAS.map((a) => (
-              <article key={a.name} className="area">
+              <AnimatedCard key={a.name} className="area">
                 <AdminImageUpload
                   className="area__photo"
                   src={images[a.name] ?? null}
@@ -108,9 +110,9 @@ export default function ServiciosPage() {
                     Solicitar entrevista →
                   </a>
                 </div>
-              </article>
+              </AnimatedCard>
             ))}
-          </div>
+          </AnimatedCards>
         </div>
       </section>
 

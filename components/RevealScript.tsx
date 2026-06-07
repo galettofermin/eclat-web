@@ -5,19 +5,8 @@ import { usePathname } from "next/navigation";
 export function RevealScript() {
   const pathname = usePathname();
 
-  // Re-run on every navigation: reveals + nav active
+  // Update nav active link on every navigation
   useEffect(() => {
-    const els = document.querySelectorAll(".reveal");
-    els.forEach(el => el.classList.remove("in"));
-    setTimeout(() => {
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach(e => {
-          if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
-        });
-      }, { threshold: 0.08 });
-      document.querySelectorAll(".reveal").forEach(el => io.observe(el));
-    }, 50);
-
     document.querySelectorAll(".nav__links a").forEach(a => {
       a.classList.remove("is-active");
       if (a.getAttribute("href") === pathname) a.classList.add("is-active");

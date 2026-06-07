@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { useAdmin } from '@/hooks/useAdmin'
 import { createClient } from '@/lib/supabase/client'
 import type { Article } from '@/lib/types'
+import { AnimatedSection } from '@/components/AnimatedSection'
+import { AnimatedCards, AnimatedCard } from '@/components/AnimatedCards'
 
 const CATEGORIES = [
   'Clínica', 'Infancia', 'Aprendizaje', 'Fonoaudiología',
@@ -99,13 +101,14 @@ export default function PublicacionesPage() {
     loadArticles()
   }
 
-  const setField = <K extends keyof EditForm>(k: K, v: EditForm[K]) =>
+  function setField<K extends keyof EditForm>(k: K, v: EditForm[K]) {
     setEditForm(f => ({ ...f, [k]: v }))
+  }
 
   return (
     <>
       <section className="phead">
-        <div className="wrap reveal">
+        <AnimatedSection className="wrap">
           <nav className="crumb"><Link href="/">Inicio</Link>&nbsp;/&nbsp;<b>Publicaciones</b></nav>
           <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
             <div>
@@ -125,7 +128,7 @@ export default function PublicacionesPage() {
               </Link>
             )}
           </div>
-        </div>
+        </AnimatedSection>
       </section>
 
       <section className="section">
@@ -133,14 +136,14 @@ export default function PublicacionesPage() {
           {loadingArticles ? (
             <Spinner />
           ) : articles.length === 0 ? (
-            <div className="reveal" style={{ textAlign: 'center', padding: '72px 24px', color: 'var(--ink-muted)' }}>
+            <AnimatedSection style={{ textAlign: 'center', padding: '72px 24px', color: 'var(--ink-muted)' }}>
               <p style={{ fontSize: 18, marginBottom: 8 }}>Próximamente.</p>
               <p style={{ fontSize: 15 }}>Estamos preparando los primeros artículos.</p>
-            </div>
+            </AnimatedSection>
           ) : (
-            <div className="writings reveal">
+            <AnimatedCards className="writings">
               {articles.map(a => (
-                <article key={a.id} className="writing" style={{ position: 'relative' }}>
+                <AnimatedCard key={a.id} className="writing" style={{ position: 'relative' }}>
                   {isAdmin && (
                     <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
                       <button
@@ -173,9 +176,9 @@ export default function PublicacionesPage() {
                       Leer →
                     </Link>
                   </span>
-                </article>
+                </AnimatedCard>
               ))}
-            </div>
+            </AnimatedCards>
           )}
         </div>
       </section>

@@ -1,5 +1,7 @@
 // app/formacion/page.tsx
 import type { Metadata } from "next";
+import { AnimatedSection } from "@/components/AnimatedSection";
+import { AnimatedCards, AnimatedCard } from "@/components/AnimatedCards";
 
 export const metadata: Metadata = {
   title: "Formación",
@@ -31,35 +33,39 @@ export default function FormacionPage() {
   return (
     <>
       <section className="phead">
-        <div className="wrap reveal">
+        <AnimatedSection className="wrap">
           <nav className="crumb"><a href="/">Inicio</a> &nbsp;/&nbsp; <b>Formación</b></nav>
           <h1>Cursos, seminarios y <em>trayectos formativos.</em></h1>
           <p className="phead__lede">La formación es uno de los pilares estratégicos de ÉCLAT. A través de cursos, seminarios, jornadas y trayectos buscamos compartir herramientas, experiencias y conocimientos vinculados a la salud mental, la educación y el trabajo interdisciplinario.</p>
-        </div>
+        </AnimatedSection>
       </section>
 
       <section className="section">
         <div className="wrap">
-          <span className="kicker reveal">Ejes temáticos</span>
-          <div className="filters reveal" style={{ marginTop: "18px" }}>
-            {EJES.map((e, i) => (
-              <span key={i} className="chip">{e}</span>
-            ))}
-          </div>
+          <AnimatedSection>
+            <span className="kicker">Ejes temáticos</span>
+            <AnimatedCards className="filters" style={{ marginTop: "18px" }}>
+              {EJES.map((e, i) => (
+                <AnimatedCard key={i}>
+                  <span className="chip">{e}</span>
+                </AnimatedCard>
+              ))}
+            </AnimatedCards>
+          </AnimatedSection>
         </div>
       </section>
 
       <section className="section section--tint">
         <div className="wrap">
-          <div className="pubs__head reveal" style={{ marginBottom: "40px" }}>
+          <AnimatedSection className="pubs__head" style={{ marginBottom: "40px" }}>
             <div>
               <span className="kicker">Agenda</span>
               <h2 style={{ fontSize: "clamp(28px,3.6vw,44px)", marginTop: "10px" }}>Próximas formaciones</h2>
             </div>
-          </div>
-          <div className="writings reveal">
+          </AnimatedSection>
+          <AnimatedCards className="writings">
             {AGENDA.map((a, i) => (
-              <article key={i} className="writing">
+              <AnimatedCard key={i} className="writing">
                 <span className="writing__tag">{a.tag}</span>
                 <h3>{a.title}</h3>
                 <p>{a.desc}</p>
@@ -67,9 +73,9 @@ export default function FormacionPage() {
                   <span>{a.meta}</span>
                   <b>Más info →</b>
                 </span>
-              </article>
+              </AnimatedCard>
             ))}
-          </div>
+          </AnimatedCards>
           <p style={{ marginTop: "28px", color: "var(--ink-muted)", fontSize: "14.5px" }}>
             Agenda en construcción — los títulos y modalidades son ejemplos. Escribinos para recibir el calendario actualizado de inscripciones.
           </p>
