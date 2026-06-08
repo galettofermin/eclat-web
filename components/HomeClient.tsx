@@ -22,12 +22,20 @@ const WRITINGS = [
   { tag: "Interdisciplina", title: "Construir lecturas compartidas entre disciplinas", desc: "Cuando distintos actores piensan juntos una misma situación." },
 ];
 
+interface Service {
+  name: string;
+  desc: string;
+  imagen_url?: string | null;
+}
+
 interface Props {
   heroTitle: string;
   heroLede: string;
+  services?: Service[];
 }
 
-export default function HomeClient({ heroTitle, heroLede }: Props) {
+export default function HomeClient({ heroTitle, heroLede, services }: Props) {
+  const svcList = services?.length ? services : SERVICES;
   const [active, setActive] = useState(0);
   const [direction, setDirection] = useState(1);
   const [isDragging, setIsDragging] = useState(false);
@@ -35,13 +43,13 @@ export default function HomeClient({ heroTitle, heroLede }: Props) {
 
   function go(n: number, dir = 1) {
     setDirection(dir);
-    setActive((n + SERVICES.length) % SERVICES.length);
+    setActive((n + svcList.length) % svcList.length);
   }
   function start() {
     stop();
     timerRef.current = setInterval(() => {
       setDirection(1);
-      setActive(i => (i + 1) % SERVICES.length);
+      setActive(i => (i + 1) % svcList.length);
     }, 3600);
   }
   function stop() {
@@ -92,18 +100,24 @@ export default function HomeClient({ heroTitle, heroLede }: Props) {
                       exit={{ opacity: 0, x: direction * -60 }}
                       transition={{ duration: 0.35, ease: [0.2, 0.7, 0.2, 1] }}
                     >
-                      <div className="rphoto" style={{ display: "flex", alignItems: "center", justifyContent: "center", fontSize: "13px", color: "var(--sage-deep)", fontWeight: 600 }}>
-                        Foto · {SERVICES[active].name}
+                      <div className="rphoto">
+                        {svcList[active].imagen_url ? (
+                          <img src={svcList[active].imagen_url!} alt={svcList[active].name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '14px' }} />
+                        ) : (
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', fontSize: '13px', color: 'var(--sage-deep)', fontWeight: 600 }}>
+                            Foto · {svcList[active].name}
+                          </div>
+                        )}
                       </div>
-                      <h3 className="rslide__name">{SERVICES[active].name}</h3>
-                      <p className="rslide__desc">{SERVICES[active].desc}</p>
+                      <h3 className="rslide__name">{svcList[active].name}</h3>
+                      <p className="rslide__desc">{svcList[active].desc}</p>
                     </motion.article>
                   </AnimatePresence>
                 </motion.div>
               </div>
               <div className="rfoot">
                 <div className="rdots">
-                  {SERVICES.map((_, idx) => (
+                  {svcList.map((_, idx) => (
                     <button
                       key={idx}
                       className={`rdot${idx === active ? " is-on" : ""}`}
@@ -116,7 +130,7 @@ export default function HomeClient({ heroTitle, heroLede }: Props) {
                 <button
                   type="button"
                   onClick={() => window.open(
-                    `https://wa.me/5493572441454?text=${encodeURIComponent(`Hola ÉCLAT, quisiera agendar un turno para ${SERVICES[active].name}.`)}`,
+                    `https://wa.me/5493572441454?text=${encodeURIComponent(`Hola ÉCLAT, quisiera agendar un turno para ${svcList[active].name}.`)}`,
                     '_blank'
                   )}
                   style={{ fontSize: 13, fontWeight: 600, background: 'var(--slate-900)', color: '#fff', padding: '8px 16px', borderRadius: 999, border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}
