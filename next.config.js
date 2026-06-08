@@ -11,8 +11,9 @@ const nextConfig = {
   },
   async redirects() {
     return [
-      { source: '/sobre-éclat', destination: '/conocer', permanent: true },
-      { source: '/sobre-eclat',      destination: '/conocer', permanent: true },
+      { source: '/sobre-éclat', destination: '/nosotros', permanent: true },
+      { source: '/sobre-eclat',      destination: '/nosotros', permanent: true },
+      { source: '/conocer',          destination: '/nosotros', permanent: true },
     ]
   },
   async headers() {

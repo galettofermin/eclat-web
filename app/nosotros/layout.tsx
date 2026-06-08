@@ -1,16 +1,16 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Conocer ÉCLAT',
+  title: 'Nosotros',
   description: 'Historia, filosofía, misión y equipo de dirección de ÉCLAT, centro de atención integral en Oncativo, Córdoba.',
-  alternates: { canonical: 'https://eclatcentro.com/conocer' },
+  alternates: { canonical: 'https://eclatcentro.com/nosotros' },
   openGraph: {
-    title: 'Conocer ÉCLAT · Centro de Atención Integral',
+    title: 'Nosotros · Centro de Atención Integral',
     description: 'Historia, filosofía, misión y equipo de ÉCLAT en Oncativo, Córdoba.',
-    url: 'https://eclatcentro.com/conocer',
+    url: 'https://eclatcentro.com/nosotros',
   },
 }
 
-export default function ConocerLayout({ children }: { children: React.ReactNode }) {
+export default function NosotrosLayout({ children }: { children: React.ReactNode }) {
   return children
 }

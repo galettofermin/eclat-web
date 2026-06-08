@@ -61,7 +61,7 @@ export default function HomeClient({ heroTitle, heroLede }: Props) {
             <p className="hero3__lede">{heroLede}</p>
             <div className="hero3__cta">
               <a className="btn btn--primary" href="https://wa.me/5493572441454?text=Hola%20%C3%89CLAT%2C%20quisiera%20solicitar%20una%20entrevista." target="_blank" rel="noopener">Solicitar entrevista</a>
-              <Link className="btn btn--ghost" href="/conocer" style={{ background: "rgba(255,255,255,.6)" }}>Conocer ÉCLAT</Link>
+              <Link className="btn btn--ghost" href="/nosotros" style={{ background: "rgba(255,255,255,.6)" }}>Conocer ÉCLAT</Link>
             </div>
           </AnimatedSection>
 
