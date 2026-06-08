@@ -64,7 +64,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
-              "@type": "MedicalOrganization",
+              "@type": ["MedicalBusiness", "LocalBusiness"],
               "name": "ÉCLAT Centro de Atención Integral",
               "alternateName": "ÉCLAT",
               "url": "https://eclatcentro.com",
@@ -74,11 +74,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               "foundingDate": "2022-07-09",
               "telephone": "+54-9-3572-44-1454",
               "email": "centrointegraleclat@gmail.com",
+              "priceRange": "$$",
+              "areaServed": ["Oncativo", "Córdoba", "Argentina"],
               "address": {
                 "@type": "PostalAddress",
                 "streetAddress": "Castelli 260",
                 "addressLocality": "Oncativo",
                 "addressRegion": "Córdoba",
+                "postalCode": "5986",
                 "addressCountry": "AR",
               },
               "geo": {
