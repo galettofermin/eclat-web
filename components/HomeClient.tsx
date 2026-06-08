@@ -40,8 +40,9 @@ interface Props {
 }
 
 export default function HomeClient({ heroTitle, heroLede, services }: Props) {
+  const normalize = (s: string) => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").trim();
   const svcList = SERVICES.map(s => {
-    const fromDB = services?.find(db => db.nombre === s.name);
+    const fromDB = services?.find(db => normalize(db.nombre) === normalize(s.name));
     return { ...s, imagen_url: fromDB?.imagen_url || null };
   });
   console.log('services from DB:', services);
