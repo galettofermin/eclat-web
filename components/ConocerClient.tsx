@@ -49,7 +49,7 @@ export default function ConocerClient({ heroTitle, heroLede }: Props) {
       <section className="phead">
         <AnimatedSection className="wrap">
           <nav className="crumb">
-            <Link href="/">Inicio</Link>&nbsp;/&nbsp;<b>Conocer ÉCLAT</b>
+            <Link href="/">Inicio</Link>&nbsp;/&nbsp;<b>Nosotros</b>
           </nav>
           <h1>{heroTitle}</h1>
           <p className="phead__lede">{heroLede}</p>

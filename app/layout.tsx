@@ -48,7 +48,7 @@ export const metadata: Metadata = {
 
 const NAV_LINKS = [
   { href: "/",              label: "Inicio" },
-  { href: "/conocer",       label: "Conocer" },
+  { href: "/conocer",       label: "Nosotros" },
   { href: "/servicios",     label: "Servicios" },
   { href: "/formacion",     label: "Formación" },
   { href: "/publicaciones", label: "Publicaciones" },
@@ -145,7 +145,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <ul>
                   {NAV_LINKS.map((l) => (
                     <li key={l.href}>
-                      <Link href={l.href}>{l.label === "Conocer" ? "Conocer ÉCLAT" : l.label}</Link>
+                      <Link href={l.href}>{l.label}</Link>
                     </li>
                   ))}
                 </ul>
