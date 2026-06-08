@@ -9,9 +9,23 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'nombre e imagen_url requeridos' }, { status: 400 })
   }
   const supabase = createAdminClient()
-  const { error } = await supabase
+  const { data: existing } = await supabase
     .from('servicios')
-    .upsert({ nombre, imagen_url }, { onConflict: 'nombre' })
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    .select('id')
+    .eq('nombre', nombre)
+    .single()
+
+  if (existing) {
+    const { error } = await supabase
+      .from('servicios')
+      .update({ imagen_url })
+      .eq('nombre', nombre)
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  } else {
+    const { error } = await supabase
+      .from('servicios')
+      .insert({ nombre, imagen_url })
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  }
   return NextResponse.json({ ok: true })
 }
