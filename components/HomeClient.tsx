@@ -28,25 +28,28 @@ const WRITINGS = [
   { tag: "Interdisciplina", title: "Construir lecturas compartidas entre disciplinas", desc: "Cuando distintos actores piensan juntos una misma situación." },
 ];
 
-interface DBServicio {
-  nombre: string;
-  imagen_url: string | null;
-}
-
 interface Props {
   heroTitle: string;
   heroLede: string;
-  services?: DBServicio[];
 }
 
-export default function HomeClient({ heroTitle, heroLede, services }: Props) {
-  const normalize = (s: string) => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").trim();
+export default function HomeClient({ heroTitle, heroLede }: Props) {
+  const [dbServices, setDbServices] = useState<{ nombre: string; imagen_url: string }[]>([]);
+
+  useEffect(() => {
+    fetch('/api/servicios-publico')
+      .then(r => r.json())
+      .then(data => setDbServices(data))
+      .catch(() => {});
+  }, []);
+
   const svcList = SERVICES.map(s => {
-    const fromDB = services?.find(db => normalize(db.nombre) === normalize(s.name));
+    const fromDB = dbServices.find(db =>
+      db.nombre.toLowerCase().trim() === s.name.toLowerCase().trim()
+    );
     return { ...s, imagen_url: fromDB?.imagen_url || null };
   });
-  console.log('services from DB:', services);
-  console.log('svcList merged:', svcList.map(s => ({ name: s.name, imagen_url: s.imagen_url })));
+
   const [active, setActive] = useState(0);
   const [direction, setDirection] = useState(1);
   const [isDragging, setIsDragging] = useState(false);
