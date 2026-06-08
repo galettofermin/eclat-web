@@ -142,24 +142,75 @@ export default function AdminDashboard() {
     nombre: string,
   ) => {
     const file = e.target.files?.[0]
-    if (!file) return
+    console.log('[upload] onChange fired — file:', file?.name, file?.size, file?.type)
+    if (!file) { console.log('[upload] no file, aborting'); return }
+
     setUploadingServicio(id)
+    setError('')
+
     const fd = new FormData()
     fd.append('file', file)
     fd.append('nombre', nombre)
-    const uploadRes = await fetch('/api/servicios/upload', { method: 'POST', body: fd })
-    const uploadData = await uploadRes.json()
-    if (!uploadRes.ok) {
-      setError(uploadData.error ?? 'Error al subir imagen')
+
+    console.log('[upload] POST /api/servicios/upload — nombre:', nombre)
+    let uploadRes: Response
+    try {
+      uploadRes = await fetch('/api/servicios/upload', { method: 'POST', body: fd })
+    } catch (err) {
+      console.error('[upload] network error on upload:', err)
+      setError(`Error de red al subir imagen: ${String(err)}`)
       setUploadingServicio(null)
       return
     }
-    await fetch('/api/admin/servicios', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre, imagen_url: uploadData.url }),
-    })
-    setServicios(prev => prev.map(s => s.id === id ? { ...s, imagen_url: uploadData.url } : s))
+
+    let uploadData: { url?: string; error?: string }
+    try {
+      uploadData = await uploadRes.json()
+    } catch (err) {
+      console.error('[upload] failed to parse upload response:', err)
+      setError(`Respuesta inválida del servidor (${uploadRes.status})`)
+      setUploadingServicio(null)
+      return
+    }
+    console.log('[upload] upload response:', uploadRes.status, uploadData)
+
+    if (!uploadRes.ok) {
+      const msg = uploadData.error ?? `Error al subir imagen (HTTP ${uploadRes.status})`
+      console.error('[upload] upload failed:', msg)
+      setError(msg)
+      setUploadingServicio(null)
+      return
+    }
+
+    console.log('[upload] image URL:', uploadData.url)
+    console.log('[upload] POST /api/admin/servicios — guardando URL en DB')
+    let dbRes: Response
+    try {
+      dbRes = await fetch('/api/admin/servicios', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre, imagen_url: uploadData.url }),
+      })
+    } catch (err) {
+      console.error('[upload] network error on DB update:', err)
+      setError(`Error de red al guardar en DB: ${String(err)}`)
+      setUploadingServicio(null)
+      return
+    }
+
+    const dbData = await dbRes.json().catch(() => ({}))
+    console.log('[upload] DB response:', dbRes.status, dbData)
+
+    if (!dbRes.ok) {
+      const msg = (dbData as { error?: string }).error ?? `Error al guardar en DB (HTTP ${dbRes.status})`
+      console.error('[upload] DB update failed:', msg)
+      setError(msg)
+      setUploadingServicio(null)
+      return
+    }
+
+    console.log('[upload] done! updating UI')
+    setServicios(prev => prev.map(s => s.id === id ? { ...s, imagen_url: uploadData.url! } : s))
     setUploadingServicio(null)
     if (fileRefs.current[id]) fileRefs.current[id]!.value = ''
   }
@@ -376,7 +427,12 @@ export default function AdminDashboard() {
                         onChange={e => uploadServicioImage(e, s.id, edit.nombre)}
                       />
                       <button
-                        onClick={() => fileRefs.current[s.id]?.click()}
+                        onClick={() => {
+                          const ref = fileRefs.current[s.id]
+                          console.log('[upload] button clicked — id:', s.id, 'ref:', ref)
+                          if (!ref) { setError('No se encontró el input de archivo (id: ' + s.id + ')'); return }
+                          ref.click()
+                        }}
                         disabled={uploadingServicio === s.id}
                         style={{ alignSelf: 'flex-start', fontSize: 12, fontWeight: 600, color: 'var(--sage-deep)', background: 'var(--sage-50)', border: 'none', padding: '5px 12px', borderRadius: 6, cursor: 'pointer' }}
                       >
