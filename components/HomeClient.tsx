@@ -25,10 +25,9 @@ const WRITINGS = [
 interface Props {
   heroTitle: string;
   heroLede: string;
-  quote: string;
 }
 
-export default function HomeClient({ heroTitle, heroLede, quote }: Props) {
+export default function HomeClient({ heroTitle, heroLede }: Props) {
   const [active, setActive] = useState(0);
   const [direction, setDirection] = useState(1);
   const [isDragging, setIsDragging] = useState(false);
@@ -187,13 +186,6 @@ export default function HomeClient({ heroTitle, heroLede, quote }: Props) {
         </div>
       </section>
 
-      {/* FRASE */}
-      <section className="quote3">
-        <AnimatedSection className="wrap">
-          <blockquote>"{quote}"</blockquote>
-          <cite>Nuestra filosofía</cite>
-        </AnimatedSection>
-      </section>
 
       {/* Contenido SEO indexable */}
       <section style={{ padding: '48px 0' }}>

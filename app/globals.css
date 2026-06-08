@@ -530,11 +530,6 @@ p { margin: 0; text-wrap: pretty; }
 .writing__meta { font-size: 13.5px; font-weight: 600; color: var(--sage-deep); margin-top: auto; }
 @media (max-width: 760px) { .writings { grid-template-columns: 1fr; } }
 
-/* ── Frase / quote ── */
-.quote3 { background: var(--sage); }
-.quote3 .wrap { padding-block: clamp(56px,8vw,100px); text-align: center; }
-.quote3 blockquote { margin: 0 auto; max-width: 26ch; font-size: clamp(26px,3.6vw,44px); font-weight: 500; line-height: 1.2; letter-spacing: -0.03em; color: var(--slate-900); }
-.quote3 cite { display: block; margin-top: 24px; font-style: normal; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--slate); font-weight: 700; }
 
 /* ── Contacto ── */
 .contact { display: grid; grid-template-columns: .9fr 1.1fr; gap: clamp(32px,5vw,64px); align-items: start; }
