@@ -51,8 +51,6 @@ export default function HomeClient({ heroTitle, heroLede, quote }: Props) {
 
   useEffect(() => { start(); return stop; }, []);
 
-  const pad = (n: number) => String(n + 1).padStart(2, "0");
-
   return (
     <>
       {/* HERO */}
@@ -105,7 +103,6 @@ export default function HomeClient({ heroTitle, heroLede, quote }: Props) {
                 </motion.div>
               </div>
               <div className="rfoot">
-                <span className="rcounter">{pad(active)} / {pad(SERVICES.length - 1)}</span>
                 <div className="rdots">
                   {SERVICES.map((_, idx) => (
                     <button
@@ -117,6 +114,16 @@ export default function HomeClient({ heroTitle, heroLede, quote }: Props) {
                     />
                   ))}
                 </div>
+                <button
+                  type="button"
+                  onClick={() => window.open(
+                    `https://wa.me/5493572441454?text=${encodeURIComponent(`Hola ÉCLAT, quisiera agendar un turno para ${SERVICES[active].name}.`)}`,
+                    '_blank'
+                  )}
+                  style={{ fontSize: 13, fontWeight: 600, background: 'var(--slate-900)', color: '#fff', padding: '8px 16px', borderRadius: 999, border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                >
+                  Agendar turno →
+                </button>
               </div>
             </aside>
           </AnimatedSection>

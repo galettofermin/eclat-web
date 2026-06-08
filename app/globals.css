@@ -469,7 +469,6 @@ p { margin: 0; text-wrap: pretty; }
 .rslide__name { margin: 14px 0 0; font-size: clamp(23px,2.5vw,29px); font-weight: 600; letter-spacing: -0.02em; color: var(--slate-900); line-height: 1.08; }
 .rslide__desc { margin: 9px 0 0; font-size: 15px; line-height: 1.5; color: var(--ink-muted); max-width: 40ch; }
 .rfoot { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 14px 24px 18px; border-top: 1px solid var(--line); }
-.rcounter { font-variant-numeric: tabular-nums; font-size: 12.5px; font-weight: 600; letter-spacing: .1em; color: var(--ink-muted); }
 .rdots { display: flex; gap: 7px; }
 .rdot { width: 7px; height: 7px; border-radius: 50%; background: var(--line-strong); border: 0; padding: 0; cursor: pointer; transition: background .3s ease, transform .3s ease; }
 .rdot.is-on { background: var(--sage-deep); transform: scale(1.35); }
