@@ -17,6 +17,7 @@ export default function ArticleForm({ article }: { article?: Article }) {
 
   const [form, setForm] = useState({
     title:     article?.title     ?? '',
+    subtitle:  article?.subtitle  ?? '',
     category:  article?.category  ?? 'Clínica',
     excerpt:   article?.excerpt   ?? '',
     content:   article?.content   ?? '',
@@ -83,6 +84,17 @@ export default function ArticleForm({ article }: { article?: Article }) {
           onChange={(e) => set('title', e.target.value)}
           className="w-full px-4 py-3 rounded-xl border border-black/10 text-[15px] focus:outline-none focus:border-[#2F7D6B] transition-colors"
           placeholder="Título del escrito"
+        />
+      </div>
+
+      <div>
+        <label className="block text-[13px] font-medium text-[#0A0A0A] mb-1.5">Subtítulo</label>
+        <input
+          type="text"
+          value={form.subtitle}
+          onChange={(e) => set('subtitle', e.target.value)}
+          className="w-full px-4 py-3 rounded-xl border border-black/10 text-[15px] focus:outline-none focus:border-[#2F7D6B] transition-colors"
+          placeholder="Una línea que amplía el título"
         />
       </div>
 

@@ -1,6 +1,7 @@
 export interface Article {
   id: string
   title: string
+  subtitle: string
   category: string
   excerpt: string
   content: string
