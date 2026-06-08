@@ -18,7 +18,7 @@ export default async function HomePage() {
   const supabase = createClient()
   const [content, { data: serviciosData }] = await Promise.all([
     getSiteContent(Object.keys(DEFAULTS)),
-    supabase.from('servicios').select('nombre, descripcion, imagen_url').order('orden'),
+    supabase.from('servicios').select('nombre, imagen_url').order('orden'),
   ])
   const get = (key: keyof typeof DEFAULTS) => content[key] ?? DEFAULTS[key]
   const services = (serviciosData ?? []).map(s => ({

@@ -44,6 +44,8 @@ export default function HomeClient({ heroTitle, heroLede, services }: Props) {
     const fromDB = services?.find(db => db.nombre === s.name);
     return { ...s, imagen_url: fromDB?.imagen_url || null };
   });
+  console.log('services from DB:', services);
+  console.log('svcList merged:', svcList.map(s => ({ name: s.name, imagen_url: s.imagen_url })));
   const [active, setActive] = useState(0);
   const [direction, setDirection] = useState(1);
   const [isDragging, setIsDragging] = useState(false);
