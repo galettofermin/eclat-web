@@ -22,8 +22,7 @@ export default async function HomePage() {
   ])
   const get = (key: keyof typeof DEFAULTS) => content[key] ?? DEFAULTS[key]
   const services = (serviciosData ?? []).map(s => ({
-    name: s.nombre as string,
-    desc: (s.descripcion ?? '') as string,
+    nombre: s.nombre as string,
     imagen_url: (s.imagen_url ?? null) as string | null,
   }))
   return (

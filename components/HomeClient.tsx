@@ -28,14 +28,22 @@ const WRITINGS = [
   { tag: "Interdisciplina", title: "Construir lecturas compartidas entre disciplinas", desc: "Cuando distintos actores piensan juntos una misma situación." },
 ];
 
+interface DBServicio {
+  nombre: string;
+  imagen_url: string | null;
+}
+
 interface Props {
   heroTitle: string;
   heroLede: string;
-  services?: Service[];
+  services?: DBServicio[];
 }
 
 export default function HomeClient({ heroTitle, heroLede, services }: Props) {
-  const svcList = services?.length ? services : SERVICES;
+  const svcList = SERVICES.map(s => {
+    const fromDB = services?.find(db => db.nombre === s.name);
+    return { ...s, imagen_url: fromDB?.imagen_url || null };
+  });
   const [active, setActive] = useState(0);
   const [direction, setDirection] = useState(1);
   const [isDragging, setIsDragging] = useState(false);
