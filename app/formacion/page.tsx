@@ -2,6 +2,9 @@
 import type { Metadata } from "next";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { AnimatedCards, AnimatedCard } from "@/components/AnimatedCards";
+import { getSiteContent } from "@/lib/siteContent";
+
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: "Formación",
@@ -29,14 +32,24 @@ const AGENDA = [
   { tag: "Orientación a familias", title: "Acompañar la crianza", desc: "Encuentros para pensar los desafíos cotidianos junto a las familias.", meta: "Virtual" },
 ];
 
-export default function FormacionPage() {
+const DEFAULTS = {
+  'formacion.hero.title': 'Cursos, seminarios y trayectos formativos.',
+  'formacion.hero.lede': 'La formación es uno de los pilares estratégicos de ÉCLAT. A través de cursos, seminarios, jornadas y trayectos buscamos compartir herramientas, experiencias y conocimientos vinculados a la salud mental, la educación y el trabajo interdisciplinario.',
+}
+
+export default async function FormacionPage() {
+  const content = await getSiteContent(Object.keys(DEFAULTS))
+  const get = (key: keyof typeof DEFAULTS) => content[key] ?? DEFAULTS[key]
+  const heroTitle = get('formacion.hero.title')
+  const heroLede = get('formacion.hero.lede')
+
   return (
     <>
       <section className="phead">
         <AnimatedSection className="wrap">
           <nav className="crumb"><a href="/">Inicio</a> &nbsp;/&nbsp; <b>Formación</b></nav>
-          <h1>Cursos, seminarios y <em>trayectos formativos.</em></h1>
-          <p className="phead__lede">La formación es uno de los pilares estratégicos de ÉCLAT. A través de cursos, seminarios, jornadas y trayectos buscamos compartir herramientas, experiencias y conocimientos vinculados a la salud mental, la educación y el trabajo interdisciplinario.</p>
+          <h1>{heroTitle}</h1>
+          <p className="phead__lede">{heroLede}</p>
         </AnimatedSection>
       </section>
 
