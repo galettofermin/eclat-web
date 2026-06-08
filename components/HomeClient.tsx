@@ -5,7 +5,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { AnimatedCards, AnimatedCard } from "@/components/AnimatedCards";
 
-const SERVICES = [
+interface Service {
+  name: string;
+  desc: string;
+  imagen_url?: string | null;
+}
+
+const SERVICES: Service[] = [
   { name: "Psicología", desc: "Atención clínica de niños, adolescentes y adultos desde una escucha singular." },
   { name: "Psicopedagogía", desc: "Acompañamiento de los procesos de aprendizaje y la trayectoria escolar." },
   { name: "Fonoaudiología", desc: "Lenguaje, voz y comunicación en cada etapa del desarrollo." },
@@ -21,12 +27,6 @@ const WRITINGS = [
   { tag: "Salud mental infantil", title: "El malestar en la infancia y sus tiempos", desc: "Una lectura de los síntomas que no se apura por clasificar." },
   { tag: "Interdisciplina", title: "Construir lecturas compartidas entre disciplinas", desc: "Cuando distintos actores piensan juntos una misma situación." },
 ];
-
-interface Service {
-  name: string;
-  desc: string;
-  imagen_url?: string | null;
-}
 
 interface Props {
   heroTitle: string;
