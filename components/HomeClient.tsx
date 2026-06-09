@@ -165,15 +165,58 @@ export default function HomeClient({ heroTitle, heroLede }: Props) {
       </section>
 
       {/* PILARES */}
-      <FadeIn direction="up">
-        <section className="strip">
-          <div className="wrap">
-            <span><b>Salud</b> — atención clínica e interdisciplinaria</span>
-            <span><b>Educación</b> — trayectorias educativas e inclusión escolar</span>
-            <span><b>Formación</b> — cursos, seminarios y actualización profesional</span>
-          </div>
-        </section>
-      </FadeIn>
+      <section style={{ background: 'var(--sage-50)', borderBlock: '1px solid var(--line)', padding: 'clamp(40px,6vw,72px) 0' }}>
+        <div className="wrap">
+          <StaggerList className="pilares-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '24px' }}>
+            {[
+              {
+                icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>,
+                title: "Salud",
+                desc: "Atención clínica e interdisciplinaria"
+              },
+              {
+                icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>,
+                title: "Educación",
+                desc: "Trayectorias educativas e inclusión escolar"
+              },
+              {
+                icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>,
+                title: "Formación",
+                desc: "Cursos, seminarios y actualización profesional"
+              }
+            ].map((p, i) => (
+              <StaggerItem key={i}>
+                <div style={{
+                  background: 'var(--white)',
+                  border: '1px solid var(--line)',
+                  borderRadius: '18px',
+                  padding: 'clamp(24px,3vw,36px)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '14px',
+                  transition: 'transform .25s ease, box-shadow .25s ease',
+                }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 16px 40px -20px rgba(41,51,47,.25)'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'none'; (e.currentTarget as HTMLElement).style.boxShadow = 'none'; }}
+                >
+                  <div style={{
+                    width: '52px', height: '52px', borderRadius: '14px',
+                    background: 'var(--sage-50)', border: '1px solid var(--line)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: 'var(--sage-deep)'
+                  }}>
+                    {p.icon}
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '20px', fontWeight: 700, color: 'var(--slate-900)', letterSpacing: '-0.02em' }}>{p.title}</div>
+                    <div style={{ fontSize: '15px', color: 'var(--ink-muted)', marginTop: '4px', lineHeight: 1.5 }}>{p.desc}</div>
+                  </div>
+                </div>
+              </StaggerItem>
+            ))}
+          </StaggerList>
+        </div>
+      </section>
 
       {/* SOBRE ÉCLAT */}
       <section className="about">

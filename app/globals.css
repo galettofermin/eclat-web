@@ -475,11 +475,6 @@ p { margin: 0; text-wrap: pretty; }
 @media (prefers-reduced-motion: reduce) { .rslide { transition: opacity .4s ease; transform: none; } }
 
 /* ── Pilares ── */
-.strip { background: var(--slate-900); color: #fff; }
-.strip .wrap { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px 40px; padding-block: 22px; font-size: 14.5px; }
-.strip span { display: inline-flex; align-items: center; gap: 10px; color: #C9D6D0; }
-.strip span b { color: #fff; font-weight: 600; }
-.strip span::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--sage); }
 
 /* ── Sobre ÉCLAT ── */
 .about { padding-block: clamp(60px,8vw,108px); }
@@ -721,20 +716,7 @@ p { margin: 0; text-wrap: pretty; }
     right: 16px;
   }
 
-  /* Strip pilares — cada uno en su línea, alineados */
-  .strip .wrap {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-    padding-inline: 24px;
-    padding-block: 20px;
-  }
-  .strip span {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
+  .pilares-grid { grid-template-columns: 1fr !important; }
 }
 
 /* ── Admin: photo overlay ── */
