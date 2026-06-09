@@ -81,7 +81,10 @@ export default function HomeClient({ heroTitle, heroLede }: Props) {
           <div className="hero3__text">
             <FadeIn direction="up" delay={0}>
               <span className="kicker">Centro de atención integral · Oncativo, Córdoba</span>
-              <h1>{heroTitle}</h1>
+              <h1 style={{ margin: '24px 0 0', fontSize: 'clamp(38px,4.6vw,64px)', fontWeight: 600, letterSpacing: '-0.025em', lineHeight: 1.08, color: 'var(--slate-900)' }}>
+                Salud mental, educación y acompañamiento{' '}
+                <em style={{ fontStyle: 'italic', fontWeight: 500, color: 'var(--sage-deep)' }}>interdisciplinario.</em>
+              </h1>
             </FadeIn>
             <FadeIn direction="up" delay={0.1}>
               <p className="hero3__lede">{heroLede}</p>
