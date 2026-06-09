@@ -4,6 +4,7 @@ import { Cormorant_Garamond } from "next/font/google";
 import Link from "next/link";
 import AdminBar from "@/components/AdminBar";
 import { RevealScript } from "@/components/RevealScript";
+import { ProgressBar } from "@/components/ProgressBar";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -104,6 +105,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
+        <ProgressBar />
         <div className="pageload"><i></i></div>
 
         {/* Navbar */}

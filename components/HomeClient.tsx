@@ -167,7 +167,7 @@ export default function HomeClient({ heroTitle, heroLede }: Props) {
       {/* PILARES */}
       <section style={{ background: 'var(--sage-50)', borderBlock: '1px solid var(--line)', padding: 'clamp(28px,4vw,48px) 0' }}>
         <div className="wrap">
-          <div className="pilares-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '16px' }}>
+          <div className="pilares-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '16px', alignItems: 'stretch' }}>
             {[
               {
                 icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>,
@@ -210,6 +210,7 @@ export default function HomeClient({ heroTitle, heroLede }: Props) {
                       gap: '16px',
                       overflow: 'hidden',
                       cursor: 'pointer',
+                      height: '100%',
                     }}
                     whileHover="hover"
                     initial="rest"
