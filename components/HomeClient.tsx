@@ -165,56 +165,97 @@ export default function HomeClient({ heroTitle, heroLede }: Props) {
       </section>
 
       {/* PILARES */}
-      <section style={{ background: 'var(--sage-50)', borderBlock: '1px solid var(--line)', padding: 'clamp(40px,6vw,72px) 0' }}>
+      <section style={{ background: 'var(--sage-50)', borderBlock: '1px solid var(--line)', padding: 'clamp(28px,4vw,48px) 0' }}>
         <div className="wrap">
-          <StaggerList className="pilares-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '24px' }}>
+          <div className="pilares-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '16px' }}>
             {[
               {
-                icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>,
+                icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>,
                 title: "Salud",
-                desc: "Atención clínica e interdisciplinaria"
+                desc: "Atención clínica e interdisciplinaria",
+                href: "/servicios",
+                gradient: "linear-gradient(135deg, rgba(198,224,214,0.6) 0%, rgba(255,255,255,0) 60%)"
               },
               {
-                icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>,
+                icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>,
                 title: "Educación",
-                desc: "Trayectorias educativas e inclusión escolar"
+                desc: "Trayectorias educativas e inclusión escolar",
+                href: "/servicios",
+                gradient: "linear-gradient(135deg, rgba(198,224,214,0.6) 0%, rgba(255,255,255,0) 60%)"
               },
               {
-                icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>,
+                icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>,
                 title: "Formación",
-                desc: "Cursos, seminarios y actualización profesional"
+                desc: "Cursos, seminarios y actualización profesional",
+                href: "/formacion",
+                gradient: "linear-gradient(135deg, rgba(198,224,214,0.6) 0%, rgba(255,255,255,0) 60%)"
               }
             ].map((p, i) => (
-              <StaggerItem key={i}>
-                <div style={{
-                  background: 'var(--white)',
-                  border: '1px solid var(--line)',
-                  borderRadius: '18px',
-                  padding: 'clamp(24px,3vw,36px)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '14px',
-                  transition: 'transform .25s ease, box-shadow .25s ease',
-                }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 16px 40px -20px rgba(41,51,47,.25)'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'none'; (e.currentTarget as HTMLElement).style.boxShadow = 'none'; }}
-                >
-                  <div style={{
-                    width: '52px', height: '52px', borderRadius: '14px',
-                    background: 'var(--sage-50)', border: '1px solid var(--line)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    color: 'var(--sage-deep)'
-                  }}>
-                    {p.icon}
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '20px', fontWeight: 700, color: 'var(--slate-900)', letterSpacing: '-0.02em' }}>{p.title}</div>
-                    <div style={{ fontSize: '15px', color: 'var(--ink-muted)', marginTop: '4px', lineHeight: 1.5 }}>{p.desc}</div>
-                  </div>
-                </div>
-              </StaggerItem>
+              <motion.div key={i}
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-30px" }}
+                transition={{ duration: 0.55, ease: [0.2, 0.7, 0.2, 1], delay: i * 0.08 }}
+              >
+                <Link href={p.href} style={{ textDecoration: 'none' }}>
+                  <motion.div
+                    style={{
+                      position: 'relative',
+                      background: 'var(--white)',
+                      border: '1px solid var(--line)',
+                      borderRadius: '16px',
+                      padding: '22px 24px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '16px',
+                      overflow: 'hidden',
+                      cursor: 'pointer',
+                    }}
+                    whileHover="hover"
+                    initial="rest"
+                    animate="rest"
+                  >
+                    <motion.div
+                      variants={{ rest: { opacity: 0 }, hover: { opacity: 1 } }}
+                      transition={{ duration: 0.3 }}
+                      style={{
+                        position: 'absolute', inset: 0,
+                        background: p.gradient,
+                        pointerEvents: 'none',
+                        borderRadius: '16px',
+                      }}
+                    />
+                    <motion.div
+                      variants={{
+                        rest: { scale: 1, background: 'var(--sage-50)' },
+                        hover: { scale: 1.08, background: 'var(--sage)' }
+                      }}
+                      transition={{ duration: 0.25 }}
+                      style={{
+                        width: '44px', height: '44px', borderRadius: '12px',
+                        border: '1px solid var(--line)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        color: 'var(--sage-deep)', flexShrink: 0, position: 'relative', zIndex: 1
+                      }}
+                    >
+                      {p.icon}
+                    </motion.div>
+                    <div style={{ position: 'relative', zIndex: 1 }}>
+                      <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--slate-900)', letterSpacing: '-0.01em' }}>{p.title}</div>
+                      <div style={{ fontSize: '13.5px', color: 'var(--ink-muted)', marginTop: '2px', lineHeight: 1.4 }}>{p.desc}</div>
+                    </div>
+                    <motion.div
+                      variants={{ rest: { opacity: 0, x: -4 }, hover: { opacity: 1, x: 0 } }}
+                      transition={{ duration: 0.2 }}
+                      style={{ marginLeft: 'auto', color: 'var(--sage-deep)', fontSize: '16px', flexShrink: 0, position: 'relative', zIndex: 1 }}
+                    >
+                      →
+                    </motion.div>
+                  </motion.div>
+                </Link>
+              </motion.div>
             ))}
-          </StaggerList>
+          </div>
         </div>
       </section>
 
