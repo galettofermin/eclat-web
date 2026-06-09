@@ -4,8 +4,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useAdmin } from '@/hooks/useAdmin'
 import AdminImageUpload from '@/components/AdminImageUpload'
-import { AnimatedSection } from '@/components/AnimatedSection'
-import { AnimatedCards, AnimatedCard } from '@/components/AnimatedCards'
+import { AnimatedSection, FadeIn } from '@/components/AnimatedSection'
+import { StaggerList, StaggerItem } from '@/components/StaggerList'
+import { HoverCard } from '@/components/HoverCard'
 
 const DIRECTOR_KEYS = ['direccion-fermin', 'direccion-constanza']
 
@@ -60,16 +61,16 @@ export default function ConocerClient({ heroTitle, heroLede }: Props) {
       <section className="section">
         <div className="wrap">
           <div className="split">
-            <AnimatedSection>
+            <FadeIn direction="right">
               <span className="kicker">Nuestra historia</span>
               <h2>De una experiencia compartida a una <em>institución</em></h2>
               <span className="grule"></span>
-            </AnimatedSection>
-            <AnimatedSection delay={0.1}>
+            </FadeIn>
+            <FadeIn direction="left" delay={0.1}>
               <p>ÉCLAT fue fundado el 9 de julio de 2022 en Oncativo, Córdoba, a partir de una experiencia compartida en los campos de la salud mental y la educación.</p>
               <p>A lo largo de años de práctica observamos que muchas situaciones que atravesaban niños, adolescentes, familias e instituciones no podían comprenderse de manera aislada: lo que aparecía en la escuela solía vincularse con aspectos subjetivos, familiares y sociales, y muchos padecimientos de la salud mental encontraban expresión en lo educativo.</p>
               <p>ÉCLAT surge del deseo de crear un espacio capaz de articular esos campos. Hoy somos un equipo interdisciplinario de más de treinta profesionales comprometidos con prácticas éticas y situadas.</p>
-            </AnimatedSection>
+            </FadeIn>
           </div>
         </div>
       </section>
@@ -78,17 +79,17 @@ export default function ConocerClient({ heroTitle, heroLede }: Props) {
       <section className="section section--tint">
         <div className="wrap">
           <div className="split">
-            <AnimatedSection>
+            <FadeIn direction="right">
               <span className="kicker">Nuestra filosofía</span>
               <h2>No existen respuestas universales para situaciones <em>singulares</em></h2>
               <span className="grule"></span>
               <p style={{ marginTop: '18px' }}>Nuestro trabajo no consiste en aplicar soluciones estandarizadas, sino en construir respuestas junto a las personas, las familias, los profesionales y las instituciones, respetando la particularidad de cada situación.</p>
-            </AnimatedSection>
-            <AnimatedSection delay={0.1}>
+            </FadeIn>
+            <FadeIn direction="left" delay={0.1}>
               <span className="kicker">La época actual</span>
               <h2 style={{ fontSize: 'clamp(22px,2.6vw,30px)' }}>Alojar preguntas en tiempos de <em>transformación</em></h2>
               <p style={{ marginTop: '16px' }}>Vivimos profundas transformaciones en los modos de aprender, vincularse y habitar las instituciones. Las escuelas, las familias y los profesionales enfrentan desafíos cada vez más complejos, y la salud mental ocupa un lugar creciente en la vida cotidiana. Por eso construimos espacios capaces de alojar preguntas y generar articulaciones.</p>
-            </AnimatedSection>
+            </FadeIn>
           </div>
         </div>
       </section>
@@ -99,18 +100,22 @@ export default function ConocerClient({ heroTitle, heroLede }: Props) {
           <AnimatedSection>
             <span className="kicker">Misión y visión</span>
           </AnimatedSection>
-          <AnimatedCards className="mv" style={{ marginTop: '22px' }}>
-            <AnimatedCard className="mv__card">
-              <span className="k">Misión</span>
-              <h3>Acompañar trayectorias singulares</h3>
-              <p>Acompañar a personas, familias, profesionales e instituciones mediante prácticas clínicas, educativas y formativas orientadas por la singularidad y el trabajo interdisciplinario, construyendo respuestas frente a los desafíos de la salud mental y la educación.</p>
-            </AnimatedCard>
-            <AnimatedCard className="mv__card">
-              <span className="k">Visión</span>
-              <h3>Ser una institución de referencia</h3>
-              <p>Consolidar a ÉCLAT como una institución de referencia en salud mental, educación y formación, reconocida por la calidad de sus prácticas, su compromiso ético y su capacidad de producir conocimiento y construir respuestas en cada época.</p>
-            </AnimatedCard>
-          </AnimatedCards>
+          <StaggerList className="mv" style={{ marginTop: '22px' }}>
+            <StaggerItem>
+              <HoverCard className="mv__card">
+                <span className="k">Misión</span>
+                <h3>Acompañar trayectorias singulares</h3>
+                <p>Acompañar a personas, familias, profesionales e instituciones mediante prácticas clínicas, educativas y formativas orientadas por la singularidad y el trabajo interdisciplinario, construyendo respuestas frente a los desafíos de la salud mental y la educación.</p>
+              </HoverCard>
+            </StaggerItem>
+            <StaggerItem>
+              <HoverCard className="mv__card">
+                <span className="k">Visión</span>
+                <h3>Ser una institución de referencia</h3>
+                <p>Consolidar a ÉCLAT como una institución de referencia en salud mental, educación y formación, reconocida por la calidad de sus prácticas, su compromiso ético y su capacidad de producir conocimiento y construir respuestas en cada época.</p>
+              </HoverCard>
+            </StaggerItem>
+          </StaggerList>
         </div>
       </section>
 
@@ -118,12 +123,12 @@ export default function ConocerClient({ heroTitle, heroLede }: Props) {
       <section className="section section--tint">
         <div className="wrap">
           <div className="split">
-            <AnimatedSection>
+            <FadeIn direction="right">
               <span className="kicker">Principios institucionales</span>
               <h2>Lo que sostiene cada <em>intervención</em></h2>
               <span className="grule"></span>
-            </AnimatedSection>
-            <AnimatedSection delay={0.1}>
+            </FadeIn>
+            <FadeIn direction="left" delay={0.1}>
               <div className="mv__card" style={{ padding: '26px 28px' }}>
                 {[
                   ['Singularidad', 'Cada situación requiere una lectura propia.'],
@@ -137,7 +142,7 @@ export default function ConocerClient({ heroTitle, heroLede }: Props) {
                   </p>
                 ))}
               </div>
-            </AnimatedSection>
+            </FadeIn>
           </div>
         </div>
       </section>
@@ -151,42 +156,46 @@ export default function ConocerClient({ heroTitle, heroLede }: Props) {
               <h2 style={{ fontSize: 'clamp(28px,3.6vw,44px)', marginTop: '10px' }}>Quiénes conducen ÉCLAT</h2>
             </div>
           </AnimatedSection>
-          <AnimatedCards className="dirs">
-            <AnimatedCard className="dir">
-              <AdminImageUpload
-                className="dir__photo"
-                src={dirImgs['direccion-fermin'] ?? null}
-                bucket="servicios"
-                path="direccion-fermin.jpg"
-                isAdmin={isAdmin}
-                onUpdate={url => saveImg('direccion-fermin', url)}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', color: 'var(--sage-deep)', fontSize: 13, fontWeight: 600 }}>Foto</div>
-              </AdminImageUpload>
-              <div>
-                <div className="dir__name">Lic. Fermín Galetto</div>
-                <div className="dir__role">Director General · Licenciado en Psicología</div>
-                <p className="dir__desc">Responsable de la orientación institucional y del área de salud mental.</p>
-              </div>
-            </AnimatedCard>
-            <AnimatedCard className="dir">
-              <AdminImageUpload
-                className="dir__photo"
-                src={dirImgs['direccion-constanza'] ?? null}
-                bucket="servicios"
-                path="direccion-constanza.jpg"
-                isAdmin={isAdmin}
-                onUpdate={url => saveImg('direccion-constanza', url)}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', color: 'var(--sage-deep)', fontSize: 13, fontWeight: 600 }}>Foto</div>
-              </AdminImageUpload>
-              <div>
-                <div className="dir__name">Lic. Constanza Giraudo</div>
-                <div className="dir__role">Directora del Área Educativa · Licenciada en Psicopedagogía</div>
-                <p className="dir__desc">Responsable de los procesos educativos, la inclusión escolar y la articulación institucional.</p>
-              </div>
-            </AnimatedCard>
-          </AnimatedCards>
+          <StaggerList className="dirs">
+            <StaggerItem>
+              <HoverCard className="dir">
+                <AdminImageUpload
+                  className="dir__photo"
+                  src={dirImgs['direccion-fermin'] ?? null}
+                  bucket="servicios"
+                  path="direccion-fermin.jpg"
+                  isAdmin={isAdmin}
+                  onUpdate={url => saveImg('direccion-fermin', url)}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', color: 'var(--sage-deep)', fontSize: 13, fontWeight: 600 }}>Foto</div>
+                </AdminImageUpload>
+                <div>
+                  <div className="dir__name">Lic. Fermín Galetto</div>
+                  <div className="dir__role">Director General · Licenciado en Psicología</div>
+                  <p className="dir__desc">Responsable de la orientación institucional y del área de salud mental.</p>
+                </div>
+              </HoverCard>
+            </StaggerItem>
+            <StaggerItem>
+              <HoverCard className="dir">
+                <AdminImageUpload
+                  className="dir__photo"
+                  src={dirImgs['direccion-constanza'] ?? null}
+                  bucket="servicios"
+                  path="direccion-constanza.jpg"
+                  isAdmin={isAdmin}
+                  onUpdate={url => saveImg('direccion-constanza', url)}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', color: 'var(--sage-deep)', fontSize: 13, fontWeight: 600 }}>Foto</div>
+                </AdminImageUpload>
+                <div>
+                  <div className="dir__name">Lic. Constanza Giraudo</div>
+                  <div className="dir__role">Directora del Área Educativa · Licenciada en Psicopedagogía</div>
+                  <p className="dir__desc">Responsable de los procesos educativos, la inclusión escolar y la articulación institucional.</p>
+                </div>
+              </HoverCard>
+            </StaggerItem>
+          </StaggerList>
         </div>
       </section>
 

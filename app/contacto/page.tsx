@@ -1,7 +1,7 @@
 // app/contacto/page.tsx
 "use client";
 import { FormEvent } from "react";
-import { AnimatedSection } from "@/components/AnimatedSection";
+import { FadeIn } from "@/components/AnimatedSection";
 
 const MOTIVOS = [
   "Solicitar una entrevista", "Psicología", "Psicopedagogía", "Fonoaudiología",
@@ -37,7 +37,7 @@ export default function ContactoPage() {
         <div className="wrap">
           <div className="contact">
             {/* Datos de contacto */}
-            <AnimatedSection className="cinfo">
+            <FadeIn direction="right" className="cinfo">
               <div className="cinfo__row">
                 <div className="k">WhatsApp</div>
                 <div className="v"><a href="https://wa.me/5493572441454?text=Hola%20%C3%89CLAT%2C%20quisiera%20solicitar%20una%20entrevista.">+54 9 3572 44-1454</a></div>
@@ -64,10 +64,10 @@ export default function ContactoPage() {
                 <div className="k">Instagram</div>
                 <div className="v"><a href="https://instagram.com/eclatcentro" target="_blank" rel="noopener">@eclatcentro</a></div>
               </div>
-            </AnimatedSection>
+            </FadeIn>
 
             {/* Formulario */}
-            <AnimatedSection delay={0.1}>
+            <FadeIn direction="left" delay={0.1}>
               <form className="form" onSubmit={handleSubmit} noValidate>
                 <div className="form__row">
                   <div className="field">
@@ -107,7 +107,7 @@ export default function ContactoPage() {
                   title="ÉCLAT — Castelli 260, Oncativo, Córdoba"
                 />
               </div>
-            </AnimatedSection>
+            </FadeIn>
           </div>
         </div>
       </section>

@@ -5,7 +5,8 @@ import { useAdmin } from '@/hooks/useAdmin'
 import { createClient } from '@/lib/supabase/client'
 import type { Article } from '@/lib/types'
 import { AnimatedSection } from '@/components/AnimatedSection'
-import { AnimatedCards, AnimatedCard } from '@/components/AnimatedCards'
+import { StaggerList, StaggerItem } from '@/components/StaggerList'
+import { HoverCard } from '@/components/HoverCard'
 
 const CATEGORIES = [
   'Clínica', 'Infancia', 'Aprendizaje', 'Fonoaudiología',
@@ -141,9 +142,10 @@ export default function PublicacionesPage() {
               <p style={{ fontSize: 15 }}>Estamos preparando los primeros artículos.</p>
             </AnimatedSection>
           ) : (
-            <AnimatedCards className="writings">
+            <StaggerList className="writings">
               {articles.map(a => (
-                <AnimatedCard key={a.id} className="writing" style={{ position: 'relative' }}>
+                <StaggerItem key={a.id}>
+                <HoverCard className="writing" style={{ position: 'relative' }}>
                   {isAdmin && (
                     <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
                       <button
@@ -176,9 +178,10 @@ export default function PublicacionesPage() {
                       Leer →
                     </Link>
                   </span>
-                </AnimatedCard>
+                </HoverCard>
+                </StaggerItem>
               ))}
-            </AnimatedCards>
+            </StaggerList>
           )}
         </div>
       </section>

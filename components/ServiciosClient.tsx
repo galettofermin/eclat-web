@@ -3,8 +3,9 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useAdmin } from '@/hooks/useAdmin'
 import AdminImageUpload from '@/components/AdminImageUpload'
-import { AnimatedSection } from '@/components/AnimatedSection'
-import { AnimatedCards, AnimatedCard } from '@/components/AnimatedCards'
+import { FadeIn } from '@/components/AnimatedSection'
+import { StaggerList, StaggerItem } from '@/components/StaggerList'
+import { HoverCard } from '@/components/HoverCard'
 
 const AREAS = [
   { name: 'Psicología',                    desc: 'Atención clínica de niños, adolescentes y adultos. Un espacio de escucha para alojar el malestar y construir, caso por caso, una salida posible.' },
@@ -68,7 +69,7 @@ export default function ServiciosClient({ heroTitle }: Props) {
   return (
     <>
       <section className="phead">
-        <AnimatedSection className="wrap">
+        <FadeIn direction="up" className="wrap">
           <nav className="crumb">
             <Link href="/">Inicio</Link>&nbsp;/&nbsp;<b>Servicios</b>
           </nav>
@@ -77,15 +78,16 @@ export default function ServiciosClient({ heroTitle }: Props) {
             ÉCLAT desarrolla intervenciones clínicas y educativas articulando distintas disciplinas.
             Cada situación requiere una lectura propia y cada trayectoria, un acompañamiento a su medida.
           </p>
-        </AnimatedSection>
+        </FadeIn>
       </section>
 
       <section className="section">
         <div className="wrap">
           {loadingImages && <Spinner />}
-          <AnimatedCards className="areas">
+          <StaggerList className="areas">
             {AREAS.map((a) => (
-              <AnimatedCard key={a.name} className="area">
+              <StaggerItem key={a.name}>
+              <HoverCard className="area">
                 <AdminImageUpload
                   className="area__photo"
                   src={images[a.name] ?? null}
@@ -109,9 +111,10 @@ export default function ServiciosClient({ heroTitle }: Props) {
                     Solicitar entrevista →
                   </a>
                 </div>
-              </AnimatedCard>
+              </HoverCard>
+              </StaggerItem>
             ))}
-          </AnimatedCards>
+          </StaggerList>
         </div>
       </section>
 

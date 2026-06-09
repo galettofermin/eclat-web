@@ -1,7 +1,8 @@
 // app/formacion/page.tsx
 import type { Metadata } from "next";
 import { AnimatedSection } from "@/components/AnimatedSection";
-import { AnimatedCards, AnimatedCard } from "@/components/AnimatedCards";
+import { StaggerList, StaggerItem } from "@/components/StaggerList";
+import { HoverCard } from "@/components/HoverCard";
 import { getSiteContent } from "@/lib/siteContent";
 
 export const dynamic = 'force-dynamic'
@@ -57,13 +58,13 @@ export default async function FormacionPage() {
         <div className="wrap">
           <AnimatedSection>
             <span className="kicker">Ejes temáticos</span>
-            <AnimatedCards className="filters" style={{ marginTop: "18px" }}>
+            <StaggerList className="filters" style={{ marginTop: "18px" }}>
               {EJES.map((e, i) => (
-                <AnimatedCard key={i}>
+                <StaggerItem key={i}>
                   <span className="chip">{e}</span>
-                </AnimatedCard>
+                </StaggerItem>
               ))}
-            </AnimatedCards>
+            </StaggerList>
           </AnimatedSection>
         </div>
       </section>
@@ -76,19 +77,21 @@ export default async function FormacionPage() {
               <h2 style={{ fontSize: "clamp(28px,3.6vw,44px)", marginTop: "10px" }}>Próximas formaciones</h2>
             </div>
           </AnimatedSection>
-          <AnimatedCards className="writings">
+          <StaggerList className="writings">
             {AGENDA.map((a, i) => (
-              <AnimatedCard key={i} className="writing">
-                <span className="writing__tag">{a.tag}</span>
-                <h3>{a.title}</h3>
-                <p>{a.desc}</p>
-                <span className="writing__meta">
-                  <span>{a.meta}</span>
-                  <b>Más info →</b>
-                </span>
-              </AnimatedCard>
+              <StaggerItem key={i}>
+                <HoverCard className="writing">
+                  <span className="writing__tag">{a.tag}</span>
+                  <h3>{a.title}</h3>
+                  <p>{a.desc}</p>
+                  <span className="writing__meta">
+                    <span>{a.meta}</span>
+                    <b>Más info →</b>
+                  </span>
+                </HoverCard>
+              </StaggerItem>
             ))}
-          </AnimatedCards>
+          </StaggerList>
           <p style={{ marginTop: "28px", color: "var(--ink-muted)", fontSize: "14.5px" }}>
             Agenda en construcción — los títulos y modalidades son ejemplos. Escribinos para recibir el calendario actualizado de inscripciones.
           </p>

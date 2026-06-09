@@ -2,8 +2,9 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { AnimatedSection } from "@/components/AnimatedSection";
-import { AnimatedCards, AnimatedCard } from "@/components/AnimatedCards";
+import { AnimatedSection, FadeIn } from "@/components/AnimatedSection";
+import { StaggerList, StaggerItem } from "@/components/StaggerList";
+import { HoverCard } from "@/components/HoverCard";
 
 interface Service {
   name: string;
@@ -77,15 +78,21 @@ export default function HomeClient({ heroTitle, heroLede }: Props) {
       {/* HERO */}
       <section className="hero3">
         <div className="wrap">
-          <AnimatedSection className="hero3__text" delay={0.1}>
-            <span className="kicker">Centro de atención integral · Oncativo, Córdoba</span>
-            <h1>{heroTitle}</h1>
-            <p className="hero3__lede">{heroLede}</p>
-            <div className="hero3__cta">
-              <a className="btn btn--primary" href="https://wa.me/5493572441454?text=Hola%20%C3%89CLAT%2C%20quisiera%20solicitar%20una%20entrevista." target="_blank" rel="noopener">Solicitar entrevista</a>
-              <Link className="btn btn--ghost" href="/nosotros" style={{ background: "rgba(255,255,255,.6)" }}>Conocer ÉCLAT</Link>
-            </div>
-          </AnimatedSection>
+          <div className="hero3__text">
+            <FadeIn direction="up" delay={0}>
+              <span className="kicker">Centro de atención integral · Oncativo, Córdoba</span>
+              <h1>{heroTitle}</h1>
+            </FadeIn>
+            <FadeIn direction="up" delay={0.1}>
+              <p className="hero3__lede">{heroLede}</p>
+            </FadeIn>
+            <FadeIn direction="up" delay={0.2}>
+              <div className="hero3__cta">
+                <a className="btn btn--primary" href="https://wa.me/5493572441454?text=Hola%20%C3%89CLAT%2C%20quisiera%20solicitar%20una%20entrevista." target="_blank" rel="noopener">Solicitar entrevista</a>
+                <Link className="btn btn--ghost" href="/nosotros" style={{ background: "rgba(255,255,255,.6)" }}>Conocer ÉCLAT</Link>
+              </div>
+            </FadeIn>
+          </div>
 
           <AnimatedSection delay={0.25}>
             <aside className="svcbox" onMouseEnter={stop} onMouseLeave={start}>
@@ -158,7 +165,7 @@ export default function HomeClient({ heroTitle, heroLede }: Props) {
       </section>
 
       {/* PILARES */}
-      <AnimatedSection>
+      <FadeIn direction="up">
         <section className="strip">
           <div className="wrap">
             <span><b>Salud</b> — atención clínica e interdisciplinaria</span>
@@ -166,7 +173,7 @@ export default function HomeClient({ heroTitle, heroLede }: Props) {
             <span><b>Formación</b> — cursos, seminarios y actualización profesional</span>
           </div>
         </section>
-      </AnimatedSection>
+      </FadeIn>
 
       {/* SOBRE ÉCLAT */}
       <section className="about">
@@ -181,11 +188,11 @@ export default function HomeClient({ heroTitle, heroLede }: Props) {
               <span>Articulación</span><span>Responsabilidad compartida</span>
             </div>
           </AnimatedSection>
-          <AnimatedCards className="about__stats">
-            <AnimatedCard className="stat"><div className="n">+30</div><div className="l">Profesionales en un equipo interdisciplinario</div></AnimatedCard>
-            <AnimatedCard className="stat"><div className="n">2022</div><div className="l">Fundada el 9 de julio en Oncativo, Córdoba</div></AnimatedCard>
-            <AnimatedCard className="stat"><div className="n">+364</div><div className="l">Usuarios y familias acompañadas</div></AnimatedCard>
-          </AnimatedCards>
+          <StaggerList className="about__stats">
+            <StaggerItem><HoverCard className="stat"><div className="n">+30</div><div className="l">Profesionales en un equipo interdisciplinario</div></HoverCard></StaggerItem>
+            <StaggerItem><HoverCard className="stat"><div className="n">2022</div><div className="l">Fundada el 9 de julio en Oncativo, Córdoba</div></HoverCard></StaggerItem>
+            <StaggerItem><HoverCard className="stat"><div className="n">+364</div><div className="l">Usuarios y familias acompañadas</div></HoverCard></StaggerItem>
+          </StaggerList>
         </div>
       </section>
 
@@ -199,18 +206,18 @@ export default function HomeClient({ heroTitle, heroLede }: Props) {
             </div>
             <Link className="lib__more" href="/publicaciones">Ver todas las publicaciones →</Link>
           </AnimatedSection>
-          <AnimatedCards className="writings">
+          <StaggerList className="writings">
             {WRITINGS.map((w, i) => (
-              <AnimatedCard key={i}>
+              <StaggerItem key={i}>
                 <Link className="writing" href="/publicaciones">
                   <span className="writing__tag">{w.tag}</span>
                   <h3>{w.title}</h3>
                   <p>{w.desc}</p>
                   <span className="writing__meta"><b>Leer →</b></span>
                 </Link>
-              </AnimatedCard>
+              </StaggerItem>
             ))}
-          </AnimatedCards>
+          </StaggerList>
         </div>
       </section>
 
