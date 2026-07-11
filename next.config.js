@@ -12,8 +12,13 @@ const nextConfig = {
   async redirects() {
     return [
       { source: '/sobre-éclat', destination: '/nosotros', permanent: true },
+      { source: '/sobre-%C3%A9clat', destination: '/nosotros', permanent: true },
       { source: '/sobre-eclat',      destination: '/nosotros', permanent: true },
       { source: '/conocer',          destination: '/nosotros', permanent: true },
+      { source: '/sobre',            destination: '/nosotros', permanent: true },
+      { source: '/escritos',         destination: '/publicaciones', permanent: true },
+      { source: '/turnos',           destination: '/contacto', permanent: true },
+      { source: '/formaciones',      destination: '/formacion', permanent: true },
     ]
   },
   async headers() {
