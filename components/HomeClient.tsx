@@ -28,6 +28,7 @@ export interface LatestArticle {
   title: string;
   excerpt: string | null;
   category: string | null;
+  image_url: string | null;
 }
 
 interface Props {
@@ -307,6 +308,16 @@ export default function HomeClient({ heroTitle, heroLede, latestArticles }: Prop
             {latestArticles.map((a) => (
               <StaggerItem key={a.id}>
                 <Link className="writing" href={`/publicaciones/${a.id}`}>
+                  {a.image_url && (
+                    <div style={{ width: '100%', aspectRatio: '16/9', overflow: 'hidden', borderRadius: '10px', marginBottom: '14px' }}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={a.image_url}
+                        alt={a.title}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                    </div>
+                  )}
                   {a.category && <span className="writing__tag">{a.category}</span>}
                   <h3>{a.title}</h3>
                   {a.excerpt && <p>{a.excerpt}</p>}

@@ -21,7 +21,7 @@ export default async function HomePage() {
   const supabase = createClient()
   const { data: latestArticles } = await supabase
     .from('articles')
-    .select('id, title, excerpt, category')
+    .select('id, title, excerpt, category, image_url')
     .eq('published', true)
     .order('created_at', { ascending: false })
     .limit(3)
