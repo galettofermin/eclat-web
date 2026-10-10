@@ -10,7 +10,14 @@ const CATEGORIES = [
   'Psicomotricidad', 'Interdisciplina', 'Familias', 'Salud mental',
 ]
 
-export default function ArticleForm({ article }: { article?: Article }) {
+type Props = {
+  article?: Article
+  // Si se pasan, reemplazan la navegación por defecto (p. ej. al usarlo dentro de un modal)
+  onSaved?: () => void
+  onCancel?: () => void
+}
+
+export default function ArticleForm({ article, onSaved, onCancel }: Props) {
   const isEditing = !!article
   const router = useRouter()
   const fileRef = useRef<HTMLInputElement>(null)
@@ -69,6 +76,9 @@ export default function ArticleForm({ article }: { article?: Article }) {
     if (error) {
       setError(error.message)
       setLoading(false)
+    } else if (onSaved) {
+      setLoading(false)
+      onSaved()
     } else {
       router.push('/admin/escritos')
       router.refresh()
@@ -230,7 +240,7 @@ export default function ArticleForm({ article }: { article?: Article }) {
         </button>
         <button
           type="button"
-          onClick={() => router.back()}
+          onClick={() => (onCancel ? onCancel() : router.back())}
           className="text-[15px] font-medium text-[#6E6E73] hover:text-[#0A0A0A] transition-colors"
         >
           Cancelar

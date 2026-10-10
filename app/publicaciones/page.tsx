@@ -1,30 +1,16 @@
 'use client'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useAdmin } from '@/hooks/useAdmin'
 import { createClient } from '@/lib/supabase/client'
 import type { Article } from '@/lib/types'
+import ArticleForm from '@/components/admin/ArticleForm'
 import { AnimatedSection } from '@/components/AnimatedSection'
 import { StaggerList, StaggerItem } from '@/components/StaggerList'
 import { HoverCard } from '@/components/HoverCard'
 
-const CATEGORIES = [
-  'Clínica', 'Infancia', 'Aprendizaje', 'Fonoaudiología',
-  'Psicomotricidad', 'Interdisciplina', 'Familias', 'Salud mental',
-]
-
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('es-AR', { year: 'numeric', month: 'long', day: 'numeric' })
-}
-
-type EditForm = {
-  title: string; category: string; excerpt: string; content: string
-  image_url: string; read_time: string; published: boolean
-}
-
-const EMPTY_FORM: EditForm = {
-  title: '', category: 'Clínica', excerpt: '', content: '',
-  image_url: '', read_time: '5 min', published: true,
 }
 
 const Spinner = () => (
@@ -38,10 +24,6 @@ export default function PublicacionesPage() {
   const [articles, setArticles] = useState<Article[]>([])
   const [loadingArticles, setLoadingArticles] = useState(true)
   const [editingArticle, setEditingArticle] = useState<Article | null>(null)
-  const [editForm, setEditForm] = useState<EditForm>(EMPTY_FORM)
-  const [saving, setSaving] = useState(false)
-  const [uploadingImg, setUploadingImg] = useState(false)
-  const fileRef = useRef<HTMLInputElement>(null)
 
   const loadArticles = () => {
     setLoadingArticles(true)
@@ -59,51 +41,13 @@ export default function PublicacionesPage() {
 
   useEffect(loadArticles, [])
 
-  const openEdit = (a: Article) => {
-    setEditingArticle(a)
-    setEditForm({
-      title: a.title, category: a.category, excerpt: a.excerpt,
-      content: a.content, image_url: a.image_url ?? '', read_time: a.read_time,
-      published: a.published,
-    })
-  }
-
-  const closeEdit = () => { setEditingArticle(null); setEditForm(EMPTY_FORM) }
-
-  const handleEditImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    setUploadingImg(true)
-    const fd = new FormData()
-    fd.append('file', file)
-    const res = await fetch('/api/articulos/upload', { method: 'POST', body: fd })
-    const json = await res.json()
-    if (json.url) setEditForm(f => ({ ...f, image_url: json.url }))
-    setUploadingImg(false)
-    if (fileRef.current) fileRef.current.value = ''
-  }
-
-  const handleSave = async () => {
-    if (!editingArticle) return
-    setSaving(true)
-    await fetch(`/api/admin/articulos/${editingArticle.id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(editForm),
-    })
-    setSaving(false)
-    closeEdit()
-    loadArticles()
-  }
+  const openEdit = (a: Article) => setEditingArticle(a)
+  const closeEdit = () => setEditingArticle(null)
 
   const handleDelete = async (id: string) => {
     if (!confirm('¿Eliminar este artículo?')) return
     await fetch(`/api/admin/articulos/${id}`, { method: 'DELETE' })
     loadArticles()
-  }
-
-  function setField<K extends keyof EditForm>(k: K, v: EditForm[K]) {
-    setEditForm(f => ({ ...f, [k]: v }))
   }
 
   return (
@@ -223,108 +167,12 @@ export default function PublicacionesPage() {
               <button onClick={closeEdit} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: 'var(--ink-muted)', lineHeight: 1 }}>✕</button>
             </div>
 
-            {/* Imagen */}
-            <div style={{ marginBottom: 16 }}>
-              <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--slate-700)', marginBottom: 8 }}>Imagen de portada</label>
-              {editForm.image_url && (
-                <div style={{ position: 'relative', width: '100%', height: 160, borderRadius: 10, overflow: 'hidden', marginBottom: 8 }}>
-                  <img src={editForm.image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  <button
-                    onClick={() => setField('image_url', '')}
-                    style={{ position: 'absolute', top: 8, right: 8, background: 'rgba(0,0,0,.6)', color: '#fff', border: 'none', borderRadius: 6, fontSize: 12, padding: '4px 8px', cursor: 'pointer' }}
-                  >
-                    Quitar
-                  </button>
-                </div>
-              )}
-              <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" onChange={handleEditImage} style={{ fontSize: 13 }} />
-              {uploadingImg && <p style={{ fontSize: 12, color: 'var(--ink-muted)', marginTop: 4 }}>Subiendo imagen…</p>}
-            </div>
-
-            {/* Título */}
-            <div style={{ marginBottom: 14 }}>
-              <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--slate-700)', marginBottom: 6 }}>Título *</label>
-              <input
-                value={editForm.title}
-                onChange={e => setField('title', e.target.value)}
-                placeholder="Título del artículo"
-                style={{ width: '100%', padding: '10px 14px', borderRadius: 10, border: '1px solid var(--line-strong)', fontSize: 15, outline: 'none', fontFamily: 'inherit' }}
-              />
-            </div>
-
-            {/* Categoría + tiempo */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 14 }}>
-              <div>
-                <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--slate-700)', marginBottom: 6 }}>Categoría</label>
-                <select
-                  value={editForm.category}
-                  onChange={e => setField('category', e.target.value)}
-                  style={{ width: '100%', padding: '10px 14px', borderRadius: 10, border: '1px solid var(--line-strong)', fontSize: 15, outline: 'none', fontFamily: 'inherit', background: '#fff' }}
-                >
-                  {CATEGORIES.map(c => <option key={c}>{c}</option>)}
-                </select>
-              </div>
-              <div>
-                <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--slate-700)', marginBottom: 6 }}>Tiempo de lectura</label>
-                <input
-                  value={editForm.read_time}
-                  onChange={e => setField('read_time', e.target.value)}
-                  placeholder="5 min"
-                  style={{ width: '100%', padding: '10px 14px', borderRadius: 10, border: '1px solid var(--line-strong)', fontSize: 15, outline: 'none', fontFamily: 'inherit' }}
-                />
-              </div>
-            </div>
-
-            {/* Bajada */}
-            <div style={{ marginBottom: 14 }}>
-              <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--slate-700)', marginBottom: 6 }}>Descripción corta *</label>
-              <textarea
-                rows={3}
-                value={editForm.excerpt}
-                onChange={e => setField('excerpt', e.target.value)}
-                placeholder="Resumen breve del artículo"
-                style={{ width: '100%', padding: '10px 14px', borderRadius: 10, border: '1px solid var(--line-strong)', fontSize: 15, outline: 'none', fontFamily: 'inherit', resize: 'vertical' }}
-              />
-            </div>
-
-            {/* Contenido */}
-            <div style={{ marginBottom: 20 }}>
-              <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--slate-700)', marginBottom: 6 }}>Contenido</label>
-              <textarea
-                rows={12}
-                value={editForm.content}
-                onChange={e => setField('content', e.target.value)}
-                placeholder="Texto completo del artículo…"
-                style={{ width: '100%', padding: '10px 14px', borderRadius: 10, border: '1px solid var(--line-strong)', fontSize: 14, outline: 'none', fontFamily: 'inherit', resize: 'vertical', lineHeight: 1.6 }}
-              />
-            </div>
-
-            {/* Publicado */}
-            <label style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 24, cursor: 'pointer' }}>
-              <input
-                type="checkbox"
-                checked={editForm.published}
-                onChange={e => setField('published', e.target.checked)}
-                style={{ width: 16, height: 16, accentColor: 'var(--green-accent)' }}
-              />
-              <span style={{ fontSize: 14, fontWeight: 600 }}>Publicado</span>
-            </label>
-
-            <div style={{ display: 'flex', gap: 12, borderTop: '1px solid var(--line)', paddingTop: 20 }}>
-              <button
-                onClick={handleSave}
-                disabled={saving || uploadingImg}
-                style={{ background: 'var(--slate-900)', color: '#fff', border: 'none', borderRadius: 999, fontSize: 15, fontWeight: 700, padding: '12px 28px', cursor: 'pointer', opacity: saving ? .6 : 1 }}
-              >
-                {saving ? 'Guardando…' : 'Guardar cambios'}
-              </button>
-              <button
-                onClick={closeEdit}
-                style={{ background: 'none', border: 'none', fontSize: 15, fontWeight: 600, color: 'var(--ink-muted)', cursor: 'pointer' }}
-              >
-                Cancelar
-              </button>
-            </div>
+            <ArticleForm
+              key={editingArticle.id}
+              article={editingArticle}
+              onSaved={() => { closeEdit(); loadArticles() }}
+              onCancel={closeEdit}
+            />
           </div>
         </div>
       )}
