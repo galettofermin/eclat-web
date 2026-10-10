@@ -123,16 +123,16 @@ export default async function ArticlePage({ params }: Props) {
             <Link href="/publicaciones" className="article-back">
               ← Volver a publicaciones
             </Link>
-            <span className="article-category">{article.category}</span>
             <h1 className="article-title">{article.title}</h1>
             {article.subtitle && (
               <p className="article-subtitle">{article.subtitle}</p>
             )}
-            <div className="article-meta">
-              {/* La fecha va en la tarjeta de autora; acá solo si no hay autor */}
-              {!author && <span>{formatDate(article.created_at)}</span>}
-              {article.read_time && <span>{author ? '' : '· '}{article.read_time}</span>}
-            </div>
+            {/* La fecha va en la tarjeta de autora; acá solo si no hay autor */}
+            {!author && (
+              <div className="article-meta">
+                <span>{formatDate(article.created_at)}</span>
+              </div>
+            )}
           </div>
 
           {/* Columna derecha — imagen */}
