@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { getSiteContent } from '@/lib/siteContent'
+import { createClient } from '@/lib/supabase/server'
 import HomeClient from '@/components/HomeClient'
 
 export const dynamic = 'force-dynamic'
@@ -16,10 +17,20 @@ const DEFAULTS = {
 export default async function HomePage() {
   const content = await getSiteContent(Object.keys(DEFAULTS))
   const get = (key: keyof typeof DEFAULTS) => content[key] ?? DEFAULTS[key]
+
+  const supabase = createClient()
+  const { data: latestArticles } = await supabase
+    .from('articles')
+    .select('id, title, excerpt, category')
+    .eq('published', true)
+    .order('created_at', { ascending: false })
+    .limit(3)
+
   return (
     <HomeClient
       heroTitle={get('home.hero.title')}
       heroLede={get('home.hero.lede')}
+      latestArticles={latestArticles ?? []}
     />
   )
 }

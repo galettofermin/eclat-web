@@ -23,18 +23,27 @@ const SERVICES: Service[] = [
   { name: "Asesoramiento Institucional", desc: "Acompañamiento a escuelas e instituciones frente a situaciones complejas." },
 ];
 
-const WRITINGS = [
-  { tag: "Inclusión escolar", title: "Pensar la inclusión más allá del diagnóstico", desc: "Sobre los apoyos, los tiempos y las articulaciones que sostienen una trayectoria." },
-  { tag: "Salud mental infantil", title: "El malestar en la infancia y sus tiempos", desc: "Una lectura de los síntomas que no se apura por clasificar." },
-  { tag: "Interdisciplina", title: "Construir lecturas compartidas entre disciplinas", desc: "Cuando distintos actores piensan juntos una misma situación." },
-];
+export interface LatestArticle {
+  id: string;
+  title: string;
+  excerpt: string | null;
+  category: string | null;
+}
 
 interface Props {
   heroTitle: string;
   heroLede: string;
+  latestArticles: LatestArticle[];
 }
 
-export default function HomeClient({ heroTitle, heroLede }: Props) {
+// La última palabra del título va en cursiva verde (.hero3 h1 em)
+function splitLastWord(text: string): [string, string] {
+  const i = text.trimEnd().lastIndexOf(' ');
+  return i === -1 ? ['', text] : [text.slice(0, i + 1), text.slice(i + 1)];
+}
+
+export default function HomeClient({ heroTitle, heroLede, latestArticles }: Props) {
+  const [heroStart, heroEnd] = splitLastWord(heroTitle);
   const [dbServices, setDbServices] = useState<{ nombre: string; imagen_url: string }[]>([]);
 
   useEffect(() => {
@@ -81,9 +90,8 @@ export default function HomeClient({ heroTitle, heroLede }: Props) {
           <div className="hero3__text">
             <FadeIn direction="up" delay={0}>
               <span className="kicker">Centro de atención integral · Oncativo, Córdoba</span>
-              <h1 style={{ margin: '24px 0 0', fontSize: 'clamp(38px,4.6vw,64px)', fontWeight: 600, letterSpacing: '-0.025em', lineHeight: 1.08, color: 'var(--slate-900)' }}>
-                Salud mental, educación y acompañamiento{' '}
-                <em style={{ fontStyle: 'italic', fontWeight: 500, color: 'var(--sage-deep)' }}>interdisciplinario.</em>
+              <h1>
+                {heroStart}<em>{heroEnd}</em>
               </h1>
             </FadeIn>
             <FadeIn direction="up" delay={0.1}>
@@ -284,7 +292,8 @@ export default function HomeClient({ heroTitle, heroLede }: Props) {
         </div>
       </section>
 
-      {/* PUBLICACIONES teaser */}
+      {/* PUBLICACIONES teaser — se oculta si no hay artículos publicados */}
+      {latestArticles.length > 0 && (
       <section className="pubs">
         <div className="wrap">
           <AnimatedSection className="pubs__head">
@@ -295,12 +304,12 @@ export default function HomeClient({ heroTitle, heroLede }: Props) {
             <Link className="lib__more" href="/publicaciones">Ver todas las publicaciones →</Link>
           </AnimatedSection>
           <StaggerList className="writings">
-            {WRITINGS.map((w, i) => (
-              <StaggerItem key={i}>
-                <Link className="writing" href="/publicaciones">
-                  <span className="writing__tag">{w.tag}</span>
-                  <h3>{w.title}</h3>
-                  <p>{w.desc}</p>
+            {latestArticles.map((a) => (
+              <StaggerItem key={a.id}>
+                <Link className="writing" href={`/publicaciones/${a.id}`}>
+                  {a.category && <span className="writing__tag">{a.category}</span>}
+                  <h3>{a.title}</h3>
+                  {a.excerpt && <p>{a.excerpt}</p>}
                   <span className="writing__meta"><b>Leer →</b></span>
                 </Link>
               </StaggerItem>
@@ -308,6 +317,7 @@ export default function HomeClient({ heroTitle, heroLede }: Props) {
           </StaggerList>
         </div>
       </section>
+      )}
 
 
       {/* Contenido SEO indexable */}

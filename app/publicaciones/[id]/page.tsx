@@ -12,13 +12,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const supabase = createClient()
     const { data } = await supabase
       .from('articles')
-      .select('title, excerpt')
+      .select('title, excerpt, image_url')
       .eq('id', params.id)
       .eq('published', true)
       .single()
+    const title = data?.title ?? 'Artículo · ÉCLAT'
+    const description = data?.excerpt ?? ''
     return {
-      title: data?.title ?? 'Artículo · ÉCLAT',
-      description: data?.excerpt ?? '',
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        type: 'article',
+        images: data?.image_url ? [data.image_url] : [],
+      },
     }
   } catch {
     return { title: 'Artículo · ÉCLAT' }
@@ -50,7 +58,7 @@ function renderContent(content: string) {
     if (text.startsWith('Referencias')) {
       return (
         <div key={i} style={{ marginTop: '48px', paddingTop: '32px', borderTop: '1px solid var(--line)' }}>
-          <p style={{ fontSize: '13px', fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--sage-deep)', marginBottom: '16px' }}>Referencias conceptuales</p>
+          <p style={{ fontSize: '13px', fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--sage-text)', marginBottom: '16px' }}>Referencias conceptuales</p>
           {text.split('\n').slice(1).map((ref, j) => (
             <p key={j} style={{ fontSize: '15px', color: 'var(--ink-muted)', marginBottom: '8px' }}>{ref}</p>
           ))}
@@ -116,7 +124,7 @@ export default async function ArticlePage({ params }: Props) {
   return (
     <>
       {/* Hero */}
-      <section className="article-hero">
+      <section className={`article-hero${article.image_url ? '' : ' article-hero--noimg'}`}>
         <div className="wrap">
           {/* Columna izquierda */}
           <div>
@@ -135,19 +143,17 @@ export default async function ArticlePage({ params }: Props) {
             )}
           </div>
 
-          {/* Columna derecha — imagen */}
-          <div>
-            {article.image_url ? (
-              // eslint-disable-next-line @next/next/no-img-element
+          {/* Columna derecha — imagen (sin imagen, el título va a lo ancho) */}
+          {article.image_url && (
+            <div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={article.image_url}
                 alt={article.title}
                 className="article-image"
               />
-            ) : (
-              <div className="article-image-placeholder">Sin imagen</div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </section>
 
@@ -158,9 +164,9 @@ export default async function ArticlePage({ params }: Props) {
           <div className="article-author">
             <div style={{
               width: '44px', height: '44px', borderRadius: '50%',
-              background: 'var(--sage)', display: 'flex', alignItems: 'center',
+              background: 'var(--green-700)', display: 'flex', alignItems: 'center',
               justifyContent: 'center', fontSize: '16px', fontWeight: 700,
-              color: 'var(--slate-900)', flexShrink: 0
+              color: '#fff', flexShrink: 0
             }}>{initials}</div>
             <div>
               <div style={{ fontSize: '15px', fontWeight: 600, color: 'var(--slate-900)' }}>{author}</div>
