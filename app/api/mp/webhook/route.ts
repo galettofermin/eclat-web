@@ -13,7 +13,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true })
     }
 
-    const mp = new MercadoPagoConfig({ accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN! })
+    const mp = new MercadoPagoConfig({ accessToken: (process.env.MP_ACCESS_TOKEN || process.env.MERCADOPAGO_ACCESS_TOKEN)! })
     const paymentClient = new Payment(mp)
     const payment = await paymentClient.get({ id: body.data.id })
 
@@ -46,7 +46,7 @@ export async function POST(req: Request) {
             .eq('id', courseId)
             .single()
 
-          const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://eclatcentro.com'
+          const siteUrl = process.env.NEXT_PUBLIC_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://eclatcentro.com'
           await enviarAccesoCurso({
             email: userEmail,
             nombre: userEmail.split('@')[0],

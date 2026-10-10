@@ -98,7 +98,7 @@ export async function POST(req: Request) {
         user.user_metadata?.full_name ?? user.email?.split('@')[0] ?? 'ÉCLAT'
       const nombreDestinatario =
         destinatario.user_metadata?.full_name ?? emailDestinatario.split('@')[0] ?? 'Usuario'
-      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://eclatcentro.com'
+      const siteUrl = process.env.NEXT_PUBLIC_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://eclatcentro.com'
 
       await enviarNotificacionMensaje({
         email: emailDestinatario,

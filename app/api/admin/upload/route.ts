@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { isAdmin } from '@/lib/auth/checkAdmin'
 
 export const dynamic = 'force-dynamic'
 
 export async function POST(req: Request) {
+  if (!(await isAdmin())) return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
   const fd = await req.formData()
   const file = fd.get('file') as File | null
   const bucket = (fd.get('bucket') as string) || 'servicios'

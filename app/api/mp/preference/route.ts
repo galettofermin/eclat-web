@@ -27,14 +27,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'El curso no tiene precio configurado', price }, { status: 400 })
     }
 
-    const token = process.env.MERCADOPAGO_ACCESS_TOKEN
+    const token = process.env.MP_ACCESS_TOKEN || process.env.MERCADOPAGO_ACCESS_TOKEN
     if (!token) {
       return NextResponse.json({ error: 'Token de MP no configurado en el servidor' }, { status: 500 })
     }
 
     const mp = new MercadoPagoConfig({ accessToken: token })
     const preference = new Preference(mp)
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://eclatcentro.com'
+    const siteUrl = process.env.NEXT_PUBLIC_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://eclatcentro.com'
 
     const result = await preference.create({
       body: {

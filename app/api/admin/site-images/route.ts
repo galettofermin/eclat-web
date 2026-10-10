@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { isAdmin } from '@/lib/auth/checkAdmin'
 
 export const dynamic = 'force-dynamic'
 
@@ -18,6 +19,7 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
+  if (!(await isAdmin())) return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
   const { key, url } = await req.json()
   if (!key || !url) return NextResponse.json({ error: 'key y url requeridos' }, { status: 400 })
 
