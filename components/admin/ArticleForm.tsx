@@ -18,6 +18,8 @@ export default function ArticleForm({ article }: { article?: Article }) {
   const [form, setForm] = useState({
     title:     article?.title     ?? '',
     subtitle:  article?.subtitle  ?? '',
+    author:      article?.author      ?? '',
+    author_role: article?.author_role ?? '',
     category:  article?.category  ?? 'Clínica',
     excerpt:   article?.excerpt   ?? '',
     content:   article?.content   ?? '',
@@ -84,6 +86,28 @@ export default function ArticleForm({ article }: { article?: Article }) {
           onChange={(e) => set('title', e.target.value)}
           className="w-full px-4 py-3 rounded-xl border border-black/10 text-[15px] focus:outline-none focus:border-[#2F7D6B] transition-colors"
           placeholder="Título del escrito"
+        />
+      </div>
+
+      <div>
+        <label className="block text-[13px] font-medium text-[#0A0A0A] mb-1.5">Autor</label>
+        <input
+          type="text"
+          value={form.author}
+          onChange={(e) => set('author', e.target.value)}
+          className="w-full px-4 py-3 rounded-xl border border-black/10 text-[15px] focus:outline-none focus:border-[#2F7D6B] transition-colors"
+          placeholder="Lic. Nombre Apellido"
+        />
+      </div>
+
+      <div>
+        <label className="block text-[13px] font-medium text-[#0A0A0A] mb-1.5">Rol / Especialidad</label>
+        <input
+          type="text"
+          value={form.author_role}
+          onChange={(e) => set('author_role', e.target.value)}
+          className="w-full px-4 py-3 rounded-xl border border-black/10 text-[15px] focus:outline-none focus:border-[#2F7D6B] transition-colors"
+          placeholder="Licenciada en Psicopedagogía"
         />
       </div>
 
