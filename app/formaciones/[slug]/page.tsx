@@ -5,8 +5,14 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import AppLayout from '@/components/AppLayout'
 import { DIRECTOR_EMAIL, WHATSAPP_URL } from '@/lib/constants'
 import type { QuizQuestion } from '@/lib/types'
+import type { Metadata } from 'next'
+import { courseMetadata } from '@/lib/courseMetadata'
 
 export const dynamic = 'force-dynamic'
+
+export function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  return courseMetadata(params.slug)
+}
 
 const formatPrice = (p: number) =>
   new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(p)
