@@ -7,29 +7,54 @@ export const dynamic = 'force-dynamic'
 
 type Props = { params: { id: string } }
 
+const SITE_URL = 'https://eclatcentro.com'
+const OG_FALLBACK = { url: `${SITE_URL}/og-image.png`, width: 1200, height: 630 }
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
     const supabase = createClient()
     const { data } = await supabase
       .from('articles')
-      .select('title, excerpt, image_url')
+      .select('title, excerpt, image_url, author, created_at')
       .eq('id', params.id)
       .eq('published', true)
       .single()
-    const title = data?.title ?? 'Artículo · ÉCLAT'
-    const description = data?.excerpt ?? ''
+
+    if (!data) return { title: 'Artículo' }
+
+    // El layout raíz ya agrega " · ÉCLAT" al <title>; en OG/Twitter va completo
+    const shareTitle = `${data.title} · ÉCLAT`
+    const description = data.excerpt || 'Artículo del equipo de ÉCLAT Centro de Atención Integral, Oncativo, Córdoba.'
+    const url = `${SITE_URL}/publicaciones/${params.id}`
+    // Las portadas tienen tamaños variables: no declaramos width/height para no mentirle a las plataformas
+    const image = data.image_url
+      ? { url: data.image_url, alt: data.title }
+      : { ...OG_FALLBACK, alt: data.title }
+
     return {
-      title,
+      title: data.title,
       description,
       openGraph: {
-        title,
+        title: shareTitle,
         description,
+        url,
+        siteName: 'ÉCLAT Centro de Atención Integral',
+        images: [image],
         type: 'article',
-        images: data?.image_url ? [data.image_url] : [],
+        publishedTime: data.created_at,
+        authors: data.author ? [data.author] : ['ÉCLAT'],
+        locale: 'es_AR',
       },
+      twitter: {
+        card: 'summary_large_image',
+        title: shareTitle,
+        description,
+        images: [image.url],
+      },
+      alternates: { canonical: url },
     }
   } catch {
-    return { title: 'Artículo · ÉCLAT' }
+    return { title: 'Artículo' }
   }
 }
 
