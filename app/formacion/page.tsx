@@ -35,7 +35,7 @@ const AGENDA = [
 
 const DEFAULTS = {
   'formacion.hero.title': 'Cursos, seminarios y trayectos formativos.',
-  'formacion.hero.lede': 'La formación es uno de los pilares estratégicos de ÉCLAT. A través de cursos, seminarios, jornadas y trayectos buscamos compartir herramientas, experiencias y conocimientos vinculados a la salud mental, la educación y el trabajo interdisciplinario.',
+  'formacion.hero.lede': 'Un espacio donde la práctica se piensa y se transmite. A través de cursos, seminarios, jornadas y trayectos buscamos compartir herramientas, experiencias y conocimientos vinculados a la salud mental, la educación y el trabajo interdisciplinario.',
 }
 
 export default async function FormacionPage() {

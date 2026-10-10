@@ -15,5 +15,5 @@ INSERT INTO public.site_content (key, value) VALUES
   ('conocer.hero.lede', 'ÉCLAT articula salud mental, educación y formación para construir respuestas frente a los desafíos contemporáneos, reconociendo la singularidad de cada trayectoria.'),
   ('servicios.hero.title', 'Un lugar para cada situación.'),
   ('formacion.hero.title', 'Cursos, seminarios y trayectos formativos.'),
-  ('formacion.hero.lede', 'La formación es uno de los pilares estratégicos de ÉCLAT.')
+  ('formacion.hero.lede', 'Un espacio donde la práctica se piensa y se transmite.')
 ON CONFLICT (key) DO NOTHING;
