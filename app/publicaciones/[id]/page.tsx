@@ -29,6 +29,59 @@ function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('es-AR', { year: 'numeric', month: 'long', day: 'numeric' })
 }
 
+function renderContent(content: string) {
+  const blocks = content.split('\n\n').filter(b => b.trim());
+
+  return blocks.map((block, i) => {
+    const text = block.trim();
+
+    // Pregunta retórica (termina en ?)
+    if (text.endsWith('?')) {
+      return (
+        <p key={i} style={{
+          fontSize: '21px', fontStyle: 'italic', color: 'var(--slate-900)',
+          fontWeight: 500, margin: '32px 0', paddingLeft: '24px',
+          borderLeft: '3px solid var(--sage)', lineHeight: 1.6
+        }}>{text}</p>
+      );
+    }
+
+    // Referencias (empieza con "Referencias")
+    if (text.startsWith('Referencias')) {
+      return (
+        <div key={i} style={{ marginTop: '48px', paddingTop: '32px', borderTop: '1px solid var(--line)' }}>
+          <p style={{ fontSize: '13px', fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--sage-deep)', marginBottom: '16px' }}>Referencias conceptuales</p>
+          {text.split('\n').slice(1).map((ref, j) => (
+            <p key={j} style={{ fontSize: '15px', color: 'var(--ink-muted)', marginBottom: '8px' }}>{ref}</p>
+          ))}
+        </div>
+      );
+    }
+
+    // Firma final (empieza con "Lic.")
+    if (text.startsWith('Lic.') && i > blocks.length - 5) {
+      return (
+        <div key={i} style={{
+          marginTop: '48px', paddingTop: '32px', borderTop: '1px solid var(--line)',
+          display: 'flex', flexDirection: 'column', gap: '4px'
+        }}>
+          {text.split('\n').map((line, j) => (
+            <p key={j} style={{ fontSize: j === 0 ? '16px' : '14px', fontWeight: j === 0 ? 600 : 400, color: j === 0 ? 'var(--slate-900)' : 'var(--ink-muted)' }}>{line}</p>
+          ))}
+        </div>
+      );
+    }
+
+    // Párrafo normal
+    return (
+      <p key={i} style={{
+        fontSize: '19px', lineHeight: 1.85, color: 'var(--slate-700)',
+        marginBottom: '24px'
+      }}>{text}</p>
+    );
+  });
+}
+
 export default async function ArticlePage({ params }: Props) {
   const supabase = createClient()
 
@@ -49,10 +102,16 @@ export default async function ArticlePage({ params }: Props) {
     .order('created_at', { ascending: false })
     .limit(3)
 
-  const paragraphs = (article.content ?? '')
-    .split('\n\n')
-    .map((p: string) => p.trim())
+  const content: string = article.content ?? ''
+  const author: string = article.author ?? ''
+  const authorRole: string = article.author_role ?? ''
+  const initials = author
+    .replace(/^(Lic|Dra?|Mg|Prof)\.\s*/i, '')
+    .split(/\s+/)
     .filter(Boolean)
+    .slice(-2)
+    .map((w) => w[0].toUpperCase())
+    .join('')
 
   return (
     <>
@@ -70,8 +129,9 @@ export default async function ArticlePage({ params }: Props) {
               <p className="article-subtitle">{article.subtitle}</p>
             )}
             <div className="article-meta">
-              <span>{formatDate(article.created_at)}</span>
-              {article.read_time && <span>· {article.read_time}</span>}
+              {/* La fecha va en la tarjeta de autora; acá solo si no hay autor */}
+              {!author && <span>{formatDate(article.created_at)}</span>}
+              {article.read_time && <span>{author ? '' : '· '}{article.read_time}</span>}
             </div>
           </div>
 
@@ -94,8 +154,23 @@ export default async function ArticlePage({ params }: Props) {
       {/* Cuerpo */}
       <div className="wrap">
         <div className="article-body">
-          {paragraphs.length > 0 ? (
-            paragraphs.map((para: string, i: number) => <p key={i}>{para}</p>)
+          {author && (
+          <div className="article-author">
+            <div style={{
+              width: '44px', height: '44px', borderRadius: '50%',
+              background: 'var(--sage)', display: 'flex', alignItems: 'center',
+              justifyContent: 'center', fontSize: '16px', fontWeight: 700,
+              color: 'var(--slate-900)', flexShrink: 0
+            }}>{initials}</div>
+            <div>
+              <div style={{ fontSize: '15px', fontWeight: 600, color: 'var(--slate-900)' }}>{author}</div>
+              <div style={{ fontSize: '13px', color: 'var(--ink-muted)' }}>{authorRole}</div>
+            </div>
+            <div className="article-author__date">{formatDate(article.created_at)}</div>
+          </div>
+          )}
+          {content.trim() ? (
+            renderContent(content)
           ) : (
             <p style={{ color: 'var(--ink-muted)', fontStyle: 'italic' }}>
               Contenido próximamente.

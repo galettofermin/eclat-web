@@ -21,6 +21,10 @@ CREATE TABLE IF NOT EXISTS public.articles (
 -- Agregar image_url si la tabla ya existe sin esa columna
 ALTER TABLE public.articles ADD COLUMN IF NOT EXISTS image_url TEXT DEFAULT '';
 
+-- Autor/a del escrito (tarjeta de autor en /publicaciones/[id])
+ALTER TABLE public.articles ADD COLUMN IF NOT EXISTS author TEXT DEFAULT '';
+ALTER TABLE public.articles ADD COLUMN IF NOT EXISTS author_role TEXT DEFAULT '';
+
 -- ── Tabla: services (títulos y descripciones) ────────────────────
 CREATE TABLE IF NOT EXISTS public.services (
   id          UUID        DEFAULT gen_random_uuid() PRIMARY KEY,

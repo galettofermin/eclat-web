@@ -7,6 +7,8 @@ export interface Article {
   content: string
   image_url: string
   read_time: string
+  author: string
+  author_role: string
   featured: boolean
   published: boolean
   created_at: string
