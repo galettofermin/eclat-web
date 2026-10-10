@@ -102,12 +102,20 @@ export default function PublicacionesPage() {
                       </button>
                     </div>
                   )}
+                  {a.image_url && (
+                    // La imagen también lleva al artículo; fuera del orden de tabulación para no duplicar el link del título
+                    <Link href={`/publicaciones/${a.id}`} tabIndex={-1} aria-hidden="true"
+                      style={{ display: 'block', width: '100%', aspectRatio: '16/9', overflow: 'hidden', borderRadius: '10px', marginBottom: '14px' }}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={a.image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </Link>
+                  )}
                   <h3>
                     <Link href={`/publicaciones/${a.id}`} style={{ color: 'inherit' }}>{a.title}</Link>
                   </h3>
                   <p>{a.excerpt}</p>
                   <span className="writing__meta">
-                    <Link href={`/publicaciones/${a.id}`} style={{ color: 'var(--sage-deep)', fontWeight: 700 }}>
+                    <Link href={`/publicaciones/${a.id}`} style={{ color: 'var(--sage-text)', fontWeight: 700 }}>
                       Leer →
                     </Link>
                   </span>
