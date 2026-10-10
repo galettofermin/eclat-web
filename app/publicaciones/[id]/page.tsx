@@ -96,7 +96,7 @@ export default async function ArticlePage({ params }: Props) {
 
   const { data: related } = await supabase
     .from('articles')
-    .select('id, title, category, image_url')
+    .select('id, title, image_url')
     .eq('published', true)
     .neq('id', params.id)
     .order('created_at', { ascending: false })
@@ -202,7 +202,6 @@ export default async function ArticlePage({ params }: Props) {
                     <div className="article-card__img" />
                   )}
                   <div className="article-card__body">
-                    <span className="article-card__cat">{a.category}</span>
                     <p className="article-card__title">{a.title}</p>
                     <span className="article-card__link">Leer →</span>
                   </div>

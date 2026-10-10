@@ -111,7 +111,6 @@ export default function PublicacionesPage() {
                       <img src={a.image_url} alt={a.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     </div>
                   )}
-                  <span className="writing__tag">{a.category}</span>
                   <h3>
                     <Link href={`/publicaciones/${a.id}`} style={{ color: 'inherit' }}>{a.title}</Link>
                   </h3>
