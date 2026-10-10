@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { isAdmin } from '@/lib/auth/checkAdmin'
 
 export const dynamic = 'force-dynamic'
 
 export async function POST(req: Request) {
+  if (!(await isAdmin())) return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
   const { nombre, imagen_url } = await req.json()
   if (!nombre || !imagen_url) {
     return NextResponse.json({ error: 'nombre e imagen_url requeridos' }, { status: 400 })
