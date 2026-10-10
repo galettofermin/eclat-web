@@ -7,6 +7,7 @@ export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'Psicólogo en Oncativo · ÉCLAT Centro de Salud Mental y Educación',
+  alternates: { canonical: 'https://eclatcentro.com' },
 }
 
 const DEFAULTS = {
@@ -26,11 +27,18 @@ export default async function HomePage() {
     .order('created_at', { ascending: false })
     .limit(3)
 
+  // Imágenes de los servicios de la caja rotadora (antes se pedían desde el cliente)
+  const { data: services } = await supabase
+    .from('servicios')
+    .select('nombre, imagen_url')
+    .not('imagen_url', 'is', null)
+
   return (
     <HomeClient
       heroTitle={get('home.hero.title')}
       heroLede={get('home.hero.lede')}
       latestArticles={latestArticles ?? []}
+      services={services ?? []}
     />
   )
 }

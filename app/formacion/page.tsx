@@ -4,6 +4,7 @@ import { AnimatedSection } from "@/components/AnimatedSection";
 import { StaggerList, StaggerItem } from "@/components/StaggerList";
 import { HoverCard } from "@/components/HoverCard";
 import { getSiteContent } from "@/lib/siteContent";
+import { WA_URL } from "@/lib/constants";
 
 export const dynamic = 'force-dynamic'
 
@@ -104,7 +105,7 @@ export default async function FormacionPage() {
             <h2>Recibí el calendario de formaciones</h2>
             <p>Te avisamos cuando se abren las inscripciones de cada curso, seminario o jornada.</p>
           </div>
-          <a className="btn btn--primary" href="https://wa.me/5493572441454?text=Hola%20%C3%89CLAT%2C%20quiero%20recibir%20el%20calendario%20de%20formaciones." target="_blank" rel="noopener">
+          <a className="btn btn--primary" href={WA_URL("Hola ÉCLAT, quiero recibir el calendario de formaciones.")} target="_blank" rel="noopener">
             Quiero el calendario
           </a>
         </div>

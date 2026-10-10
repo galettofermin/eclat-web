@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { AnimatedSection, FadeIn } from "@/components/AnimatedSection";
 import { StaggerList, StaggerItem } from "@/components/StaggerList";
 import { HoverCard } from "@/components/HoverCard";
+import { WA_URL } from "@/lib/constants";
 
 interface Service {
   name: string;
@@ -31,10 +32,16 @@ export interface LatestArticle {
   image_url: string | null;
 }
 
+export interface ServiceImage {
+  nombre: string;
+  imagen_url: string | null;
+}
+
 interface Props {
   heroTitle: string;
   heroLede: string;
   latestArticles: LatestArticle[];
+  services: ServiceImage[];
 }
 
 // La última palabra del título va en cursiva verde (.hero3 h1 em)
@@ -43,19 +50,10 @@ function splitLastWord(text: string): [string, string] {
   return i === -1 ? ['', text] : [text.slice(0, i + 1), text.slice(i + 1)];
 }
 
-export default function HomeClient({ heroTitle, heroLede, latestArticles }: Props) {
+export default function HomeClient({ heroTitle, heroLede, latestArticles, services }: Props) {
   const [heroStart, heroEnd] = splitLastWord(heroTitle);
-  const [dbServices, setDbServices] = useState<{ nombre: string; imagen_url: string }[]>([]);
-
-  useEffect(() => {
-    fetch('/api/servicios-publico')
-      .then(r => r.json())
-      .then(data => setDbServices(data))
-      .catch(() => {});
-  }, []);
-
   const svcList = SERVICES.map(s => {
-    const fromDB = dbServices.find(db =>
+    const fromDB = services.find(db =>
       db.nombre.toLowerCase().trim() === s.name.toLowerCase().trim()
     );
     return { ...s, imagen_url: fromDB?.imagen_url || null };
@@ -100,7 +98,7 @@ export default function HomeClient({ heroTitle, heroLede, latestArticles }: Prop
             </FadeIn>
             <FadeIn direction="up" delay={0.2}>
               <div className="hero3__cta">
-                <a className="btn btn--primary" href="https://wa.me/5493572441454?text=Hola%20%C3%89CLAT%2C%20quisiera%20solicitar%20una%20entrevista." target="_blank" rel="noopener">Solicitar entrevista</a>
+                <a className="btn btn--primary" href={WA_URL("Hola ÉCLAT, quisiera solicitar una entrevista.")} target="_blank" rel="noopener">Solicitar entrevista</a>
                 <Link className="btn btn--ghost" href="/nosotros" style={{ background: "rgba(255,255,255,.6)" }}>Conocer ÉCLAT</Link>
               </div>
             </FadeIn>
@@ -163,7 +161,7 @@ export default function HomeClient({ heroTitle, heroLede, latestArticles }: Prop
                 <button
                   type="button"
                   onClick={() => window.open(
-                    `https://wa.me/5493572441454?text=${encodeURIComponent(`Hola ÉCLAT, quisiera agendar un turno para ${svcList[active].name}.`)}`,
+                    WA_URL(`Hola ÉCLAT, quisiera agendar un turno para ${svcList[active].name}.`),
                     '_blank'
                   )}
                   style={{ fontSize: 13, fontWeight: 600, background: 'var(--slate-900)', color: '#fff', padding: '8px 16px', borderRadius: 999, border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}

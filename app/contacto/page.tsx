@@ -2,6 +2,7 @@
 "use client";
 import { FormEvent } from "react";
 import { FadeIn } from "@/components/AnimatedSection";
+import { WA_URL } from "@/lib/constants";
 
 const MOTIVOS = [
   "Solicitar una entrevista", "Psicología", "Psicopedagogía", "Fonoaudiología",
@@ -20,7 +21,7 @@ export default function ContactoPage() {
     let txt = `Hola ÉCLAT, soy ${nombre || "(sin nombre)"}.\nMotivo: ${motivo}.`;
     if (mensaje) txt += `\n${mensaje}`;
     if (tel)     txt += `\nTel: ${tel}`;
-    window.open(`https://wa.me/5493572441454?text=${encodeURIComponent(txt)}`, "_blank");
+    window.open(WA_URL(txt), "_blank");
   }
 
   return (
@@ -40,7 +41,7 @@ export default function ContactoPage() {
             <FadeIn direction="right" className="cinfo">
               <div className="cinfo__row">
                 <div className="k">WhatsApp</div>
-                <div className="v"><a href="https://wa.me/5493572441454?text=Hola%20%C3%89CLAT%2C%20quisiera%20solicitar%20una%20entrevista.">+54 9 3572 44-1454</a></div>
+                <div className="v"><a href={WA_URL("Hola ÉCLAT, quisiera solicitar una entrevista.")}>+54 9 3572 44-1454</a></div>
                 <small>La vía más rápida para pedir un turno.</small>
               </div>
               <div className="cinfo__row">

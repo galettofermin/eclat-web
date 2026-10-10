@@ -1,3 +1,5 @@
+export const WA_NUMBER = '5493572441454'
+export const WA_URL = (msg: string) => `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`
 export const WHATSAPP_URL = 'https://wa.link/vyi5uv'
 export const INSTAGRAM_URL = 'https://www.instagram.com/eclatcentro'
 export const INSTAGRAM_HANDLE = '@eclatcentro'

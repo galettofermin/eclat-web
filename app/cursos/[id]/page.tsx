@@ -11,9 +11,38 @@ import CourseAccordion from '@/components/course/CourseAccordion'
 import CoursePriceCard from '@/components/course/CoursePriceCard'
 import ModuleCompleteBtn from '@/components/course/ModuleCompleteBtn'
 import type { QuizQuestion } from '@/lib/types'
+import type { Metadata } from 'next'
 import { DIRECTOR_EMAIL } from '@/lib/constants'
 
 export const dynamic = 'force-dynamic'
+
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  try {
+    const { data } = await createAdminClient()
+      .from('courses').select('title, description').eq('id', params.id).eq('published', true).single()
+    if (!data) return { title: 'Curso' }
+
+    const description = data.description || 'Formación de ÉCLAT Centro de Atención Integral, Oncativo, Córdoba.'
+    const url = `https://eclatcentro.com/cursos/${params.id}`
+    return {
+      title: data.title,
+      description,
+      openGraph: {
+        title: `${data.title} · ÉCLAT`,
+        description,
+        url,
+        siteName: 'ÉCLAT Centro de Atención Integral',
+        images: [{ url: 'https://eclatcentro.com/og-image.png', width: 1200, height: 630, alt: data.title }],
+        type: 'website',
+        locale: 'es_AR',
+      },
+      twitter: { card: 'summary_large_image', title: `${data.title} · ÉCLAT`, description, images: ['https://eclatcentro.com/og-image.png'] },
+      alternates: { canonical: url },
+    }
+  } catch {
+    return { title: 'Curso' }
+  }
+}
 
 const ICON_PDF = (<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>)
 const ICON_VIDEO = (<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>)

@@ -6,6 +6,7 @@ import AdminImageUpload from '@/components/AdminImageUpload'
 import { FadeIn } from '@/components/AnimatedSection'
 import { StaggerList, StaggerItem } from '@/components/StaggerList'
 import { HoverCard } from '@/components/HoverCard'
+import { WA_URL } from '@/lib/constants'
 
 const AREAS = [
   { name: 'Psicología',                    desc: 'Atención clínica de niños, adolescentes y adultos. Un espacio de escucha para alojar el malestar y construir, caso por caso, una salida posible.' },
@@ -24,7 +25,6 @@ const slugify = (s: string) =>
    .replace(/\s+/g, '-')
    .replace(/[^a-z0-9-]/g, '')
 
-const WA = 'https://wa.me/5493572441454?text='
 
 const Spinner = () => (
   <div style={{ display: 'flex', justifyContent: 'center', padding: '48px 0' }}>
@@ -105,7 +105,7 @@ export default function ServiciosClient({ heroTitle }: Props) {
                   <p className="area__desc">{a.desc}</p>
                   <a
                     className="area__go"
-                    href={`${WA}${encodeURIComponent(`Hola ÉCLAT, quisiera solicitar una consulta sobre ${a.name}.`)}`}
+                    href={WA_URL(`Hola ÉCLAT, quisiera solicitar una consulta sobre ${a.name}.`)}
                     target="_blank" rel="noopener noreferrer"
                   >
                     Solicitar entrevista →
@@ -126,7 +126,7 @@ export default function ServiciosClient({ heroTitle }: Props) {
           </div>
           <a
             className="btn btn--primary"
-            href={`${WA}${encodeURIComponent('Hola ÉCLAT, quisiera orientación sobre los servicios.')}`}
+            href={WA_URL('Hola ÉCLAT, quisiera orientación sobre los servicios.')}
             target="_blank" rel="noopener noreferrer"
           >
             Solicitar entrevista

@@ -7,6 +7,7 @@ import AdminImageUpload from '@/components/AdminImageUpload'
 import { AnimatedSection, FadeIn } from '@/components/AnimatedSection'
 import { StaggerList, StaggerItem } from '@/components/StaggerList'
 import { HoverCard } from '@/components/HoverCard'
+import { WA_URL } from '@/lib/constants'
 
 const DIRECTOR_KEYS = ['direccion-fermin', 'direccion-constanza']
 
@@ -226,7 +227,7 @@ export default function ConocerClient({ heroTitle, heroLede }: Props) {
           </div>
           <a
             className="btn btn--primary"
-            href={`https://wa.me/5493572441454?text=${encodeURIComponent('Hola ÉCLAT, quisiera solicitar una entrevista.')}`}
+            href={WA_URL('Hola ÉCLAT, quisiera solicitar una entrevista.')}
             target="_blank" rel="noopener noreferrer"
           >
             Solicitar entrevista
