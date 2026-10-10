@@ -21,6 +21,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }))
 
+  const { data: courses } = await supabase
+    .from('courses')
+    .select('id, created_at')
+    .eq('published', true)
+
+  const courseUrls: MetadataRoute.Sitemap = (courses ?? []).map((c) => ({
+    url: `${BASE}/cursos/${c.id}`,
+    // courses no tiene updated_at
+    lastModified: new Date(c.created_at),
+    changeFrequency: 'monthly',
+    priority: 0.8,
+  }))
+
   return [
     { url: BASE,                       lastModified: new Date(), changeFrequency: 'weekly',  priority: 1.0 },
     { url: `${BASE}/nosotros`,         lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
@@ -29,5 +42,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/publicaciones`,    lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.7 },
     { url: `${BASE}/contacto`,         lastModified: new Date(), changeFrequency: 'yearly',  priority: 0.6 },
     ...articleUrls,
+    ...courseUrls,
   ]
 }
