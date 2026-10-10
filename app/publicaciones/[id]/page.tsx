@@ -96,7 +96,7 @@ export default async function ArticlePage({ params }: Props) {
 
   const { data: related } = await supabase
     .from('articles')
-    .select('id, title, image_url')
+    .select('id, title, excerpt')
     .eq('published', true)
     .neq('id', params.id)
     .order('created_at', { ascending: false })
@@ -195,14 +195,9 @@ export default async function ArticlePage({ params }: Props) {
                   className="article-card"
                   style={{ textDecoration: 'none', display: 'block' }}
                 >
-                  {a.image_url ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={a.image_url} alt={a.title} className="article-card__img" />
-                  ) : (
-                    <div className="article-card__img" />
-                  )}
                   <div className="article-card__body">
                     <p className="article-card__title">{a.title}</p>
+                    {a.excerpt && <p className="article-card__excerpt">{a.excerpt}</p>}
                     <span className="article-card__link">Leer →</span>
                   </div>
                 </Link>

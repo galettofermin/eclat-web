@@ -9,10 +9,6 @@ import { AnimatedSection } from '@/components/AnimatedSection'
 import { StaggerList, StaggerItem } from '@/components/StaggerList'
 import { HoverCard } from '@/components/HoverCard'
 
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('es-AR', { year: 'numeric', month: 'long', day: 'numeric' })
-}
-
 const Spinner = () => (
   <div style={{ display: 'flex', justifyContent: 'center', padding: '48px 0' }}>
     <div style={{ width: 36, height: 36, border: '3px solid var(--line)', borderTop: '3px solid var(--sage-deep)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
@@ -106,17 +102,11 @@ export default function PublicacionesPage() {
                       </button>
                     </div>
                   )}
-                  {a.image_url && (
-                    <div style={{ width: '100%', height: 180, borderRadius: 10, overflow: 'hidden', marginBottom: 12 }}>
-                      <img src={a.image_url} alt={a.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    </div>
-                  )}
                   <h3>
                     <Link href={`/publicaciones/${a.id}`} style={{ color: 'inherit' }}>{a.title}</Link>
                   </h3>
                   <p>{a.excerpt}</p>
                   <span className="writing__meta">
-                    <span>{formatDate(a.created_at)}</span>
                     <Link href={`/publicaciones/${a.id}`} style={{ color: 'var(--sage-deep)', fontWeight: 700 }}>
                       Leer →
                     </Link>
