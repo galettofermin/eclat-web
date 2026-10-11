@@ -62,35 +62,60 @@ function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('es-AR', { year: 'numeric', month: 'long', day: 'numeric' })
 }
 
-function renderContent(content: string) {
-  const blocks = content.split('\n\n').filter(b => b.trim());
+// Comienzos de párrafo que marcan el cierre reflexivo del texto
+const CLOSING_STARTS = ['Y ', 'Porque ', 'Tal vez']
+// Párrafos de presentación (desde dónde se piensa el tema)
+const INTRO_STARTS = ['Desde el psicoanálisis', 'Desde el Centro', 'Desde una orientación']
 
-  return blocks.map((block, i) => {
-    const text = block.trim();
+function renderContent(content: string) {
+  const blocks = content.split('\n\n').map(b => b.trim()).filter(Boolean);
+  const out: React.ReactNode[] = [];
+
+  for (let i = 0; i < blocks.length; i++) {
+    const text = blocks[i];
 
     // Pregunta retórica (termina en ?)
     if (text.endsWith('?')) {
-      return <p key={i} className="article-quote">{text}</p>;
+      out.push(<p key={i} className="article-quote">{text}</p>);
+      continue;
     }
 
-    // Referencias (empieza con "Referencias")
+    // Párrafo de cierre poético
+    if (CLOSING_STARTS.some(s => text.startsWith(s))) {
+      out.push(<p key={i} className="article-closing">{text}</p>);
+      continue;
+    }
+
+    // Párrafo de presentación (disciplina o institución)
+    if (INTRO_STARTS.some(s => text.startsWith(s))) {
+      out.push(<p key={i} className="article-intro">{text}</p>);
+      continue;
+    }
+
+    // Referencias: las líneas del mismo bloque y los bloques siguientes
+    // (cada referencia suele venir separada por una línea en blanco) hasta la firma
     if (text.startsWith('Referencias')) {
-      return (
+      const refs = text.split('\n').slice(1).map(l => l.trim()).filter(Boolean);
+      while (i + 1 < blocks.length && !blocks[i + 1].startsWith('Lic.')) {
+        refs.push(...blocks[++i].split('\n').map(l => l.trim()).filter(Boolean));
+      }
+      out.push(
         <div key={i} className="article-references">
           <p className="ref-title">Referencias conceptuales</p>
-          {text.split('\n').slice(1).map((ref, j) => (
+          {refs.map((ref, j) => (
             <p key={j}>{ref}</p>
           ))}
         </div>
       );
+      continue;
     }
 
-    // Firma final (empieza con "Lic.")
+    // Firma final
     if (text.startsWith('Lic.') && i > blocks.length - 5) {
-      return (
+      out.push(
         <div key={i} style={{
-          marginTop: '56px', paddingTop: '32px', borderTop: '1px solid var(--line)',
-          background: 'var(--sage-50)', borderRadius: '12px', padding: '24px 28px'
+          marginTop: '56px', background: 'var(--sage-50)',
+          borderRadius: '12px', padding: '24px 28px'
         }}>
           {text.split('\n').map((line, j) => (
             <p key={j} style={{
@@ -102,11 +127,14 @@ function renderContent(content: string) {
           ))}
         </div>
       );
+      continue;
     }
 
     // Párrafo normal (estilos en .article-body p)
-    return <p key={i}>{text}</p>;
-  });
+    out.push(<p key={i}>{text}</p>);
+  }
+
+  return out;
 }
 
 export default async function ArticlePage({ params }: Props) {

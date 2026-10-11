@@ -755,6 +755,18 @@ p { margin: 0; text-wrap: pretty; }
   border-left: 3px solid var(--green-accent); padding: 16px 24px; margin: 40px 0;
   background: var(--sage-50); border-radius: 0 12px 12px 0; line-height: 1.6;
 }
+.article-body .article-closing {
+  font-size: 20px; font-style: italic; font-weight: 500; color: var(--slate-900);
+  line-height: 1.7; margin: 40px auto; text-align: center; max-width: 52ch;
+}
+.article-body .article-intro {
+  font-size: 18px; font-weight: 500; color: var(--slate-900); line-height: 1.85;
+  padding-left: 20px; border-left: 3px solid var(--sage);
+}
+@media (max-width: 640px) {
+  .article-body .article-quote, .article-body .article-closing { font-size: 18px; }
+  .article-body .article-intro { font-size: 16.5px; }
+}
 .article-references {
   margin-top: 48px; padding: 24px 28px;
   background: var(--paper-2); border: 1px solid var(--line); border-radius: 12px;
