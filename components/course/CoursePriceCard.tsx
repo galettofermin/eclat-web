@@ -49,17 +49,22 @@ export default function CoursePriceCard({
       {/* Precio (sin precio cargado se omite en vez de mostrar $0) */}
       {price > 0 && (
       <div className="mb-5">
-        <div className="flex items-baseline gap-3 mb-1">
-          <span className="text-[32px] font-bold text-[#0A0A0A] leading-none">{formatPrice(price)}</span>
+        <div className="flex items-baseline flex-wrap gap-y-1 mb-1">
+          {/* Precio anterior tachado solo si es mayor al actual */}
+          {priceOriginal > price && (
+            <span style={{ fontSize: '16px', color: 'var(--ink-muted)', textDecoration: 'line-through', marginRight: '8px' }}>
+              {formatPrice(priceOriginal)}
+            </span>
+          )}
+          <span style={{ fontSize: '26px', fontWeight: 700, color: 'var(--slate-900)' }}>
+            {formatPrice(price)}
+          </span>
           {discount > 0 && (
-            <span className="bg-[#DCEFE8] text-[#2F7D6B] text-[12px] font-bold px-2 py-0.5 rounded-full">
+            <span className="bg-[#DCEFE8] text-[#2F7D6B] text-[12px] font-bold px-2 py-0.5 rounded-full ml-3">
               -{discount}%
             </span>
           )}
         </div>
-        {priceOriginal > price && (
-          <p className="text-[15px] text-[#86868b] line-through">{formatPrice(priceOriginal)}</p>
-        )}
         {discount > 0 && (
           <p className="text-[12px] text-[#2F7D6B] font-semibold mt-1">
             ¡Oferta limitada! Ahorrás {formatPrice(priceOriginal - price)}
