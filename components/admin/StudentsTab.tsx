@@ -20,7 +20,7 @@ export default function StudentsTab({ onError }: { onError: (msg: string) => voi
   const [courses, setCourses] = useState<Course[]>([])
   const [loading, setLoading] = useState(true)
   const [picking, setPicking] = useState<string | null>(null)   // id del alumno con el selector abierto
-  const [selected, setSelected] = useState('')
+  const [selected, setSelected] = useState<string[]>([])
   const [busy, setBusy] = useState(false)
 
   const load = useCallback(async () => {
@@ -37,15 +37,21 @@ export default function StudentsTab({ onError }: { onError: (msg: string) => voi
       .then(({ data }) => setCourses(data ?? []))
   }, [load])
 
+  const toggle = (courseId: string) =>
+    setSelected(prev => prev.includes(courseId) ? prev.filter(id => id !== courseId) : [...prev, courseId])
+
   const enable = async (userId: string) => {
-    if (!selected) return
+    if (!selected.length) return
     setBusy(true)
-    const res = await fetch('/api/admin/enrollments', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId, courseId: selected }),
-    })
-    if (!res.ok) onError((await res.json()).error ?? 'No se pudo habilitar el curso.')
-    setPicking(null); setSelected('')
+    const results = await Promise.all(selected.map(courseId =>
+      fetch('/api/admin/enrollments', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, courseId }),
+      })
+    ))
+    const failed = results.filter(r => !r.ok).length
+    if (failed) onError(`No se pudieron habilitar ${failed} de ${selected.length} cursos seleccionados.`)
+    setPicking(null); setSelected([])
     await load()
     setBusy(false)
   }
@@ -81,7 +87,7 @@ export default function StudentsTab({ onError }: { onError: (msg: string) => voi
               </div>
               {picking !== s.id && (
                 <button
-                  onClick={() => { setPicking(s.id); setSelected('') }}
+                  onClick={() => { setPicking(s.id); setSelected([]) }}
                   disabled={busy || !available.length}
                   style={{ ...btn, color: '#fff', background: 'var(--slate-900)', opacity: available.length ? 1 : .4 }}
                 >
@@ -91,21 +97,29 @@ export default function StudentsTab({ onError }: { onError: (msg: string) => voi
             </div>
 
             {picking === s.id && (
-              <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
-                <select
-                  value={selected}
-                  onChange={e => setSelected(e.target.value)}
-                  style={{ flex: 1, minWidth: 200, fontSize: 13, padding: '7px 10px', borderRadius: 8, border: '1px solid var(--eclat-border)' }}
-                >
-                  <option value="">Elegí un curso…</option>
-                  {available.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}
-                </select>
-                <button onClick={() => enable(s.id)} disabled={busy || !selected} style={{ ...btn, color: '#fff', background: 'var(--green-700)', opacity: selected ? 1 : .5 }}>
-                  Habilitar
-                </button>
-                <button onClick={() => setPicking(null)} style={{ ...btn, color: 'var(--ink-muted)', background: '#f5f5f7' }}>
-                  Cancelar
-                </button>
+              <div style={{ marginTop: 12, background: '#f7f8f7', borderRadius: 8, padding: '12px 14px' }}>
+                <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--ink-muted)', marginBottom: 8 }}>Elegí los cursos a habilitar</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 12 }}>
+                  {available.map(c => (
+                    <label key={c.id} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--slate-900)', cursor: 'pointer' }}>
+                      <input
+                        type="checkbox"
+                        checked={selected.includes(c.id)}
+                        onChange={() => toggle(c.id)}
+                        style={{ width: 16, height: 16, accentColor: 'var(--green-700)' }}
+                      />
+                      {c.title}
+                    </label>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  <button onClick={() => enable(s.id)} disabled={busy || !selected.length} style={{ ...btn, color: '#fff', background: 'var(--green-700)', opacity: selected.length ? 1 : .5 }}>
+                    {busy ? 'Habilitando…' : `Habilitar seleccionados${selected.length ? ` (${selected.length})` : ''}`}
+                  </button>
+                  <button onClick={() => setPicking(null)} disabled={busy} style={{ ...btn, color: 'var(--ink-muted)', background: '#e9ecea' }}>
+                    Cancelar
+                  </button>
+                </div>
               </div>
             )}
 
