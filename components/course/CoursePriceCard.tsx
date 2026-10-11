@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
 import { BANK_ALIAS, WHATSAPP_URL } from '@/lib/constants'
 
 interface CoursePriceCardProps {
@@ -15,16 +14,16 @@ interface CoursePriceCardProps {
   isEnrolled: boolean
   isPending: boolean
   user: boolean
+  waHref: string
 }
 
 const formatPrice = (p: number) =>
   new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(p)
 
 export default function CoursePriceCard({
-  price, priceOriginal, courseId, isFree, freeLink, freeCta,
-  isDirector, isEnrolled, isPending, user
+  price, priceOriginal, isFree, freeLink, freeCta,
+  isDirector, isEnrolled, isPending, user, waHref
 }: CoursePriceCardProps) {
-  const [expandMP, setExpandMP] = useState(false)
   const [expandTransfer, setExpandTransfer] = useState(false)
   const discount = priceOriginal > price
     ? Math.round(((priceOriginal - price) / priceOriginal) * 100)
@@ -47,7 +46,8 @@ export default function CoursePriceCard({
 
   return (
     <div className="bg-white rounded-2xl border border-black/[0.08] shadow-xl p-6">
-      {/* Precio */}
+      {/* Precio (sin precio cargado se omite en vez de mostrar $0) */}
+      {price > 0 && (
       <div className="mb-5">
         <div className="flex items-baseline gap-3 mb-1">
           <span className="text-[32px] font-bold text-[#0A0A0A] leading-none">{formatPrice(price)}</span>
@@ -66,6 +66,7 @@ export default function CoursePriceCard({
           </p>
         )}
       </div>
+      )}
 
       {/* CTA principal */}
       {isDirector ? (
@@ -80,44 +81,21 @@ export default function CoursePriceCard({
         <div className="w-full text-center bg-amber-50 text-amber-700 font-semibold py-3.5 rounded-xl text-[14px] mb-4 border border-amber-200">
           Pago en verificación
         </div>
-      ) : !user ? (
-        <Link href={`/login?redirect=/inscripcion/${courseId}`}
-          className="block w-full text-center bg-[#2F7D6B] text-white font-bold py-4 rounded-xl hover:bg-[#245f52] transition-colors text-[16px] mb-4 shadow-lg shadow-[#2F7D6B]/25">
-          Inscribirme ahora
-        </Link>
       ) : (
-        <Link href={`/inscripcion/${courseId}`}
-          className="block w-full text-center bg-[#2F7D6B] text-white font-bold py-4 rounded-xl hover:bg-[#245f52] transition-colors text-[16px] mb-4 shadow-lg shadow-[#2F7D6B]/25">
-          Inscribirme ahora
-        </Link>
+        <>
+          <a href={waHref} target="_blank" rel="noopener noreferrer"
+            className="block w-full text-center bg-[#2F7D6B] text-white font-bold py-4 rounded-xl hover:bg-[#245f52] transition-colors text-[16px] mb-2 shadow-lg shadow-[#2F7D6B]/25">
+            Inscribirme
+          </a>
+          <p className="text-[12px] text-[#86868b] text-center mb-4">
+            {user ? 'Te habilitamos el curso en tu cuenta.' : 'Necesitás una cuenta para acceder al curso.'}
+          </p>
+        </>
       )}
 
       {/* Formas de pago */}
       {!isDirector && !isEnrolled && !isPending && (
         <div className="space-y-2 mb-4">
-          {/* Mercado Pago */}
-          <button onClick={() => setExpandMP(!expandMP)}
-            className="w-full flex items-center justify-between px-4 py-3 bg-[#009EE3]/5 border border-[#009EE3]/20 rounded-xl hover:bg-[#009EE3]/10 transition-colors">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded bg-[#009EE3] flex items-center justify-center">
-                <span className="text-white text-[10px] font-bold">MP</span>
-              </div>
-              <span className="text-[13px] font-medium text-[#0A0A0A]">Mercado Pago</span>
-            </div>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#86868b" strokeWidth="2"
-              className={`transition-transform ${expandMP ? 'rotate-180' : ''}`}>
-              <polyline points="6 9 12 15 18 9"/>
-            </svg>
-          </button>
-          {expandMP && (
-            <div className="px-4 py-3 bg-[#F5F5F7] rounded-xl text-[12px] text-[#424245] space-y-1">
-              <p>✓ Tarjeta de crédito (hasta 12 cuotas)</p>
-              <p>✓ Tarjeta de débito</p>
-              <p>✓ Dinero en cuenta MP</p>
-              <p>✓ Pago en efectivo (Rapipago, Pago Fácil)</p>
-            </div>
-          )}
-
           {/* Transferencia */}
           <button onClick={() => setExpandTransfer(!expandTransfer)}
             className="w-full flex items-center justify-between px-4 py-3 bg-[#2F7D6B]/5 border border-[#2F7D6B]/20 rounded-xl hover:bg-[#2F7D6B]/10 transition-colors">

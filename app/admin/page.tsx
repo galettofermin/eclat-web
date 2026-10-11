@@ -3,8 +3,9 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import StudentsTab from '@/components/admin/StudentsTab'
 
-type Tab = 'escritos' | 'servicios' | 'textos'
+type Tab = 'escritos' | 'servicios' | 'textos' | 'alumnos'
 
 type ArticleRow = {
   id: string
@@ -286,6 +287,7 @@ export default function AdminDashboard() {
             { key: 'escritos',  label: 'Escritos' },
             { key: 'servicios', label: 'Servicios' },
             { key: 'textos',    label: 'Textos del sitio' },
+            { key: 'alumnos',   label: 'Alumnos' },
           ] as { key: Tab; label: string }[]).map(t => (
             <button
               key={t.key}
@@ -310,6 +312,16 @@ export default function AdminDashboard() {
         <div style={{ marginBottom: 16, padding: '11px 16px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 10, fontSize: 13, color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           {error}
           <button onClick={() => setError('')} style={{ fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', color: '#dc2626', marginLeft: 12 }}>✕</button>
+        </div>
+      )}
+
+      {/* ── Tab: Alumnos ── */}
+      {tab === 'alumnos' && (
+        <div style={card}>
+          <div style={cardHead}>
+            <h2 style={{ fontSize: 15, fontWeight: 600 }}>Alumnos</h2>
+          </div>
+          <StudentsTab onError={setError} />
         </div>
       )}
 

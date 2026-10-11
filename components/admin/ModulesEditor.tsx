@@ -29,7 +29,7 @@ function AddYouTubeForm({ onAdd, onCancel }: AddYouTubeFormProps) {
     <form onSubmit={handleSubmit} className="bg-[#F5F5F7] rounded-xl p-4 space-y-2 border border-black/5">
       <input type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="Título del video (opcional)"
         className="w-full px-3 py-2 rounded-lg border border-black/10 text-[13px] focus:outline-none focus:border-[#2F7D6B] bg-white"/>
-      <input type="url" value={url} onChange={e => setUrl(e.target.value)} placeholder="https://youtube.com/watch?v=..." required
+      <input type="url" value={url} onChange={e => setUrl(e.target.value)} placeholder="Link de YouTube o Vimeo" required
         className="w-full px-3 py-2 rounded-lg border border-black/10 text-[13px] focus:outline-none focus:border-[#2F7D6B] bg-white"/>
       <div className="flex gap-2">
         <button type="submit" disabled={loading}
@@ -262,7 +262,7 @@ export default function ModulesEditor({ courseId }: { courseId: string }) {
                 </button>
                 <button onClick={() => setAddingMaterial({ moduleId: mod.id, type: 'youtube' })}
                   className="flex items-center gap-1.5 text-[11px] font-semibold text-[#6E6E73] bg-[#F5F5F7] hover:bg-[#e8e8eb] px-3 py-1.5 rounded-full transition-colors">
-                  {ICON_YT} Link YouTube
+                  {ICON_YT} Link YouTube / Vimeo
                 </button>
               </div>
 

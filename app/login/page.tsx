@@ -16,7 +16,9 @@ function LoginForm() {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const params = useSearchParams()
-  const redirect = params.get('redirect')
+  // Solo rutas internas: evita redirigir a otro sitio con ?redirect=//dominio
+  const rawRedirect = params.get('redirect')
+  const redirect = rawRedirect?.startsWith('/') && !rawRedirect.startsWith('//') ? rawRedirect : null
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -34,7 +36,7 @@ function LoginForm() {
     if (data.user.email === DIRECTOR_EMAIL) {
       router.push(redirect || '/admin')
     } else {
-      router.push(redirect || '/dashboard')
+      router.push(redirect || '/mi-cuenta')
     }
     router.refresh()
   }

@@ -25,12 +25,12 @@ export async function GET() {
   // Para cada usuario buscar sus inscripciones
   const { data: enrollments } = await admin
     .from('enrollments')
-    .select('user_id, status, courses(title)')
+    .select('id, user_id, course_id, status, courses(title)')
 
-  const enrollmentMap: Record<string, { title: string; status: string }[]> = {}
+  const enrollmentMap: Record<string, { enrollmentId: string; courseId: string; title: string; status: string }[]> = {}
   enrollments?.forEach((enr: any) => {
     if (!enrollmentMap[enr.user_id]) enrollmentMap[enr.user_id] = []
-    if (enr.courses) enrollmentMap[enr.user_id].push({ title: enr.courses.title, status: enr.status })
+    if (enr.courses) enrollmentMap[enr.user_id].push({ enrollmentId: enr.id, courseId: enr.course_id, title: enr.courses.title, status: enr.status })
   })
 
   const result = filtered.map((u) => ({

@@ -10,9 +10,10 @@ import DirectorModules from '@/components/admin/DirectorModules'
 import CourseAccordion from '@/components/course/CourseAccordion'
 import CoursePriceCard from '@/components/course/CoursePriceCard'
 import ModuleCompleteBtn from '@/components/course/ModuleCompleteBtn'
+import ModuleContent from '@/components/course/ModuleContent'
 import type { QuizQuestion } from '@/lib/types'
 import type { Metadata } from 'next'
-import { DIRECTOR_EMAIL } from '@/lib/constants'
+import { DIRECTOR_EMAIL, WA_URL } from '@/lib/constants'
 import { courseMetadata } from '@/lib/courseMetadata'
 
 export const dynamic = 'force-dynamic'
@@ -21,9 +22,6 @@ export function generateMetadata({ params }: { params: { id: string } }): Promis
   return courseMetadata(params.id)
 }
 
-const ICON_PDF = (<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>)
-const ICON_VIDEO = (<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>)
-const ICON_YT = (<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-2.74 12.52 12.52 0 0 0-7.64 0 4.83 4.83 0 0 1-3.77 2.74A12.22 12.22 0 0 0 2 12a12.22 12.22 0 0 0 2.41 5.31 4.83 4.83 0 0 1 3.77 2.74 12.52 12.52 0 0 0 7.64 0 4.83 4.83 0 0 1 3.77-2.74A12.22 12.22 0 0 0 22 12a12.22 12.22 0 0 0-2.41-5.31zM10 15.5v-7l6 3.5z"/></svg>)
 
 const formatPrice = (p: number) =>
   new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(p)
@@ -84,6 +82,7 @@ export default async function CursoPage({
     ? course.target_audience.split('\n').map((s: string) => s.trim()).filter(Boolean) : []
 
   const priceOriginal = course.price_original ?? 0
+  const waHref = WA_URL(`Hola ÉCLAT, quiero inscribirme en "${course.title}".${user?.email ? ` Mi cuenta es ${user.email}.` : ''}`)
 
   return (
     <main className="min-h-screen bg-white">
@@ -174,6 +173,7 @@ export default async function CursoPage({
                   isEnrolled={isApproved && !isDirector}
                   isPending={isPending}
                   user={!!user}
+                  waHref={waHref}
                 />
               </div>
             </div>
@@ -194,6 +194,7 @@ export default async function CursoPage({
           isEnrolled={isApproved && !isDirector}
           isPending={isPending}
           user={!!user}
+          waHref={waHref}
         />
       </div>
 
@@ -309,24 +310,8 @@ export default async function CursoPage({
                     </div>
                   </div>
 
-                  {/* Materiales desbloqueados */}
-                  {isApproved && mod.module_materials?.length > 0 && (
-                    <div className="px-5 pb-3 pt-1 bg-[#F9F9F9] border-t border-black/[0.04] space-y-1.5">
-                      {mod.module_materials.map((mat: { id: string; type: string; title: string; url: string }) => (
-                        <a key={mat.id} href={mat.url} target="_blank" rel="noopener noreferrer"
-                          className="flex items-center gap-3 py-2 px-3 rounded-xl hover:bg-white transition-colors group">
-                          <span className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${mat.type === 'pdf' ? 'bg-red-50 text-red-500' : mat.type === 'video' ? 'bg-blue-50 text-blue-500' : 'bg-red-50 text-red-500'}`}>
-                            {mat.type === 'pdf' ? ICON_PDF : mat.type === 'video' ? ICON_VIDEO : ICON_YT}
-                          </span>
-                          <span className="text-[13px] font-medium text-[#0A0A0A] group-hover:text-[#2F7D6B] transition-colors flex-1 truncate">{mat.title}</span>
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#86868b" strokeWidth="1.5" className="shrink-0">
-                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                            <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
-                          </svg>
-                        </a>
-                      ))}
-                    </div>
-                  )}
+                  {/* Contenido desbloqueado */}
+                  {isApproved && <ModuleContent materials={mod.module_materials ?? []} />}
 
                   {/* Botón completar + cierre del módulo */}
                   {isApproved && !isDirector && user && (
@@ -355,24 +340,27 @@ export default async function CursoPage({
             </div>
           )}
 
-          {/* CTAs sin acceso */}
+          {/* CTA sin acceso: la inscripción se gestiona por WhatsApp y el admin habilita el curso */}
           {!isApproved && !isPending && !course.is_free && (
             <div className="mt-6 bg-[#0A0A0A] rounded-2xl p-7 md:p-8 text-center text-white">
-              <p className="text-[17px] font-semibold mb-2">{!user ? 'Registrate para acceder' : 'Desbloqueá el contenido completo'}</p>
+              <p className="text-[17px] font-semibold mb-2">Desbloqueá el contenido completo</p>
               <p className="text-white/55 text-[14px] mb-6">
-                {!user ? 'Creá tu cuenta gratis y comprá el curso.' : `${formatPrice(course.price)} · Acceso de por vida`}
-                {priceOriginal > course.price && ` (antes ${formatPrice(priceOriginal)})`}
+                {!user
+                  ? 'Creá tu cuenta y escribinos por WhatsApp: te habilitamos el curso.'
+                  : 'Escribinos por WhatsApp y te habilitamos el curso en tu cuenta.'}
+                {course.price > 0 && ` ${formatPrice(course.price)} · Acceso de por vida.`}
               </p>
-              {!user ? (
-                <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                  <Link href="/registro" className="bg-white text-[#0A0A0A] font-semibold px-6 py-3 rounded-full text-[15px] hover:bg-white/90 transition-colors">Crear cuenta gratis</Link>
-                  <Link href={`/login?redirect=/inscripcion/${course.id}`} className="border border-white/20 text-white font-semibold px-6 py-3 rounded-full text-[15px] hover:bg-white/10 transition-colors">Ya tengo cuenta</Link>
-                </div>
-              ) : (
-                <Link href={`/inscripcion/${course.id}`} className="inline-block bg-white text-[#0A0A0A] font-semibold px-8 py-3 rounded-full text-[15px] hover:bg-white/90 transition-colors">
-                  Inscribirme — {formatPrice(course.price)}
-                </Link>
-              )}
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <a href={waHref} target="_blank" rel="noopener noreferrer"
+                  className="bg-white text-[#0A0A0A] font-semibold px-8 py-3 rounded-full text-[15px] hover:bg-white/90 transition-colors">
+                  Inscribirme
+                </a>
+                {!user && (
+                  <Link href="/registro" className="border border-white/20 text-white font-semibold px-6 py-3 rounded-full text-[15px] hover:bg-white/10 transition-colors">
+                    Crear cuenta
+                  </Link>
+                )}
+              </div>
             </div>
           )}
 
