@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond } from "next/font/google";
 import Link from "next/link";
+import { NavAuthButton } from "@/components/NavAuthButton";
 import Image from "next/image";
 import { WA_NUMBER, WA_URL } from "@/lib/constants";
 import AdminBar from "@/components/AdminBar";
@@ -123,13 +124,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <button className="nav__ham" aria-label="Menú" aria-expanded="false">
               <span></span><span></span><span></span>
             </button>
-            <Link className="btn btn--primary nav__login" href="/login" style={{ padding: "11px 20px", fontSize: "15px" }}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="8" r="4" />
-                <path d="M4 21c0-4 4-6 8-6s8 2 8 6" />
-              </svg>
-              Ingreso
-            </Link>
+            <NavAuthButton />
           </div>
         </header>
 
