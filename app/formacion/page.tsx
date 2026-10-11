@@ -86,8 +86,8 @@ export default async function FormacionPage() {
                   <h3>{a.title}</h3>
                   <p>{a.desc}</p>
                   <span className="writing__meta">
-                    <span>{a.meta}</span>
-                    <b>Más info →</b>
+                    <span style={{ color: 'var(--ink-muted)', fontSize: '13px' }}>{a.meta}</span>
+                    <b style={{ marginLeft: 'auto' }}>Más info →</b>
                   </span>
                 </HoverCard>
               </StaggerItem>
