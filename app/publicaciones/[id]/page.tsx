@@ -70,22 +70,16 @@ function renderContent(content: string) {
 
     // Pregunta retórica (termina en ?)
     if (text.endsWith('?')) {
-      return (
-        <p key={i} style={{
-          fontSize: '21px', fontStyle: 'italic', color: 'var(--slate-900)',
-          fontWeight: 500, margin: '32px 0', paddingLeft: '24px',
-          borderLeft: '3px solid var(--sage)', lineHeight: 1.6
-        }}>{text}</p>
-      );
+      return <p key={i} className="article-quote">{text}</p>;
     }
 
     // Referencias (empieza con "Referencias")
     if (text.startsWith('Referencias')) {
       return (
-        <div key={i} style={{ marginTop: '48px', paddingTop: '32px', borderTop: '1px solid var(--line)' }}>
-          <p style={{ fontSize: '13px', fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--sage-text)', marginBottom: '16px' }}>Referencias conceptuales</p>
+        <div key={i} className="article-references">
+          <p className="ref-title">Referencias conceptuales</p>
           {text.split('\n').slice(1).map((ref, j) => (
-            <p key={j} style={{ fontSize: '15px', color: 'var(--ink-muted)', marginBottom: '8px' }}>{ref}</p>
+            <p key={j}>{ref}</p>
           ))}
         </div>
       );
@@ -95,23 +89,23 @@ function renderContent(content: string) {
     if (text.startsWith('Lic.') && i > blocks.length - 5) {
       return (
         <div key={i} style={{
-          marginTop: '48px', paddingTop: '32px', borderTop: '1px solid var(--line)',
-          display: 'flex', flexDirection: 'column', gap: '4px'
+          marginTop: '56px', paddingTop: '32px', borderTop: '1px solid var(--line)',
+          background: 'var(--sage-50)', borderRadius: '12px', padding: '24px 28px'
         }}>
           {text.split('\n').map((line, j) => (
-            <p key={j} style={{ fontSize: j === 0 ? '16px' : '14px', fontWeight: j === 0 ? 600 : 400, color: j === 0 ? 'var(--slate-900)' : 'var(--ink-muted)' }}>{line}</p>
+            <p key={j} style={{
+              fontSize: j === 0 ? '15px' : '13.5px',
+              fontWeight: j === 0 ? 600 : 400,
+              color: j === 0 ? 'var(--slate-900)' : 'var(--ink-muted)',
+              marginBottom: '3px'
+            }}>{line}</p>
           ))}
         </div>
       );
     }
 
-    // Párrafo normal
-    return (
-      <p key={i} style={{
-        fontSize: '19px', lineHeight: 1.85, color: 'var(--slate-700)',
-        marginBottom: '24px'
-      }}>{text}</p>
-    );
+    // Párrafo normal (estilos en .article-body p)
+    return <p key={i}>{text}</p>;
   });
 }
 
@@ -136,6 +130,7 @@ export default async function ArticlePage({ params }: Props) {
     .limit(3)
 
   const content: string = article.content ?? ''
+  const imageUrl: string = article.image_url?.trim() ?? ''
   const author: string = article.author ?? ''
   const authorRole: string = article.author_role ?? ''
   const initials = author
@@ -149,7 +144,7 @@ export default async function ArticlePage({ params }: Props) {
   return (
     <>
       {/* Hero */}
-      <section className={`article-hero${article.image_url ? '' : ' article-hero--noimg'}`}>
+      <section className={`article-hero${imageUrl ? '' : ' article-hero--noimg'}`}>
         <div className="wrap">
           {/* Columna izquierda */}
           <div>
@@ -169,11 +164,11 @@ export default async function ArticlePage({ params }: Props) {
           </div>
 
           {/* Columna derecha — imagen (sin imagen, el título va a lo ancho) */}
-          {article.image_url && (
+          {imageUrl && (
             <div>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={article.image_url}
+                src={imageUrl}
                 alt={article.title}
                 className="article-image"
               />
