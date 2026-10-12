@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { DIRECTOR_EMAIL } from '@/lib/constants'
 
 const SUPABASE_URL = 'https://fwdhtdpzxvvjattbllfl.supabase.co'
 const SUPABASE_ANON_KEY = 'sb_publishable_xnvX6Ov1Y8DYUY8-AAcEsQ_4CBr36CB'
@@ -28,7 +29,6 @@ export async function middleware(request: NextRequest) {
 
   const isAdminPath = request.nextUrl.pathname.startsWith('/admin')
   const isLoginPath = request.nextUrl.pathname === '/login'
-  const DIRECTOR_EMAIL = 'galettofermin@gmail.com'
 
   if (isAdminPath && !user) {
     return NextResponse.redirect(new URL('/login?redirect=/admin', request.url))

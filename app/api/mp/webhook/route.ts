@@ -68,16 +68,18 @@ export async function POST(req: Request) {
 
         // Enviar email de acceso si tenemos el email del usuario
         if (userEmail) {
-          const { data: course } = await supabase
-            .from('courses')
-            .select('title')
-            .eq('id', courseId)
-            .single()
+          const [{ data: course }, { data: { user: authUser } }] = await Promise.all([
+            supabase.from('courses').select('title').eq('id', courseId).single(),
+            supabase.auth.admin.getUserById(userId),
+          ])
+
+          const meta = authUser?.user_metadata ?? {}
+          const nombre = meta.nombre || String(meta.full_name ?? '').trim().split(/\s+/)[0] || userEmail.split('@')[0]
 
           const siteUrl = process.env.NEXT_PUBLIC_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://eclatcentro.com'
           await enviarAccesoCurso({
             email: userEmail,
-            nombre: userEmail.split('@')[0],
+            nombre,
             tituloCurso: course?.title ?? 'tu curso',
             urlCurso: `${siteUrl}/cursos/${courseId}`,
           }).catch(err => console.error('Email acceso error:', err))
