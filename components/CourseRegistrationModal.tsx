@@ -49,11 +49,26 @@ export default function CourseRegistrationModal({ courseId, courseTitle, price, 
   const [byTransfer, setByTransfer] = useState(false)
   const firstField = useRef<HTMLInputElement>(null)
   const trigger = useRef<HTMLButtonElement>(null)
+  // true si se abrió directo en "Elegí cómo pagar" y la inscripción todavía no se guardó
+  const pendingSave = useRef(false)
 
   const close = () => {
     setOpen(false)
     if (step === 'done') { setForm({ ...EMPTY, email: userEmail ?? '' }); setStep('form'); setByTransfer(false) }
     trigger.current?.focus()
+  }
+
+  // Si el usuario ya tiene sesión, saltar directo al paso de pago al abrir
+  const handleOpen = () => {
+    if (userEmail && price && price > 0) {
+      setStep('choose')
+      setSavedOutcome('loggedIn')
+      pendingSave.current = true
+    } else {
+      setStep('form')
+    }
+    setError('')
+    setOpen(true)
   }
 
   // Escape cierra, se bloquea el scroll de fondo y el foco va al primer campo
@@ -63,7 +78,7 @@ export default function CourseRegistrationModal({ courseId, courseTitle, price, 
     document.addEventListener('keydown', onKey)
     const prevOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
-    firstField.current?.focus()
+    if (step === 'form') firstField.current?.focus()
     return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = prevOverflow }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
@@ -140,9 +155,24 @@ export default function CourseRegistrationModal({ courseId, courseTitle, price, 
     }
   }
 
+  // Guarda la inscripción cuando el usuario ya tiene sesión y saltó el form
+  // El servidor completa nombre y apellido desde la cuenta. Se guarda una sola vez aunque
+  // la persona pruebe los dos métodos de pago.
+  const saveRegistrationIfLoggedIn = async () => {
+    if (!userEmail || !pendingSave.current) return // solo para usuarios con sesión que saltearon el form
+    const res = await fetch('/api/registrations', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: userEmail, courseId }),
+    }).catch(() => null) // best-effort: si falla igual seguimos
+    if (res?.ok) pendingSave.current = false
+    else console.error('No se pudo guardar la inscripción', res?.status)
+  }
+
   const payWithMP = async () => {
     setPaying(true)
     try {
+      await saveRegistrationIfLoggedIn()
       // El servidor toma el usuario de la sesión o, si no hay, lo busca por el mail
       const res = await fetch('/api/mp/preference', {
         method: 'POST',
@@ -158,7 +188,8 @@ export default function CourseRegistrationModal({ courseId, courseTitle, price, 
     }
   }
 
-  const payWithTransfer = () => {
+  const payWithTransfer = async () => {
+    await saveRegistrationIfLoggedIn()
     setByTransfer(true)
     setOutcome(savedOutcome)
     setStep('done')
@@ -166,7 +197,7 @@ export default function CourseRegistrationModal({ courseId, courseTitle, price, 
 
   return (
     <>
-      <button ref={trigger} type="button" className={triggerClassName} onClick={() => setOpen(true)}>
+      <button ref={trigger} type="button" className={triggerClassName} onClick={handleOpen}>
         {triggerLabel}
       </button>
 

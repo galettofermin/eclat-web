@@ -38,10 +38,15 @@ export function NavAuthButton() {
 
   if (!user?.nombre) {
     return (
-      <Link href="/login" className="btn btn--primary nav__login" style={{ padding: '11px 20px', fontSize: '15px' }} aria-label="Ingreso">
-        <Icon />
-        Ingreso
-      </Link>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <Link href="/registro" className="btn btn--ghost nav__register" style={{ padding: '11px 16px', fontSize: '14px' }}>
+          Registrarse
+        </Link>
+        <Link href="/login" className="btn btn--primary nav__login" style={{ padding: '11px 20px', fontSize: '15px' }} aria-label="Ingresar">
+          <Icon />
+          Ingresar
+        </Link>
+      </div>
     );
   }
 
