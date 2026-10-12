@@ -3,8 +3,6 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import Navbar from '@/components/Navbar'
-import Footer from '@/components/Footer'
 import { createClient } from '@/lib/supabase/client'
 
 type PwStatus = 'idle' | 'saving' | 'ok' | 'error'
@@ -66,8 +64,7 @@ export default function PerfilPage() {
 
   return (
     <main className="min-h-screen bg-[#F5F5F7]">
-      <Navbar />
-      <div className="max-w-xl mx-auto px-5 pt-28 pb-20 space-y-6">
+      <div className="max-w-xl mx-auto px-5 pt-12 pb-20 space-y-6">
 
         {/* Header */}
         <div className="flex items-center gap-4">
@@ -149,7 +146,6 @@ export default function PerfilPage() {
         </div>
 
       </div>
-      <Footer />
     </main>
   )
 }

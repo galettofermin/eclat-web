@@ -1,7 +1,4 @@
 import type { Metadata } from 'next'
-import Navbar from '@/components/Navbar'
-import Footer from '@/components/Footer'
-import WhatsAppButton from '@/components/WhatsAppButton'
 import { WHATSAPP_URL, INSTAGRAM_URL, INSTAGRAM_HANDLE } from '@/lib/constants'
 
 export const metadata: Metadata = {
@@ -13,9 +10,7 @@ export const metadata: Metadata = {
 export default function TurnosPage() {
   return (
     <main className="min-h-screen bg-white flex flex-col">
-      <Navbar />
-
-      <section className="flex-1 flex items-center justify-center px-6 py-32">
+      <section className="flex-1 flex items-center justify-center px-6 py-20">
         <div className="max-w-lg w-full text-center">
           {/* Ícono */}
           <div className="w-20 h-20 rounded-3xl bg-[#DCEFE8] flex items-center justify-center mx-auto mb-8">
@@ -61,8 +56,6 @@ export default function TurnosPage() {
         </div>
       </section>
 
-      <Footer />
-      <WhatsAppButton />
     </main>
   )
 }

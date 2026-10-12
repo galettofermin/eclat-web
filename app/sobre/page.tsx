@@ -1,8 +1,5 @@
 import type { Metadata } from 'next'
-import Navbar from '@/components/Navbar'
 import About from '@/components/About'
-import Footer from '@/components/Footer'
-import WhatsAppButton from '@/components/WhatsAppButton'
 import { getSiteConfig } from '@/lib/supabase/getSiteConfig'
 
 export const metadata: Metadata = {
@@ -16,10 +13,7 @@ export default async function SobrePage() {
   const siteConfig = await getSiteConfig()
   return (
     <main className="min-h-screen bg-white">
-      <Navbar />
-      <div className="pt-16"><About siteConfig={siteConfig} /></div>
-      <Footer />
-      <WhatsAppButton />
+      <div><About siteConfig={siteConfig} /></div>
     </main>
   )
 }

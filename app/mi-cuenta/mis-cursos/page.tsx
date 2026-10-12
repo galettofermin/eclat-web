@@ -1,7 +1,5 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import Navbar from '@/components/Navbar'
-import Footer from '@/components/Footer'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 
@@ -41,8 +39,7 @@ export default async function MisCursosPage() {
 
   return (
     <main className="min-h-screen bg-[#F5F5F7]">
-      <Navbar />
-      <div className="max-w-3xl mx-auto px-5 pt-28 pb-20">
+      <div className="max-w-3xl mx-auto px-5 pt-12 pb-20">
 
         {/* Header */}
         <div className="mb-8">
@@ -141,7 +138,6 @@ export default async function MisCursosPage() {
           </Link>
         </div>
       </div>
-      <Footer />
     </main>
   )
 }

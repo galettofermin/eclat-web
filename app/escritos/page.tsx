@@ -1,8 +1,5 @@
 import type { Metadata } from 'next'
-import Navbar from '@/components/Navbar'
 import Escritos from '@/components/Escritos'
-import Footer from '@/components/Footer'
-import WhatsAppButton from '@/components/WhatsAppButton'
 import { createClient } from '@/lib/supabase/server'
 import { getSiteConfig } from '@/lib/supabase/getSiteConfig'
 import type { Article } from '@/lib/types'
@@ -24,10 +21,7 @@ export default async function EscritosPage() {
   const siteConfig = await getSiteConfig()
   return (
     <main className="min-h-screen bg-white">
-      <Navbar />
-      <div className="pt-16"><Escritos articles={articles} siteConfig={siteConfig} /></div>
-      <Footer />
-      <WhatsAppButton />
+      <div><Escritos articles={articles} siteConfig={siteConfig} /></div>
     </main>
   )
 }

@@ -2,8 +2,6 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import Navbar from '@/components/Navbar'
-import Footer from '@/components/Footer'
 
 export const dynamic = 'force-dynamic'
 
@@ -60,8 +58,7 @@ export default async function MisCursosPage() {
 
   return (
     <main className="min-h-screen bg-[#F5F5F7]">
-      <Navbar />
-      <div className="max-w-4xl mx-auto px-5 pt-28 pb-20">
+      <div className="max-w-4xl mx-auto px-5 pt-12 pb-20">
 
         {/* Header */}
         <div className="flex items-center gap-4 mb-10">
@@ -182,7 +179,6 @@ export default async function MisCursosPage() {
           </div>
         )}
       </div>
-      <Footer />
     </main>
   )
 }
