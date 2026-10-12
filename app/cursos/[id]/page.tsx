@@ -170,6 +170,7 @@ export default async function CursoPage({
                   isPending={isPending}
                   user={!!user}
                   courseTitle={course.title}
+                  userEmail={user?.email ?? null}
                 />
               </div>
             </div>
@@ -191,6 +192,7 @@ export default async function CursoPage({
           isPending={isPending}
           user={!!user}
           courseTitle={course.title}
+          userEmail={user?.email ?? null}
         />
       </div>
 
@@ -349,6 +351,7 @@ export default async function CursoPage({
                 <CourseRegistrationModal
                   courseId={course.id}
                   courseTitle={course.title}
+                  userEmail={user?.email ?? null}
                   triggerClassName="bg-white text-[#0A0A0A] font-semibold px-8 py-3 rounded-full text-[15px] hover:bg-white/90 transition-colors"
                 />
                 {!user && (

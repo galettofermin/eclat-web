@@ -16,13 +16,14 @@ interface CoursePriceCardProps {
   isPending: boolean
   user: boolean
   courseTitle: string
+  userEmail: string | null
 }
 
 const formatPrice = (p: number) =>
   new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(p)
 
 export default function CoursePriceCard({
-  price, priceOriginal, courseId, courseTitle, isFree, freeLink, freeCta,
+  price, priceOriginal, courseId, courseTitle, userEmail, isFree, freeLink, freeCta,
   isDirector, isEnrolled, isPending, user
 }: CoursePriceCardProps) {
   const [expandTransfer, setExpandTransfer] = useState(false)
@@ -92,6 +93,7 @@ export default function CoursePriceCard({
           <CourseRegistrationModal
             courseId={courseId}
             courseTitle={courseTitle}
+            userEmail={userEmail}
             triggerClassName="block w-full text-center bg-[#25655B] text-white font-bold py-4 rounded-xl hover:bg-[#1d5249] transition-colors text-[16px] mb-2 shadow-lg shadow-[#25655B]/25"
           />
           <p className="text-[12px] text-[#86868b] text-center mb-4">

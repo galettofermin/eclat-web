@@ -107,3 +107,25 @@ export async function enviarNuevaInscripcion(params: {
     html,
   })
 }
+
+// Confirmación al alumno de que su inscripción llegó
+export async function enviarConfirmacionInscripcion(params: {
+  email: string
+  nombre: string
+  courseTitle: string
+}) {
+  const resend = new Resend(process.env.RESEND_API_KEY)
+  const html = `
+    <div style="font-family:sans-serif;font-size:15px;line-height:1.6;color:#29332F;max-width:520px">
+      <p>Hola ${escapeHtml(params.nombre)},</p>
+      <p>Recibimos tu inscripción a <b>${escapeHtml(params.courseTitle)}</b>. En cuanto confirmemos tu pago habilitaremos tu acceso.</p>
+      <p>Podés ingresar desde <a href="https://eclatcentro.com/mi-cuenta" style="color:#25655B">eclatcentro.com/mi-cuenta</a> con tu mail y contraseña.</p>
+      <p style="color:#6E6E73">Equipo ÉCLAT</p>
+    </div>`
+  return resend.emails.send({
+    from: FROM,
+    to: params.email,
+    subject: `Tu inscripción a ${params.courseTitle} — ÉCLAT`,
+    html,
+  })
+}

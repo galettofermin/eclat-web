@@ -106,7 +106,11 @@ export default function RegistroPage() {
             </div>
           ) : (
             <>
-              <h1 className="text-[20px] font-medium mb-6" style={{ color: 'var(--eclat-text)' }}>Creá tu cuenta</h1>
+              <h1 className="text-[20px] font-medium mb-4" style={{ color: 'var(--eclat-text)' }}>Creá tu cuenta</h1>
+              <p className="text-[12.5px] leading-relaxed px-3 py-2.5 rounded-lg mb-6" style={{ background: 'var(--eclat-bg-green)', color: 'var(--eclat-text-2)' }}>
+                Si ya te inscribiste a un curso, no necesitás registrarte de nuevo. Ingresá directamente desde{' '}
+                <Link href="/login" className="font-semibold hover:underline" style={{ color: 'var(--eclat-mid)' }}>Ingresar</Link>.
+              </p>
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-2 gap-3">

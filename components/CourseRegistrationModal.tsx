@@ -1,29 +1,48 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import Link from 'next/link'
+import { createClient } from '@/lib/supabase/client'
 import { REGISTRATION_ROLES } from '@/lib/registrationRoles'
 
 type Props = {
   courseId: string
   courseTitle: string
+  /** Mail del usuario con sesión: si viene, no se pide contraseña ni se crea cuenta */
+  userEmail?: string | null
   /** Clases del botón que abre el modal (cambia según dónde se use) */
   triggerClassName?: string
   triggerLabel?: string
 }
 
-const EMPTY = { nombre: '', apellido: '', email: '', telefono: '', localidad: '', rol: '', website: '' }
+// Cómo terminó el envío: define el mensaje final
+type Outcome = 'new' | 'newWithSession' | 'existing' | 'loggedIn' | 'accountFailed'
 
-export default function CourseRegistrationModal({ courseId, courseTitle, triggerClassName, triggerLabel = 'Inscribirme' }: Props) {
+const EMPTY = { nombre: '', apellido: '', email: '', telefono: '', localidad: '', rol: '', password: '', confirm: '', website: '' }
+
+const OUTCOME_TEXT: Record<Outcome, string> = {
+  new: 'Vas a recibir un mail para confirmar tu cuenta. Una vez que el equipo de ÉCLAT habilite tu acceso, podrás ingresar desde Mi cuenta.',
+  newWithSession: 'Ya creamos tu cuenta. Una vez que el equipo de ÉCLAT habilite tu acceso, vas a ver el curso en Mi cuenta.',
+  existing: 'Este mail ya tiene una cuenta. Podés inscribirte igual — tu acceso se habilitará cuando confirmemos el pago.',
+  loggedIn: 'Una vez que el equipo de ÉCLAT habilite tu acceso, vas a ver el curso en Mi cuenta.',
+  accountFailed: 'No pudimos crear tu cuenta en este momento. Podés crearla después desde Registrarse con este mismo mail.',
+}
+
+const isExistingAccountError = (msg: string, code?: string) =>
+  code === 'user_already_exists' || code === 'email_exists' || /already (been )?registered|already exists/i.test(msg)
+
+export default function CourseRegistrationModal({ courseId, courseTitle, userEmail, triggerClassName, triggerLabel = 'Inscribirme' }: Props) {
   const [open, setOpen] = useState(false)
-  const [form, setForm] = useState(EMPTY)
+  const [form, setForm] = useState({ ...EMPTY, email: userEmail ?? '' })
   const [status, setStatus] = useState<'idle' | 'sending' | 'done'>('idle')
+  const [outcome, setOutcome] = useState<Outcome>('new')
   const [error, setError] = useState('')
   const firstField = useRef<HTMLInputElement>(null)
   const trigger = useRef<HTMLButtonElement>(null)
 
   const close = () => {
     setOpen(false)
-    if (status === 'done') { setForm(EMPTY); setStatus('idle') }
+    if (status === 'done') { setForm({ ...EMPTY, email: userEmail ?? '' }); setStatus('idle') }
     trigger.current?.focus()
   }
 
@@ -42,17 +61,60 @@ export default function CourseRegistrationModal({ courseId, courseTitle, trigger
   const set = (k: keyof typeof EMPTY) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setForm(f => ({ ...f, [k]: e.target.value }))
 
+  // Paso 1: crear la cuenta (salvo que ya haya sesión). Devuelve null si hay que frenar el envío.
+  const createAccount = async (): Promise<Outcome | null> => {
+    if (userEmail) return 'loggedIn'
+
+    if (form.password.length < 8) { setError('La contraseña tiene que tener al menos 8 caracteres.'); return null }
+    if (form.password !== form.confirm) { setError('Las contraseñas no coinciden.'); return null }
+
+    const nombre = form.nombre.trim()
+    const apellido = form.apellido.trim()
+    const { data, error: signUpError } = await createClient().auth.signUp({
+      email: form.email.trim(),
+      password: form.password,
+      options: {
+        data: { nombre, apellido, full_name: `${nombre} ${apellido}` },
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=/mi-cuenta`,
+      },
+    })
+
+    if (signUpError) {
+      if (isExistingAccountError(signUpError.message, signUpError.code)) return 'existing'
+      // Un problema con la contraseña lo puede corregir la persona: se frena y se muestra
+      if (signUpError.code === 'weak_password' || /password/i.test(signUpError.message)) {
+        setError('La contraseña no es válida. Probá con otra más larga o con letras y números.')
+        return null
+      }
+      // Cualquier otro error (p. ej. límite de envío de mails): la inscripción se guarda igual
+      console.error('signUp:', signUpError)
+      return 'accountFailed'
+    }
+
+    // Con la confirmación por mail activa, Supabase no avisa con error si el mail ya existe:
+    // devuelve un usuario sin identidades
+    if (data.user && data.user.identities?.length === 0) return 'existing'
+    return data.session ? 'newWithSession' : 'new'
+  }
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
     setStatus('sending'); setError('')
     try {
+      const result = await createAccount()
+      if (!result) { setStatus('idle'); return }
+
+      // Paso 2: guardar la inscripción. La contraseña no se envía.
+      const { password: _pw, confirm: _confirm, ...registration } = form
       const res = await fetch('/api/registrations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, courseId }),
+        body: JSON.stringify({ ...registration, courseId }),
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error(data.error || 'No pudimos enviar la inscripción.')
+
+      setOutcome(result)
       setStatus('done')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No pudimos enviar la inscripción.')
@@ -94,12 +156,16 @@ export default function CourseRegistrationModal({ courseId, courseTitle, trigger
             </button>
 
             {status === 'done' ? (
-              <div style={{ textAlign: 'center', padding: '12px 0' }}>
-                <h2 id="reg-title" style={{ fontSize: 22, fontWeight: 600, marginBottom: 12 }}>¡Listo!</h2>
+              <div style={{ textAlign: 'center', padding: '12px 0' }} role="status">
+                <h2 id="reg-title" style={{ fontSize: 22, fontWeight: 600, marginBottom: 12 }}>¡Tu inscripción fue recibida!</h2>
                 <p style={{ fontSize: 16, lineHeight: 1.6, color: 'var(--slate-700)', marginBottom: 24 }}>
-                  ¡Tu inscripción fue recibida! Te contactamos pronto para confirmar tu lugar.
+                  {OUTCOME_TEXT[outcome]}
                 </p>
-                <button type="button" className="btn-wa" style={{ justifyContent: 'center' }} onClick={close}>Cerrar</button>
+                {outcome === 'accountFailed' ? (
+                  <Link href="/registro" className="btn-wa" style={{ justifyContent: 'center' }}>Crear mi cuenta</Link>
+                ) : (
+                  <button type="button" className="btn-wa" style={{ justifyContent: 'center' }} onClick={close}>Cerrar</button>
+                )}
               </div>
             ) : (
               <form onSubmit={submit}>
@@ -120,7 +186,11 @@ export default function CourseRegistrationModal({ courseId, courseTitle, trigger
                 </div>
                 <div className="field">
                   <label htmlFor="reg-email">Mail</label>
-                  <input id="reg-email" type="email" required autoComplete="email" value={form.email} onChange={set('email')} placeholder="tu@email.com" />
+                  <input
+                    id="reg-email" type="email" required autoComplete="email" value={form.email} onChange={set('email')} placeholder="tu@email.com"
+                    readOnly={!!userEmail} style={userEmail ? { background: 'var(--paper-2, #f5f5f3)', color: 'var(--ink-muted)' } : undefined}
+                  />
+                  {userEmail && <p style={{ fontSize: 12, color: 'var(--ink-muted)', marginTop: 6 }}>Te inscribís con tu cuenta.</p>}
                 </div>
                 <div className="form__row">
                   <div className="field">
@@ -139,6 +209,21 @@ export default function CourseRegistrationModal({ courseId, courseTitle, trigger
                     {REGISTRATION_ROLES.map(r => <option key={r} value={r}>{r}</option>)}
                   </select>
                 </div>
+
+                {!userEmail && (
+                  <div className="form__row">
+                    <div className="field">
+                      <label htmlFor="reg-pass">Contraseña</label>
+                      <input id="reg-pass" type="password" required minLength={8} autoComplete="new-password"
+                        value={form.password} onChange={set('password')} placeholder="Mínimo 8 caracteres" />
+                    </div>
+                    <div className="field">
+                      <label htmlFor="reg-confirm">Confirmar contraseña</label>
+                      <input id="reg-confirm" type="password" required minLength={8} autoComplete="new-password"
+                        value={form.confirm} onChange={set('confirm')} />
+                    </div>
+                  </div>
+                )}
 
                 {/* Honeypot anti-spam: oculto para personas */}
                 <input
@@ -161,6 +246,11 @@ export default function CourseRegistrationModal({ courseId, courseTitle, trigger
                 >
                   {status === 'sending' ? 'Enviando…' : 'Inscribirme'}
                 </button>
+                {!userEmail && (
+                  <p style={{ fontSize: 12, color: 'var(--ink-muted)', marginTop: 12, textAlign: 'center' }}>
+                    Con este mail y contraseña vas a ingresar a tu cuenta para ver el curso.
+                  </p>
+                )}
               </form>
             )}
           </div>

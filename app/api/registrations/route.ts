@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { enviarNuevaInscripcion } from '@/lib/email'
+import { enviarNuevaInscripcion, enviarConfirmacionInscripcion } from '@/lib/email'
 import { REGISTRATION_ROLES } from '@/lib/registrationRoles'
 
 export const dynamic = 'force-dynamic'
@@ -15,6 +15,7 @@ export async function POST(req: Request) {
   // Honeypot: los bots completan el campo oculto; se responde ok sin guardar nada
   if (body.website) return NextResponse.json({ ok: true })
 
+  // Solo se leen los campos de la lista: si llega una contraseña en el body, se ignora y no se guarda
   const str = (k: string) => (typeof body[k] === 'string' ? (body[k] as string).trim().slice(0, 200) : '')
   const data = Object.fromEntries(REQUIRED.map(k => [k, str(k)])) as Record<(typeof REQUIRED)[number], string>
 
@@ -36,13 +37,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'No pudimos guardar la inscripción. Probá de nuevo o escribinos por WhatsApp.' }, { status: 500 })
   }
 
-  // La inscripción ya quedó guardada: si el mail falla no se le muestra error al usuario
-  try {
-    const { error: mailError } = await enviarNuevaInscripcion({ courseTitle: course.title, ...data, rol })
-    if (mailError) console.error('Aviso de inscripción por mail:', mailError)
-  } catch (e) {
-    console.error('Aviso de inscripción por mail:', e)
-  }
+  // La inscripción ya quedó guardada: si algún mail falla no se le muestra error al usuario
+  const mails = await Promise.allSettled([
+    enviarNuevaInscripcion({ courseTitle: course.title, ...data, rol }),
+    enviarConfirmacionInscripcion({ email: data.email, nombre: data.nombre, courseTitle: course.title }),
+  ])
+  mails.forEach((m, i) => {
+    const err = m.status === 'rejected' ? m.reason : m.value.error
+    if (err) console.error(i === 0 ? 'Aviso de inscripción al admin:' : 'Confirmación al alumno:', err)
+  })
 
   return NextResponse.json({ ok: true })
 }
