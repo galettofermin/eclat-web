@@ -440,6 +440,17 @@ p { margin: 0; text-wrap: pretty; }
 
 @keyframes cardRise { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:none; } }
 
+@keyframes btnPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(37, 101, 91, 0.5); }
+  50%       { box-shadow: 0 0 0 10px rgba(37, 101, 91, 0); }
+}
+@keyframes btnPulseWhite {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.5); }
+  50%       { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+}
+.btn-pulse       { animation: btnPulse 2.4s ease-in-out infinite; }
+.btn-pulse-white { animation: btnPulseWhite 2.4s ease-in-out infinite; }
+
 @layer utilities {
   .text-balance { text-wrap: balance; }
   .glass {

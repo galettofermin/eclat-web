@@ -361,7 +361,7 @@ export default async function CursoPage({
                   courseTitle={course.title}
                   price={course.price}
                   userEmail={user?.email ?? null}
-                  triggerClassName="bg-white text-[#0A0A0A] font-semibold px-8 py-3 rounded-full text-[15px] hover:bg-white/90 transition-colors"
+                  triggerClassName="bg-white text-[#0A0A0A] font-semibold px-8 py-3 rounded-full text-[15px] hover:bg-white/90 transition-colors btn-pulse-white"
                 />
                 {!user && (
                   <Link href="/registro" className="border border-white/20 text-white font-semibold px-6 py-3 rounded-full text-[15px] hover:bg-white/10 transition-colors">

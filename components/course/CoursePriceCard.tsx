@@ -92,7 +92,7 @@ export default function CoursePriceCard({
             courseTitle={courseTitle}
             price={price}
             userEmail={userEmail}
-            triggerClassName="block w-full text-center bg-[#25655B] text-white font-bold py-4 rounded-xl hover:bg-[#1d5249] transition-colors text-[16px] mb-2 shadow-lg shadow-[#25655B]/25"
+            triggerClassName="block w-full text-center bg-[#25655B] text-white font-bold py-4 rounded-xl hover:bg-[#1d5249] transition-colors text-[16px] mb-2 shadow-lg shadow-[#25655B]/25 btn-pulse"
           />
           <p className="text-[12px] text-[#86868b] text-center mb-4">
             Dejanos tus datos y te contactamos para confirmar tu lugar.
