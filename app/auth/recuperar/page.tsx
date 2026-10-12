@@ -18,16 +18,21 @@ function RecuperarForm() {
 
   useEffect(() => {
     const code = searchParams.get('code')
+    // token_hash: links generados desde el admin (sirven en cualquier navegador).
+    // code: links pedidos por el propio usuario desde "Olvidé mi contraseña".
+    const tokenHash = searchParams.get('token_hash')
 
-    if (!code) {
+    if (!code && !tokenHash) {
       setStatus('error')
       setErrorMsg('Link inválido o expirado. Solicitá un nuevo link desde la pantalla de ingreso.')
       return
     }
 
     const supabase = createClient()
-    supabase.auth
-      .exchangeCodeForSession(code)
+    const verify = tokenHash
+      ? supabase.auth.verifyOtp({ type: 'recovery', token_hash: tokenHash })
+      : supabase.auth.exchangeCodeForSession(code!)
+    verify
       .then(({ error }) => {
         if (error) {
           setStatus('error')

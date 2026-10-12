@@ -69,6 +69,22 @@ export default function RegistrationsTab({ onError }: { onError: (msg: string) =
     }), 'No se pudo borrar la solicitud.')
   }
 
+  const handleResetPassword = async (reg: Registration) => {
+    if (!confirm(`¿Mandar mail de reset de contraseña a ${reg.email}?`)) return
+    setBusy(reg.id)
+    const res = await fetch('/api/admin/reset-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: reg.email }),
+    })
+    const data = await res.json().catch(() => ({}))
+    setBusy(null)
+    if (res.ok) alert(`Mail enviado a ${reg.email}`)
+    // El link se generó pero el mail no salió: se muestra para copiarlo y mandarlo por WhatsApp
+    else if (data.link) prompt('No se pudo enviar el mail. Copiá este link y mandáselo al alumno (vence en una hora):', data.link)
+    else alert(data.error ?? 'Error al enviar el mail')
+  }
+
   if (loading) return <p style={{ padding: 40, textAlign: 'center', color: 'var(--ink-muted)' }}>Cargando solicitudes…</p>
   if (!rows.length) return <p style={{ padding: '48px 24px', textAlign: 'center', color: 'var(--ink-muted)' }}>Todavía no hay solicitudes.</p>
 
@@ -130,6 +146,15 @@ export default function RegistrationsTab({ onError }: { onError: (msg: string) =
               ) : (
                 <button onClick={() => toggleAccess(reg)} disabled={isBusy} style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: 'var(--green-700)', color: 'white', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>
                   Habilitar acceso
+                </button>
+              )}
+              {hasAccount && (
+                <button
+                  onClick={() => handleResetPassword(reg)}
+                  disabled={isBusy}
+                  style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--line)', background: '#fff', color: 'var(--ink-muted)', fontSize: '13px', cursor: 'pointer' }}
+                >
+                  Resetear contraseña
                 </button>
               )}
               <button onClick={() => remove(reg)} disabled={isBusy} aria-label={`Borrar la solicitud de ${reg.nombre} ${reg.apellido}`} style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--line)', background: '#fff', color: 'var(--ink-muted)', fontSize: '13px', cursor: 'pointer' }}>

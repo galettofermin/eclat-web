@@ -129,3 +129,22 @@ export async function enviarConfirmacionInscripcion(params: {
     html,
   })
 }
+
+// Link para elegir una contraseña nueva, enviado a pedido del admin
+export async function enviarResetPassword(params: { email: string; link: string }) {
+  const resend = new Resend(process.env.RESEND_API_KEY)
+  const html = `
+    <div style="font-family:sans-serif;font-size:15px;line-height:1.6;color:#29332F;max-width:520px">
+      <p>Hola,</p>
+      <p>Para elegir una contraseña nueva para tu cuenta de ÉCLAT, entrá a este link:</p>
+      <p><a href="${escapeHtml(params.link)}" style="display:inline-block;background:#25655B;color:#fff;padding:12px 22px;border-radius:999px;text-decoration:none;font-weight:600">Elegir contraseña nueva</a></p>
+      <p style="color:#6E6E73;font-size:13px">El link vence en una hora. Si no pediste este cambio, ignorá este mail.</p>
+      <p style="color:#6E6E73">Equipo ÉCLAT</p>
+    </div>`
+  return resend.emails.send({
+    from: FROM,
+    to: params.email,
+    subject: 'Elegí tu nueva contraseña — ÉCLAT',
+    html,
+  })
+}
