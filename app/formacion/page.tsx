@@ -1,10 +1,11 @@
 // app/formacion/page.tsx
 import type { Metadata } from "next";
+import Link from "next/link";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { StaggerList, StaggerItem } from "@/components/StaggerList";
-import { HoverCard } from "@/components/HoverCard";
 import { getSiteContent } from "@/lib/siteContent";
 import { WA_URL } from "@/lib/constants";
+import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = 'force-dynamic'
 
@@ -25,15 +26,6 @@ const EJES = [
   "Instituciones educativas", "Trayectorias educativas", "Discapacidad e inclusión social",
 ];
 
-const AGENDA = [
-  { tag: "Inclusión escolar", title: "Del diagnóstico a los apoyos", desc: "Herramientas para acompañar trayectorias educativas: PPI, DAI y articulación con la escuela.", meta: "Presencial · Oncativo" },
-  { tag: "Salud mental infantil", title: "El malestar en la infancia", desc: "Un recorrido por los modos de leer y alojar el síntoma en la niñez.", meta: "Virtual" },
-  { tag: "Psicoanálisis y educación", title: "Enseñar, aprender, desear", desc: "Trayecto anual sobre las intersecciones entre el psicoanálisis y lo educativo.", meta: "Virtual · Trayecto" },
-  { tag: "Trabajo interdisciplinario", title: "Construir lecturas compartidas", desc: "Cómo articular disciplinas frente a situaciones complejas.", meta: "Presencial / Virtual" },
-  { tag: "Instituciones educativas", title: "Pensar la escuela hoy", desc: "Jornada de trabajo con equipos directivos y docentes.", meta: "Jornada" },
-  { tag: "Orientación a familias", title: "Acompañar la crianza", desc: "Encuentros para pensar los desafíos cotidianos junto a las familias.", meta: "Virtual" },
-];
-
 const DEFAULTS = {
   'formacion.hero.title': 'Cursos, seminarios y trayectos formativos.',
   'formacion.hero.lede': 'Un espacio donde la práctica se piensa y se transmite. A través de cursos, seminarios, jornadas y trayectos buscamos compartir herramientas, experiencias y conocimientos vinculados a la salud mental, la educación y el trabajo interdisciplinario.',
@@ -44,6 +36,12 @@ export default async function FormacionPage() {
   const get = (key: keyof typeof DEFAULTS) => content[key] ?? DEFAULTS[key]
   const heroTitle = get('formacion.hero.title')
   const heroLede = get('formacion.hero.lede')
+
+  const { data: cursos } = await createClient()
+    .from('courses')
+    .select('id, title, description, badge')
+    .eq('published', true)
+    .order('sort_order')
 
   return (
     <>
@@ -78,24 +76,29 @@ export default async function FormacionPage() {
               <h2 style={{ fontSize: "clamp(28px,3.6vw,44px)", marginTop: "10px" }}>Próximas formaciones</h2>
             </div>
           </AnimatedSection>
-          <StaggerList className="writings">
-            {AGENDA.map((a, i) => (
-              <StaggerItem key={i}>
-                <HoverCard className="writing">
-                  <span className="writing__tag">{a.tag}</span>
-                  <h3>{a.title}</h3>
-                  <p>{a.desc}</p>
-                  <span className="writing__meta">
-                    <span style={{ color: 'var(--ink-muted)', fontSize: '13px' }}>{a.meta}</span>
-                    <b style={{ marginLeft: 'auto' }}>Más info →</b>
-                  </span>
-                </HoverCard>
-              </StaggerItem>
-            ))}
-          </StaggerList>
-          <p style={{ marginTop: "28px", color: "var(--ink-muted)", fontSize: "14.5px" }}>
-            Agenda en construcción — los títulos y modalidades son ejemplos. Escribinos para recibir el calendario actualizado de inscripciones.
-          </p>
+          {cursos?.length ? (
+            <StaggerList className="writings">
+              {cursos.map(c => (
+                <StaggerItem key={c.id}>
+                  <Link className="writing" href={`/cursos/${c.id}`}>
+                    <span className="writing__tag">{c.badge || 'Formación'}</span>
+                    <h3>{c.title}</h3>
+                    <p>{c.description}</p>
+                    <span className="writing__meta"><b>Más info →</b></span>
+                  </Link>
+                </StaggerItem>
+              ))}
+            </StaggerList>
+          ) : (
+            <AnimatedSection style={{ textAlign: 'center', padding: '48px 24px' }}>
+              <p style={{ fontSize: 18, color: 'var(--slate-900)', marginBottom: 20 }}>
+                Próximamente nuevas formaciones. Escribinos para recibir el calendario.
+              </p>
+              <a className="btn btn--primary" href={WA_URL("Hola ÉCLAT, quiero recibir el calendario de formaciones.")} target="_blank" rel="noopener noreferrer">
+                Escribir por WhatsApp
+              </a>
+            </AnimatedSection>
+          )}
         </div>
       </section>
 
