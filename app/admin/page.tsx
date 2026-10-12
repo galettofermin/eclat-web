@@ -4,8 +4,10 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import RegistrationsTab from '@/components/admin/RegistrationsTab'
+import EnrollmentsTab from '@/components/admin/EnrollmentsTab'
+import UsersTab from '@/components/admin/UsersTab'
 
-type Tab = 'solicitudes' | 'escritos' | 'formacion' | 'servicios' | 'textos'
+type Tab = 'solicitudes' | 'inscripciones' | 'usuarios' | 'escritos' | 'formacion' | 'servicios' | 'textos'
 
 type ArticleRow = {
   id: string
@@ -307,7 +309,9 @@ export default function AdminDashboard() {
       <div style={{ borderBottom: '1px solid var(--eclat-border)', marginBottom: 24 }}>
         <div style={{ display: 'flex', overflowX: 'auto' }}>
           {([
-            { key: 'solicitudes', label: 'Solicitudes' },
+            { key: 'solicitudes',   label: 'Solicitudes' },
+            { key: 'inscripciones', label: 'Inscripciones' },
+            { key: 'usuarios',      label: 'Usuarios' },
             { key: 'escritos',    label: 'Escritos' },
             { key: 'formacion',   label: 'Formación' },
             { key: 'servicios',   label: 'Servicios' },
@@ -348,6 +352,9 @@ export default function AdminDashboard() {
           <RegistrationsTab onError={setError} />
         </div>
       )}
+
+      {tab === 'inscripciones' && <EnrollmentsTab />}
+      {tab === 'usuarios' && <UsersTab />}
 
       {/* ── Tab: Escritos ── */}
       {tab === 'escritos' && (
