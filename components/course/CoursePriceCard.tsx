@@ -103,38 +103,6 @@ export default function CoursePriceCard({
         </>
       )}
 
-      {/* Formas de pago */}
-      {!isDirector && !isEnrolled && !isPending && (
-        <div className="space-y-2 mb-4">
-          {/* Transferencia */}
-          <button onClick={() => setExpandTransfer(!expandTransfer)}
-            className="w-full flex items-center justify-between px-4 py-3 bg-[#2F7D6B]/5 border border-[#2F7D6B]/20 rounded-xl hover:bg-[#2F7D6B]/10 transition-colors">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded bg-[#2F7D6B] flex items-center justify-center">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
-                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                </svg>
-              </div>
-              <span className="text-[13px] font-medium text-[#0A0A0A]">Transferencia bancaria</span>
-            </div>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#86868b" strokeWidth="2"
-              className={`transition-transform ${expandTransfer ? 'rotate-180' : ''}`}>
-              <polyline points="6 9 12 15 18 9"/>
-            </svg>
-          </button>
-          {expandTransfer && (
-            <div className="px-4 py-3 bg-[#F5F5F7] rounded-xl text-[12px] text-[#424245] space-y-1.5">
-              <p className="font-semibold text-[#0A0A0A]">Alias: <span className="font-mono text-[#2F7D6B]">{BANK_ALIAS}</span></p>
-              <p>Titular: Centro ÉCLAT</p>
-              <p className="text-[#86868b]">Una vez transferido, mandanos el comprobante por WhatsApp para activar el acceso.</p>
-              <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-[#2F7D6B] font-semibold hover:underline">
-                Enviar comprobante →
-              </a>
-            </div>
-          )}
-        </div>
-      )}
 
       {/* Incluye */}
       <div className="border-t border-black/5 pt-4 space-y-2">
