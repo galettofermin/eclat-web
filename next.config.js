@@ -19,6 +19,8 @@ const nextConfig = {
       { source: '/escritos',         destination: '/publicaciones', permanent: true },
       { source: '/turnos',           destination: '/contacto', permanent: true },
       { source: '/formaciones',      destination: '/formacion', permanent: true },
+      { source: '/mis-cursos',           destination: '/mi-cuenta', permanent: true },
+      { source: '/mi-cuenta/mis-cursos', destination: '/mi-cuenta', permanent: true },
     ]
   },
   async headers() {

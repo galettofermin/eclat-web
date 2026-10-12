@@ -116,7 +116,7 @@ function InscripcionContent() {
             Avisarnos por WhatsApp
           </a>
           <p className="text-[13px] text-[#6E6E73]">Podés enviarnos el comprobante para agilizar la confirmación.</p>
-          <Link href="/mis-cursos" className="block mt-6 text-[14px] text-[#2F7D6B] hover:underline font-medium">
+          <Link href="/mi-cuenta" className="block mt-6 text-[14px] text-[#2F7D6B] hover:underline font-medium">
             Ver mis cursos →
           </Link>
         </div>

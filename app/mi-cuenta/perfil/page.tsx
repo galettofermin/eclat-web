@@ -79,7 +79,7 @@ export default function PerfilPage() {
 
         {/* Links de navegación */}
         <div className="flex gap-3 text-[13px]">
-          <Link href="/mis-cursos" className="text-[#2F7D6B] hover:underline font-medium">
+          <Link href="/mi-cuenta" className="text-[#2F7D6B] hover:underline font-medium">
             ← Mis cursos
           </Link>
         </div>

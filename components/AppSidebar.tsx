@@ -28,7 +28,7 @@ const navGroups = [
     { label: 'Comunidad', href: '/escritos', icon: MessageSquare, exact: false },
   ],
   [
-    { label: 'Mis formaciones', href: '/mis-cursos', icon: BookOpen, exact: false },
+    { label: 'Mis formaciones', href: '/mi-cuenta', icon: BookOpen, exact: false },
     { label: 'Mensajes', href: '/mensajes', icon: MessageSquare, exact: false },
     { label: 'Configuración', href: '/mi-cuenta/perfil', icon: Settings, exact: false },
   ],
