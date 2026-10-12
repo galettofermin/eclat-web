@@ -56,10 +56,21 @@ function LoginForm() {
       style={{ maxWidth: 420 }}
     >
       {/* Logo */}
-      <div className="flex flex-col items-center mb-8">
-        <img src="/LOGO.png" alt="ÉCLAT" width={56} height={56} style={{ objectFit: 'contain', marginBottom: 10 }} />
-        <p className="font-semibold tracking-widest text-[18px] uppercase" style={{ color: 'var(--eclat-text)' }}>ÉCLAT</p>
-        <p className="text-[11px] mt-0.5" style={{ color: 'var(--eclat-text-3)' }}>Centro de Atención Integral</p>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '32px' }}>
+        <img
+          src="/logo.svg"
+          alt="ÉCLAT"
+          style={{ width: '120px', height: '120px', objectFit: 'contain', marginBottom: '12px' }}
+        />
+        <span style={{
+          fontSize: '11px',
+          letterSpacing: '0.2em',
+          textTransform: 'uppercase',
+          color: 'var(--ink-muted)',
+          fontWeight: 600
+        }}>
+          Centro de Atención Integral
+        </span>
       </div>
 
       {/* Card */}
