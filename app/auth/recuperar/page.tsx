@@ -46,8 +46,8 @@ function RecuperarForm() {
       setErrorMsg('Las contraseñas no coinciden.')
       return
     }
-    if (password.length < 6) {
-      setErrorMsg('La contraseña debe tener al menos 6 caracteres.')
+    if (password.length < 8) {
+      setErrorMsg('La contraseña debe tener al menos 8 caracteres.')
       return
     }
 
@@ -107,7 +107,7 @@ function RecuperarForm() {
               onChange={(e) => setPassword(e.target.value)}
               required
               autoFocus
-              placeholder="Mínimo 6 caracteres"
+              placeholder="Mínimo 8 caracteres"
               className="w-full px-4 py-3 rounded-xl border border-black/10 text-[15px] focus:outline-none focus:border-[#2F7D6B] transition-colors"
             />
           </div>

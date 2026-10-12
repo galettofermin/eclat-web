@@ -19,7 +19,7 @@ export default function RegistroPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (form.password.length < 6) { setError('La contraseña debe tener al menos 6 caracteres.'); return }
+    if (form.password.length < 8) { setError('La contraseña debe tener al menos 8 caracteres.'); return }
 
     setLoading(true); setError('')
     const nombre = form.nombre.trim()
@@ -135,9 +135,9 @@ export default function RegistroPage() {
                 <div>
                   <label htmlFor="password" className={labelClass} style={{ color: 'var(--eclat-text-2)' }}>Contraseña</label>
                   <div className="relative">
-                    <input id="password" type={showPass ? 'text' : 'password'} required minLength={6} autoComplete="new-password"
+                    <input id="password" type={showPass ? 'text' : 'password'} required minLength={8} autoComplete="new-password"
                       value={form.password} onChange={e => set('password', e.target.value)}
-                      style={{ ...inputStyle, paddingRight: 40 }} placeholder="Mínimo 6 caracteres" {...focus} />
+                      style={{ ...inputStyle, paddingRight: 40 }} placeholder="Mínimo 8 caracteres" {...focus} />
                     <button
                       type="button"
                       onClick={() => setShowPass(!showPass)}

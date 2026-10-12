@@ -35,8 +35,8 @@ export default function PerfilPage() {
       setPwError('Las contraseñas no coinciden.')
       return
     }
-    if (password.length < 6) {
-      setPwError('La contraseña debe tener al menos 6 caracteres.')
+    if (password.length < 8) {
+      setPwError('La contraseña debe tener al menos 8 caracteres.')
       return
     }
 
@@ -99,7 +99,7 @@ export default function PerfilPage() {
                 value={password}
                 onChange={e => { setPassword(e.target.value); setPwStatus('idle'); setPwError('') }}
                 required
-                placeholder="Mínimo 6 caracteres"
+                placeholder="Mínimo 8 caracteres"
                 className="w-full px-4 py-3 rounded-xl border border-black/10 text-[15px] focus:outline-none focus:border-[#2F7D6B] transition-colors"
               />
             </div>

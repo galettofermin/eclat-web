@@ -17,7 +17,7 @@ export default function RestablecerContrasena() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (password !== confirm) { setError('Las contraseñas no coinciden.'); return }
-    if (password.length < 6) { setError('Mínimo 6 caracteres.'); return }
+    if (password.length < 8) { setError('Mínimo 8 caracteres.'); return }
 
     setLoading(true)
     setError('')
@@ -62,7 +62,7 @@ export default function RestablecerContrasena() {
                   required
                   autoFocus
                   className="w-full px-4 py-3 rounded-xl border border-black/10 text-[15px] focus:outline-none focus:border-[#2F7D6B] transition-colors"
-                  placeholder="Mínimo 6 caracteres"
+                  placeholder="Mínimo 8 caracteres"
                 />
               </div>
               <div>
