@@ -11,10 +11,12 @@ export const metadata: Metadata = { title: 'Mi cuenta', robots: { index: false }
 
 type EnrolledCourse = { id: string; title: string; description: string | null }
 
-export default async function MiCuentaPage() {
+export default async function MiCuentaPage({ searchParams }: { searchParams: { pago?: string } }) {
+  const pagoOk = searchParams.pago === 'ok'
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login?redirect=/mi-cuenta')
+  // Se conserva ?pago=ok para mostrar el cartel después de iniciar sesión
+  if (!user) redirect(`/login?redirect=${encodeURIComponent(pagoOk ? '/mi-cuenta?pago=ok' : '/mi-cuenta')}`)
   if (user.email === DIRECTOR_EMAIL) redirect('/admin')
 
   const { data: enrollments } = await createAdminClient()
@@ -44,7 +46,20 @@ export default async function MiCuentaPage() {
 
       <section className="section">
         <div className="wrap">
-          {courses.length === 0 ? (
+          {/* Vuelta desde Mercado Pago: el webhook puede tardar unos segundos en habilitar el curso */}
+          {pagoOk && (
+            <div role="status" style={{ maxWidth: 560, margin: '0 auto 32px', padding: '16px 20px', borderRadius: 14, background: '#DCEFE8', border: '1px solid rgba(47,125,107,.2)', textAlign: 'center' }}>
+              <p style={{ fontSize: 16, fontWeight: 600, color: 'var(--green-700)' }}>¡Pago recibido!</p>
+              <p style={{ fontSize: 14, color: 'var(--slate-900)', marginTop: 4 }}>
+                {courses.length
+                  ? 'Ya tenés acceso a tu curso.'
+                  : <>Estamos confirmándolo con Mercado Pago. Si el curso no aparece todavía, <a href="/mi-cuenta?pago=ok" style={{ color: 'var(--green-700)', fontWeight: 600 }}>recargá la página</a> en unos segundos.</>}
+              </p>
+            </div>
+          )}
+
+          {/* Recién pagó y el curso todavía no aparece: el cartel de arriba alcanza */}
+          {courses.length === 0 && pagoOk ? null : courses.length === 0 ? (
             <div className="writing" style={{ textAlign: 'center', padding: '48px 24px', maxWidth: 560, margin: '0 auto' }}>
               <p style={{ fontSize: 17, color: 'var(--slate-900)', flex: 'none' }}>
                 Todavía no tenés cursos habilitados. Escribinos por WhatsApp para inscribirte.
