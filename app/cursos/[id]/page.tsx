@@ -10,7 +10,8 @@ import ModuleCompleteBtn from '@/components/course/ModuleCompleteBtn'
 import ModuleContent from '@/components/course/ModuleContent'
 import type { QuizQuestion } from '@/lib/types'
 import type { Metadata } from 'next'
-import { DIRECTOR_EMAIL, WA_URL } from '@/lib/constants'
+import { DIRECTOR_EMAIL } from '@/lib/constants'
+import CourseRegistrationModal from '@/components/CourseRegistrationModal'
 import { courseMetadata } from '@/lib/courseMetadata'
 
 export const dynamic = 'force-dynamic'
@@ -79,7 +80,6 @@ export default async function CursoPage({
     ? course.target_audience.split('\n').map((s: string) => s.trim()).filter(Boolean) : []
 
   const priceOriginal = course.price_original ?? 0
-  const waHref = WA_URL(`Hola ÉCLAT, quiero inscribirme en "${course.title}".${user?.email ? ` Mi cuenta es ${user.email}.` : ''}`)
 
   return (
     <main className="min-h-screen bg-white">
@@ -169,7 +169,7 @@ export default async function CursoPage({
                   isEnrolled={isApproved && !isDirector}
                   isPending={isPending}
                   user={!!user}
-                  waHref={waHref}
+                  courseTitle={course.title}
                 />
               </div>
             </div>
@@ -190,7 +190,7 @@ export default async function CursoPage({
           isEnrolled={isApproved && !isDirector}
           isPending={isPending}
           user={!!user}
-          waHref={waHref}
+          courseTitle={course.title}
         />
       </div>
 
@@ -336,21 +336,21 @@ export default async function CursoPage({
             </div>
           )}
 
-          {/* CTA sin acceso: la inscripción se gestiona por WhatsApp y el admin habilita el curso */}
+          {/* CTA sin acceso: el modal guarda la inscripción y el admin habilita el curso */}
           {!isApproved && !isPending && !course.is_free && (
             <div className="mt-6 bg-[#0A0A0A] rounded-2xl p-7 md:p-8 text-center text-white">
               <p className="text-[17px] font-semibold mb-2">Desbloqueá el contenido completo</p>
               <p className="text-white/55 text-[14px] mb-6">
-                {!user
-                  ? 'Creá tu cuenta y escribinos por WhatsApp: te habilitamos el curso.'
-                  : 'Escribinos por WhatsApp y te habilitamos el curso en tu cuenta.'}
+                Inscribite y te contactamos para confirmar tu lugar.
+                {!user && ' Para ver los módulos vas a necesitar una cuenta.'}
                 {course.price > 0 && ` ${formatPrice(course.price)} · Acceso de por vida.`}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <a href={waHref} target="_blank" rel="noopener noreferrer"
-                  className="bg-white text-[#0A0A0A] font-semibold px-8 py-3 rounded-full text-[15px] hover:bg-white/90 transition-colors">
-                  Inscribirme
-                </a>
+                <CourseRegistrationModal
+                  courseId={course.id}
+                  courseTitle={course.title}
+                  triggerClassName="bg-white text-[#0A0A0A] font-semibold px-8 py-3 rounded-full text-[15px] hover:bg-white/90 transition-colors"
+                />
                 {!user && (
                   <Link href="/registro" className="border border-white/20 text-white font-semibold px-6 py-3 rounded-full text-[15px] hover:bg-white/10 transition-colors">
                     Crear cuenta

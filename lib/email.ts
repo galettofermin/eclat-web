@@ -71,3 +71,39 @@ export async function enviarNotificacionMensaje(params: {
     html,
   })
 }
+
+const escapeHtml = (s: string) =>
+  s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!))
+
+// Aviso interno de una inscripción nueva desde el modal del curso
+export async function enviarNuevaInscripcion(params: {
+  courseTitle: string
+  nombre: string
+  apellido: string
+  email: string
+  telefono: string
+  localidad: string
+  rol: string
+}) {
+  const resend = new Resend(process.env.RESEND_API_KEY)
+  const rows: [string, string][] = [
+    ['Curso', params.courseTitle],
+    ['Nombre', `${params.nombre} ${params.apellido}`],
+    ['Mail', params.email],
+    ['Teléfono', params.telefono],
+    ['Localidad', params.localidad],
+    ['Se acerca como', params.rol || '—'],
+  ]
+  const html = `
+    <h2 style="font-family:sans-serif;color:#29332F">Nueva inscripción</h2>
+    <table style="font-family:sans-serif;font-size:14px;border-collapse:collapse">
+      ${rows.map(([k, v]) => `<tr><td style="padding:6px 16px 6px 0;color:#6E6E73">${k}</td><td style="padding:6px 0;color:#29332F"><b>${escapeHtml(v)}</b></td></tr>`).join('')}
+    </table>`
+  return resend.emails.send({
+    from: FROM,
+    to: 'centrointegraleclat@gmail.com',
+    replyTo: params.email,
+    subject: `Nueva inscripción — ${params.courseTitle}`,
+    html,
+  })
+}

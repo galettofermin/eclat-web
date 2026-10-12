@@ -4,8 +4,9 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import StudentsTab from '@/components/admin/StudentsTab'
+import RegistrationsTab from '@/components/admin/RegistrationsTab'
 
-type Tab = 'escritos' | 'servicios' | 'textos' | 'alumnos'
+type Tab = 'escritos' | 'servicios' | 'textos' | 'alumnos' | 'inscripciones'
 
 type ArticleRow = {
   id: string
@@ -282,18 +283,19 @@ export default function AdminDashboard() {
 
       {/* ── Tabs ── */}
       <div style={{ borderBottom: '1px solid var(--eclat-border)', marginBottom: 24 }}>
-        <div style={{ display: 'flex' }}>
+        <div style={{ display: 'flex', overflowX: 'auto' }}>
           {([
             { key: 'escritos',  label: 'Escritos' },
             { key: 'servicios', label: 'Servicios' },
             { key: 'textos',    label: 'Textos del sitio' },
             { key: 'alumnos',   label: 'Alumnos' },
+            { key: 'inscripciones', label: 'Inscripciones' },
           ] as { key: Tab; label: string }[]).map(t => (
             <button
               key={t.key}
               onClick={() => setTab(t.key)}
               style={{
-                padding: '10px 20px',
+                padding: '10px 20px', whiteSpace: 'nowrap', flexShrink: 0,
                 fontSize: 14, fontWeight: 600,
                 background: 'transparent', border: 'none',
                 borderBottom: tab === t.key ? '2px solid var(--slate-900)' : '2px solid transparent',
@@ -312,6 +314,16 @@ export default function AdminDashboard() {
         <div style={{ marginBottom: 16, padding: '11px 16px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 10, fontSize: 13, color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           {error}
           <button onClick={() => setError('')} style={{ fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', color: '#dc2626', marginLeft: 12 }}>✕</button>
+        </div>
+      )}
+
+      {/* ── Tab: Inscripciones ── */}
+      {tab === 'inscripciones' && (
+        <div style={card}>
+          <div style={cardHead}>
+            <h2 style={{ fontSize: 15, fontWeight: 600 }}>Inscripciones</h2>
+          </div>
+          <RegistrationsTab onError={setError} />
         </div>
       )}
 

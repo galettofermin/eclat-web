@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { BANK_ALIAS, WHATSAPP_URL } from '@/lib/constants'
+import CourseRegistrationModal from '@/components/CourseRegistrationModal'
 
 interface CoursePriceCardProps {
   price: number
@@ -14,15 +15,15 @@ interface CoursePriceCardProps {
   isEnrolled: boolean
   isPending: boolean
   user: boolean
-  waHref: string
+  courseTitle: string
 }
 
 const formatPrice = (p: number) =>
   new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(p)
 
 export default function CoursePriceCard({
-  price, priceOriginal, isFree, freeLink, freeCta,
-  isDirector, isEnrolled, isPending, user, waHref
+  price, priceOriginal, courseId, courseTitle, isFree, freeLink, freeCta,
+  isDirector, isEnrolled, isPending, user
 }: CoursePriceCardProps) {
   const [expandTransfer, setExpandTransfer] = useState(false)
   const discount = priceOriginal > price
@@ -88,12 +89,13 @@ export default function CoursePriceCard({
         </div>
       ) : (
         <>
-          <a href={waHref} target="_blank" rel="noopener noreferrer"
-            className="block w-full text-center bg-[#2F7D6B] text-white font-bold py-4 rounded-xl hover:bg-[#245f52] transition-colors text-[16px] mb-2 shadow-lg shadow-[#2F7D6B]/25">
-            Inscribirme
-          </a>
+          <CourseRegistrationModal
+            courseId={courseId}
+            courseTitle={courseTitle}
+            triggerClassName="block w-full text-center bg-[#25655B] text-white font-bold py-4 rounded-xl hover:bg-[#1d5249] transition-colors text-[16px] mb-2 shadow-lg shadow-[#25655B]/25"
+          />
           <p className="text-[12px] text-[#86868b] text-center mb-4">
-            {user ? 'Te habilitamos el curso en tu cuenta.' : 'Necesitás una cuenta para acceder al curso.'}
+            Dejanos tus datos y te contactamos para confirmar tu lugar.
           </p>
         </>
       )}
