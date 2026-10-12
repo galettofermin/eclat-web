@@ -2,8 +2,6 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import Navbar from '@/components/Navbar'
-import Footer from '@/components/Footer'
 import CourseQuiz from '@/components/CourseQuiz'
 import DirectorModules from '@/components/admin/DirectorModules'
 import CourseAccordion from '@/components/course/CourseAccordion'
@@ -85,7 +83,6 @@ export default async function CursoPage({
 
   return (
     <main className="min-h-screen bg-white">
-      <Navbar />
 
       {/* Director banner */}
       {isDirector && (
@@ -96,7 +93,7 @@ export default async function CursoPage({
 
       {/* ── HERO DEL CURSO ── */}
       <div className="bg-gradient-to-b from-[#0A0A0A] to-[#1a1a1a] text-white">
-        <div className="max-w-6xl mx-auto px-5 pt-24 pb-12">
+        <div className="max-w-6xl mx-auto px-5 pt-12 pb-12">
           <Link href="/formacion" className="inline-flex items-center gap-1.5 text-[13px] text-white/50 hover:text-white/80 transition-colors mb-6">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
             Formación
@@ -372,7 +369,6 @@ export default async function CursoPage({
         </div>
       </div>
 
-      <Footer />
     </main>
   )
 }
