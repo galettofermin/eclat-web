@@ -105,7 +105,8 @@ export default function CoursePriceCard({
       <div className="border-t border-black/5 pt-4 space-y-2">
         <p className="text-[11px] font-semibold text-[#86868b] uppercase tracking-wide mb-2">Este curso incluye</p>
         {[
-          'Acceso de por vida',
+          'Acceso ilimitado al contenido',
+          'Certificación al completar el curso',
           'Materiales descargables (PDF y video)',
           'Cierre del módulo interactivo',
           'Acompañamiento del equipo ÉCLAT',
