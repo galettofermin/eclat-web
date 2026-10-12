@@ -1,7 +1,5 @@
 'use client'
 
-import { useState } from 'react'
-import { BANK_ALIAS, WHATSAPP_URL } from '@/lib/constants'
 import CourseRegistrationModal from '@/components/CourseRegistrationModal'
 
 interface CoursePriceCardProps {
@@ -26,7 +24,6 @@ export default function CoursePriceCard({
   price, priceOriginal, courseId, courseTitle, userEmail, isFree, freeLink, freeCta,
   isDirector, isEnrolled, isPending, user
 }: CoursePriceCardProps) {
-  const [expandTransfer, setExpandTransfer] = useState(false)
   const discount = priceOriginal > price
     ? Math.round(((priceOriginal - price) / priceOriginal) * 100)
     : 0

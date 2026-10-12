@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { REGISTRATION_ROLES } from '@/lib/registrationRoles'
+import { BANK_ALIAS, WA_URL } from '@/lib/constants'
+import { WaIcon } from '@/components/WaIcon'
 
 type Props = {
   courseId: string
@@ -44,12 +46,13 @@ export default function CourseRegistrationModal({ courseId, courseTitle, price, 
   const [savedOutcome, setSavedOutcome] = useState<Outcome>('new')
   const [error, setError] = useState('')
   const [paying, setPaying] = useState(false)
+  const [byTransfer, setByTransfer] = useState(false)
   const firstField = useRef<HTMLInputElement>(null)
   const trigger = useRef<HTMLButtonElement>(null)
 
   const close = () => {
     setOpen(false)
-    if (step === 'done') { setForm({ ...EMPTY, email: userEmail ?? '' }); setStep('form') }
+    if (step === 'done') { setForm({ ...EMPTY, email: userEmail ?? '' }); setStep('form'); setByTransfer(false) }
     trigger.current?.focus()
   }
 
@@ -156,6 +159,7 @@ export default function CourseRegistrationModal({ courseId, courseTitle, price, 
   }
 
   const payWithTransfer = () => {
+    setByTransfer(true)
     setOutcome(savedOutcome)
     setStep('done')
   }
@@ -199,6 +203,24 @@ export default function CourseRegistrationModal({ courseId, courseTitle, price, 
                 <p style={{ fontSize: 16, lineHeight: 1.6, color: 'var(--slate-700)', marginBottom: 24 }}>
                   {OUTCOME_TEXT[outcome]}
                 </p>
+                {/* Datos para transferir: antes estaban en la tarjeta del curso */}
+                {byTransfer && (
+                  <div style={{ textAlign: 'left', background: 'var(--paper-2, #f5f5f3)', borderRadius: 12, padding: '16px 18px', marginBottom: 20, fontSize: 14, lineHeight: 1.6 }}>
+                    <p style={{ fontWeight: 600 }}>Datos para la transferencia</p>
+                    {price ? <p>Monto: <strong>{formatPrice(price)}</strong></p> : null}
+                    <p>Alias: <strong style={{ fontFamily: 'monospace', color: 'var(--green-700)' }}>{BANK_ALIAS}</strong></p>
+                    <p>Titular: Centro ÉCLAT</p>
+                    <p style={{ color: 'var(--ink-muted)', marginTop: 6 }}>Una vez transferido, mandanos el comprobante por WhatsApp para activar el acceso.</p>
+                    <a
+                      className="btn-wa btn-wa--sm"
+                      style={{ marginTop: 10 }}
+                      href={WA_URL(`Hola ÉCLAT, te envío el comprobante de la transferencia por "${courseTitle}".`)}
+                      target="_blank" rel="noopener noreferrer"
+                    >
+                      <WaIcon />Enviar comprobante
+                    </a>
+                  </div>
+                )}
                 {outcome === 'accountFailed' ? (
                   <Link href="/registro" className="btn-wa" style={{ justifyContent: 'center' }}>Crear mi cuenta</Link>
                 ) : (
