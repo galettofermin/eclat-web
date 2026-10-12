@@ -4,7 +4,6 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
-import WhatsAppButton from '@/components/WhatsAppButton'
 import CourseQuiz from '@/components/CourseQuiz'
 import DirectorModules from '@/components/admin/DirectorModules'
 import CourseAccordion from '@/components/course/CourseAccordion'
@@ -374,7 +373,6 @@ export default async function CursoPage({
       </div>
 
       <Footer />
-      <WhatsAppButton />
     </main>
   )
 }
