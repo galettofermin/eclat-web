@@ -294,7 +294,7 @@ export default async function CursoPage({
               {modules.map((mod, i) => (
                 <div key={mod.id} className="bg-white">
                   <div className={`flex items-center gap-3 px-5 py-4 ${isApproved ? '' : 'opacity-80'}`}>
-                    <span className={`w-8 h-8 rounded-full flex items-center justify-center text-[13px] font-bold shrink-0 ${isApproved ? 'bg-[#2F7D6B] text-white' : 'bg-[#F5F5F7] text-[#86868b]'}`}>
+                    <span className={`w-8 h-8 rounded-full flex items-center justify-center text-[13px] font-bold shrink-0 ${isApproved ? 'bg-[#2F7D6B] text-white' : 'bg-[#DCEFE8] text-[#2F7D6B]'}`}>
                       {i + 1}
                     </span>
                     <div className="flex-1">
