@@ -6,6 +6,7 @@ import { NavAuthButton } from "@/components/NavAuthButton";
 import Image from "next/image";
 import { WA_NUMBER, WA_URL } from "@/lib/constants";
 import AdminBar from "@/components/AdminBar";
+import HideOnAdmin from "@/components/HideOnAdmin";
 import { RevealScript } from "@/components/RevealScript";
 import { ProgressBar } from "@/components/ProgressBar";
 import "./globals.css";
@@ -110,6 +111,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ProgressBar />
         <div className="pageload"><i></i></div>
 
+        <HideOnAdmin>
         {/* Navbar */}
         <header className="nav">
           <div className="nav__in">
@@ -128,8 +130,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </div>
         </header>
 
+        </HideOnAdmin>
+
         <main>{children}</main>
 
+        <HideOnAdmin>
         {/* Footer */}
         <footer className="foot">
           <div className="wrap">
@@ -174,6 +179,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </a>
 
         <AdminBar />
+        </HideOnAdmin>
         <RevealScript />
       </body>
     </html>

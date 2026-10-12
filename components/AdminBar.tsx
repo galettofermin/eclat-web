@@ -1,21 +1,24 @@
 'use client'
 import Link from 'next/link'
 import { useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import { useAdmin } from '@/hooks/useAdmin'
 
 export default function AdminBar() {
   const { isAdmin, loading } = useAdmin()
+  // En /admin el header propio del panel reemplaza esta barra
+  const onAdmin = usePathname()?.startsWith('/admin') ?? false
 
   useEffect(() => {
-    if (!loading && isAdmin) {
+    if (!loading && isAdmin && !onAdmin) {
       document.body.style.paddingBottom = '44px'
     }
     return () => {
       document.body.style.paddingBottom = ''
     }
-  }, [isAdmin, loading])
+  }, [isAdmin, loading, onAdmin])
 
-  if (loading || !isAdmin) return null
+  if (loading || !isAdmin || onAdmin) return null
 
   return (
     <div style={{

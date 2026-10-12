@@ -5,13 +5,20 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import RegistrationsTab from '@/components/admin/RegistrationsTab'
 
-type Tab = 'escritos' | 'servicios' | 'textos' | 'solicitudes'
+type Tab = 'solicitudes' | 'escritos' | 'formacion' | 'servicios' | 'textos'
 
 type ArticleRow = {
   id: string
   title: string
   category: string
   created_at: string
+  published: boolean
+}
+
+type CourseRow = {
+  id: string
+  title: string
+  badge: string | null
   published: boolean
 }
 
@@ -54,7 +61,7 @@ const Spinner = () => (
 )
 
 export default function AdminDashboard() {
-  const [tab, setTab] = useState<Tab>('escritos')
+  const [tab, setTab] = useState<Tab>('solicitudes')
 
   // Stats
   const [stats, setStats] = useState({ alumnos: 0, formaciones: 0 })
@@ -62,6 +69,10 @@ export default function AdminDashboard() {
   // Escritos
   const [articles, setArticles]               = useState<ArticleRow[]>([])
   const [loadingArticles, setLoadingArticles] = useState(false)
+
+  // Formación
+  const [courses, setCourses]               = useState<CourseRow[]>([])
+  const [loadingCourses, setLoadingCourses] = useState(false)
 
   // Servicios
   const [servicios, setServicios]                 = useState<ServicioRow[]>([])
@@ -106,6 +117,18 @@ export default function AdminDashboard() {
     await fetch(`/api/admin/articulos/${id}`, { method: 'DELETE' })
     setArticles(prev => prev.filter(a => a.id !== id))
   }
+
+  // ── Formación ───────────────────────────────────────────
+  useEffect(() => {
+    if (tab !== 'formacion') return
+    setLoadingCourses(true)
+    createClient().from('courses').select('id, title, badge, published').order('sort_order')
+      .then(({ data, error }) => {
+        if (error) setError('No se pudieron cargar las formaciones.')
+        setCourses(data ?? [])
+        setLoadingCourses(false)
+      })
+  }, [tab])
 
   // ── Servicios ───────────────────────────────────────────
   useEffect(() => {
@@ -284,10 +307,11 @@ export default function AdminDashboard() {
       <div style={{ borderBottom: '1px solid var(--eclat-border)', marginBottom: 24 }}>
         <div style={{ display: 'flex', overflowX: 'auto' }}>
           {([
-            { key: 'escritos',  label: 'Escritos' },
-            { key: 'servicios', label: 'Servicios' },
-            { key: 'textos',    label: 'Textos del sitio' },
             { key: 'solicitudes', label: 'Solicitudes' },
+            { key: 'escritos',    label: 'Escritos' },
+            { key: 'formacion',   label: 'Formación' },
+            { key: 'servicios',   label: 'Servicios' },
+            { key: 'textos',      label: 'Textos del sitio' },
           ] as { key: Tab; label: string }[]).map(t => (
             <button
               key={t.key}
@@ -381,6 +405,62 @@ export default function AdminDashboard() {
                       Borrar
                     </button>
                   </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Tab: Formación ── */}
+      {tab === 'formacion' && (
+        <div style={card}>
+          <div style={cardHead}>
+            <h2 style={{ fontSize: 15, fontWeight: 600 }}>Formación</h2>
+            <Link
+              href="/admin/formacion/nuevo"
+              style={{ fontSize: 13, fontWeight: 600, background: 'var(--slate-900)', color: '#fff', padding: '8px 16px', borderRadius: 999, textDecoration: 'none' }}
+            >
+              + Nueva formación
+            </Link>
+          </div>
+          {loadingCourses ? <Spinner /> : courses.length === 0 ? (
+            <div style={{ padding: '48px 24px', textAlign: 'center' }}>
+              <p style={{ fontSize: 15, color: 'var(--ink-muted)', marginBottom: 16 }}>Todavía no hay formaciones.</p>
+              <Link href="/admin/formacion/nuevo" style={{ fontSize: 14, fontWeight: 600, color: 'var(--sage-deep)' }}>Crear la primera →</Link>
+            </div>
+          ) : (
+            <div>
+              {courses.map((c, i) => (
+                <div
+                  key={c.id}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 14,
+                    padding: '14px 22px',
+                    borderBottom: i < courses.length - 1 ? '1px solid var(--eclat-border)' : 'none',
+                  }}
+                >
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--slate-900)', marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {c.title}
+                    </p>
+                    <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                      {c.badge && (
+                        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--green-700)', background: '#edf3f0', padding: '2px 7px', borderRadius: 4 }}>
+                          {c.badge}
+                        </span>
+                      )}
+                      {!c.published && (
+                        <span style={{ fontSize: 11, color: '#b45309', background: '#fef3c7', padding: '2px 7px', borderRadius: 4, fontWeight: 600 }}>Oculto</span>
+                      )}
+                    </div>
+                  </div>
+                  <Link
+                    href={`/admin/formacion/${c.id}`}
+                    style={{ fontSize: 13, fontWeight: 600, color: 'var(--slate-900)', background: '#f5f5f7', padding: '6px 14px', borderRadius: 8, textDecoration: 'none', flexShrink: 0 }}
+                  >
+                    Editar
+                  </Link>
                 </div>
               ))}
             </div>
