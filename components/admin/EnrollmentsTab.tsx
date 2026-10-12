@@ -58,7 +58,6 @@ export default function AdminInscripciones() {
 
   return (
     <div>
-      <h1 className="text-[28px] font-semibold text-[#0A0A0A] mb-1">Inscripciones</h1>
       <p className="text-[15px] text-[#6E6E73] mb-8">Gestioná los pagos y accesos a los cursos</p>
 
       {/* Filtros */}

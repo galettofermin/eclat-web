@@ -64,6 +64,7 @@ const Spinner = () => (
 
 export default function AdminDashboard() {
   const [tab, setTab] = useState<Tab>('solicitudes')
+  const [pendingCount, setPendingCount] = useState(0)
 
   // Stats
   const [stats, setStats] = useState({ alumnos: 0, formaciones: 0 })
@@ -330,6 +331,14 @@ export default function AdminDashboard() {
               }}
             >
               {t.label}
+              {t.key === 'solicitudes' && pendingCount > 0 && (
+                <span
+                  aria-label={`${pendingCount} pendientes`}
+                  style={{ marginLeft: 6, padding: '1px 7px', borderRadius: 999, fontSize: 11, fontWeight: 700, background: '#dc2626', color: '#fff' }}
+                >
+                  {pendingCount}
+                </span>
+              )}
             </button>
           ))}
         </div>
@@ -349,7 +358,7 @@ export default function AdminDashboard() {
           <div style={cardHead}>
             <h2 style={{ fontSize: 15, fontWeight: 600 }}>Solicitudes</h2>
           </div>
-          <RegistrationsTab onError={setError} />
+          <RegistrationsTab onError={setError} onPendingCount={setPendingCount} />
         </div>
       )}
 

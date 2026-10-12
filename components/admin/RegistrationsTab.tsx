@@ -21,7 +21,11 @@ const fmtDate = (iso: string) =>
   new Date(iso).toLocaleString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
 
 // Pestaña "Solicitudes": inscripciones del modal del curso + habilitar/revocar el acceso
-export default function RegistrationsTab({ onError }: { onError: (msg: string) => void }) {
+export default function RegistrationsTab({ onError, onPendingCount }: {
+  onError: (msg: string) => void
+  /** Cantidad de solicitudes sin acceso habilitado (para el badge de la pestaña) */
+  onPendingCount?: (n: number) => void
+}) {
   const [rows, setRows] = useState<Registration[]>([])
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState<string | null>(null) // id de la fila en proceso
@@ -31,13 +35,15 @@ export default function RegistrationsTab({ onError }: { onError: (msg: string) =
       const r = await fetch('/api/admin/registrations')
       const data = await r.json()
       if (!r.ok) throw new Error(data.error ?? 'No se pudieron cargar las solicitudes.')
-      setRows(data.registrations ?? [])
+      const regs: Registration[] = data.registrations ?? []
+      setRows(regs)
+      onPendingCount?.(regs.filter(r => !r.has_access).length)
     } catch (e) {
       onError(e instanceof Error ? e.message : 'No se pudieron cargar las solicitudes.')
     } finally {
       setLoading(false)
     }
-  }, [onError])
+  }, [onError, onPendingCount])
 
   useEffect(() => { load() }, [load])
 

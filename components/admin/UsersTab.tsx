@@ -98,7 +98,6 @@ export default function AdminUsuarios() {
     <div>
       <div className="flex items-start justify-between mb-2 gap-4 flex-wrap">
         <div>
-          <h1 className="text-[28px] font-semibold text-[#0A0A0A]">Usuarios</h1>
           <p className="text-[15px] text-[#6E6E73]">{users.length} cuenta{users.length !== 1 ? 's' : ''} registrada{users.length !== 1 ? 's' : ''}</p>
         </div>
       </div>
