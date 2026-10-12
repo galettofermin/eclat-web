@@ -140,16 +140,11 @@ export default function CourseRegistrationModal({ courseId, courseTitle, price, 
   const payWithMP = async () => {
     setPaying(true)
     try {
-      const supabase = createClient()
-      const { data: { user } } = await supabase.auth.getUser()
+      // El servidor toma el usuario de la sesión o, si no hay, lo busca por el mail
       const res = await fetch('/api/mp/preference', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          courseId,
-          userId: user?.id ?? '',
-          userEmail: user?.email ?? form.email,
-        }),
+        body: JSON.stringify({ courseId, userEmail: form.email.trim() }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error ?? 'Error al crear el pago')

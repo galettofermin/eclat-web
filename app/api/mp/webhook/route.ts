@@ -24,7 +24,7 @@ export async function POST(req: Request) {
 
       if (userId && courseId) {
         const supabase = createAdminClient()
-        await supabase.from('enrollments').upsert(
+        const { error: enrollError } = await supabase.from('enrollments').upsert(
           {
             user_id: userId,
             course_id: courseId,
@@ -37,6 +37,11 @@ export async function POST(req: Request) {
           },
           { onConflict: 'user_id,course_id' }
         )
+        // Sin acceso guardado no se responde ok: así Mercado Pago reintenta la notificación
+        if (enrollError) {
+          console.error('MP webhook enrollment error:', enrollError)
+          return NextResponse.json({ error: 'No se pudo guardar el acceso' }, { status: 500 })
+        }
 
         // Enviar email de acceso si tenemos el email del usuario
         if (userEmail) {

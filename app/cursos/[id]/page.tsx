@@ -206,6 +206,14 @@ export default async function CursoPage({
         </div>
       )}
 
+      {searchParams.pago === 'error' && (
+        <div className="max-w-4xl mx-auto px-5 pt-4">
+          <div className="bg-red-50 border border-red-200 rounded-2xl px-5 py-4">
+            <p className="text-[15px] font-semibold text-red-700">El pago no se completó. Podés volver a intentarlo o elegir pagar por transferencia.</p>
+          </div>
+        </div>
+      )}
+
       {/* ── CUERPO ── */}
       <div className="max-w-4xl mx-auto px-5 py-10 md:py-14 space-y-12">
 

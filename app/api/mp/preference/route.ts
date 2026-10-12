@@ -1,17 +1,28 @@
 import { NextResponse } from 'next/server'
 import { MercadoPagoConfig, Preference } from 'mercadopago'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { createClient } from '@/lib/supabase/server'
+import { findUserByEmail } from '@/lib/auth/findUsersByEmail'
 
 export const dynamic = 'force-dynamic'
 
 export async function POST(req: Request) {
   try {
-    const { courseId, userId, userEmail } = await req.json()
-    if (!courseId || !userId) {
+    const { courseId, userEmail } = await req.json()
+    if (!courseId) {
       return NextResponse.json({ error: 'Faltan datos' }, { status: 400 })
     }
 
     const supabase = createAdminClient()
+
+    // Usuario al que se le habilita el curso: el de la sesión o, si recién creó la cuenta
+    // desde el modal (sin sesión hasta confirmar el mail), el que tiene ese mail
+    const { data: { user: sessionUser } } = await createClient().auth.getUser()
+    const user = sessionUser
+      ?? (typeof userEmail === 'string' && userEmail.trim() ? await findUserByEmail(supabase, userEmail) : undefined)
+    if (!user) {
+      return NextResponse.json({ error: 'No encontramos una cuenta con ese mail. Creá tu cuenta desde Registrarse y volvé a intentar.' }, { status: 400 })
+    }
     const { data: course, error: courseError } = await supabase
       .from('courses')
       .select('id, title, price, is_free')
@@ -47,15 +58,15 @@ export async function POST(req: Request) {
         }],
         back_urls: {
           success: `${siteUrl}/cursos/${courseId}?pago=ok`,
-          failure: `${siteUrl}/inscripcion/${courseId}?pago=error`,
+          failure: `${siteUrl}/cursos/${courseId}?pago=error`,
           pending: `${siteUrl}/cursos/${courseId}?pago=pendiente`,
         },
         auto_return: 'approved',
         notification_url: `${siteUrl}/api/mp/webhook`,
         metadata: {
-          user_id: userId,
+          user_id: user.id,
           course_id: courseId,
-          user_email: userEmail ?? '',
+          user_email: user.email ?? '',
         },
       },
     })
