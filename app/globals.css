@@ -1202,3 +1202,5 @@ p { margin: 0; text-wrap: pretty; }
 .fband { background: #f0ede6; border-color: rgba(0,0,0,.08); }
 .fband__title { color: #1a1a1a; }
 .fband__sub { color: rgba(30,30,30,.6); }
+/* Hover legible con texto blanco sobre verde */
+.fhero__btn-primary:hover, .fband__cta:hover { background: #245f52; color: #fff; }
