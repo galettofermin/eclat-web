@@ -353,7 +353,7 @@ export default async function CursoPage({
               <p className="text-white/55 text-[14px] mb-6">
                 Inscribite y te contactamos para confirmar tu lugar.
                 {!user && ' Para ver los módulos vas a necesitar una cuenta.'}
-                {course.price > 0 && ` ${formatPrice(course.price)} · Acceso de por vida.`}
+                {course.price > 0 && ` ${formatPrice(course.price)} · Acceso ilimitado.`}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <CourseRegistrationModal
