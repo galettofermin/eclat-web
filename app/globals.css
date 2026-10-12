@@ -277,6 +277,9 @@ p { margin: 0; text-wrap: pretty; }
 .btn-wa:hover { background: #1d5249; color: #fff; transform: translateY(-1px); }
 .btn-wa:focus-visible { outline: 2px solid #25655B; outline-offset: 3px; }
 .btn-wa--sm { padding: 8px 16px; font-size: 13px; gap: 8px; white-space: nowrap; }
+/* En las franjas oscuras el verde se pierde contra el fondo: botón blanco con texto verde */
+.ctaband .btn-wa { background: #fff; color: #25655B; }
+.ctaband .btn-wa:hover { background: var(--sage); color: #1d5249; }
 .ctaband .btn-wa:focus-visible { outline-color: #fff; }
 .form .btn-wa { width: 100%; justify-content: center; }
 
