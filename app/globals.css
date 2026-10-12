@@ -450,6 +450,7 @@ p { margin: 0; text-wrap: pretty; }
 }
 .btn-pulse       { animation: btnPulse 2.4s ease-in-out infinite; }
 .btn-pulse-white { animation: btnPulseWhite 2.4s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .btn-pulse, .btn-pulse-white { animation: none; } }
 
 @layer utilities {
   .text-balance { text-wrap: balance; }
