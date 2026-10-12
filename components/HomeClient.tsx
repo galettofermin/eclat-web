@@ -6,6 +6,7 @@ import { AnimatedSection, FadeIn } from "@/components/AnimatedSection";
 import { StaggerList, StaggerItem } from "@/components/StaggerList";
 import { HoverCard } from "@/components/HoverCard";
 import { WA_URL } from "@/lib/constants";
+import { WaIcon } from "@/components/WaIcon";
 
 interface Service {
   name: string;
@@ -98,7 +99,7 @@ export default function HomeClient({ heroTitle, heroLede, latestArticles, servic
             </FadeIn>
             <FadeIn direction="up" delay={0.2}>
               <div className="hero3__cta">
-                <a className="btn btn--primary" href={WA_URL("Hola ÉCLAT, quisiera solicitar una entrevista.")} target="_blank" rel="noopener">Solicitar entrevista</a>
+                <a className="btn-wa" href={WA_URL("Hola ÉCLAT, quisiera solicitar una entrevista.")} target="_blank" rel="noopener"><WaIcon />Solicitar entrevista</a>
                 <Link className="btn btn--ghost" href="/nosotros" style={{ background: "rgba(255,255,255,.6)" }}>Conocer ÉCLAT</Link>
               </div>
             </FadeIn>
@@ -164,9 +165,9 @@ export default function HomeClient({ heroTitle, heroLede, latestArticles, servic
                     WA_URL(`Hola ÉCLAT, quisiera agendar un turno para ${svcList[active].name}.`),
                     '_blank'
                   )}
-                  style={{ fontSize: 13, fontWeight: 600, background: 'var(--slate-900)', color: '#fff', padding: '8px 16px', borderRadius: 999, border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                  className="btn-wa btn-wa--sm"
                 >
-                  Agendar turno →
+                  <WaIcon size={16} />Agendar turno
                 </button>
               </div>
             </aside>

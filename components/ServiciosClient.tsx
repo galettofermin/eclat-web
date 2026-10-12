@@ -7,6 +7,7 @@ import { FadeIn } from '@/components/AnimatedSection'
 import { StaggerList, StaggerItem } from '@/components/StaggerList'
 import { HoverCard } from '@/components/HoverCard'
 import { WA_URL } from '@/lib/constants'
+import { WaIcon } from '@/components/WaIcon'
 
 const AREAS = [
   { name: 'Psicología',                    desc: 'Atención clínica de niños, adolescentes y adultos. Un espacio de escucha para alojar el malestar y construir, caso por caso, una salida posible.' },
@@ -125,11 +126,11 @@ export default function ServiciosClient({ heroTitle }: Props) {
             <p>Escribinos y te orientamos sobre el profesional indicado para tu consulta.</p>
           </div>
           <a
-            className="btn btn--primary"
+            className="btn-wa"
             href={WA_URL('Hola ÉCLAT, quisiera orientación sobre los servicios.')}
             target="_blank" rel="noopener noreferrer"
           >
-            Solicitar entrevista
+            <WaIcon />Solicitar entrevista
           </a>
         </div>
       </section>

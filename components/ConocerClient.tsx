@@ -8,6 +8,7 @@ import { AnimatedSection, FadeIn } from '@/components/AnimatedSection'
 import { StaggerList, StaggerItem } from '@/components/StaggerList'
 import { HoverCard } from '@/components/HoverCard'
 import { WA_URL } from '@/lib/constants'
+import { WaIcon } from '@/components/WaIcon'
 
 const DIRECTOR_KEYS = ['direccion-fermin', 'direccion-constanza']
 
@@ -226,11 +227,11 @@ export default function ConocerClient({ heroTitle, heroLede }: Props) {
             <p>Estamos en Castelli 260, Oncativo. Pedí una entrevista y conversemos.</p>
           </div>
           <a
-            className="btn btn--primary"
+            className="btn-wa"
             href={WA_URL('Hola ÉCLAT, quisiera solicitar una entrevista.')}
             target="_blank" rel="noopener noreferrer"
           >
-            Solicitar entrevista
+            <WaIcon />Solicitar entrevista
           </a>
         </div>
       </section>

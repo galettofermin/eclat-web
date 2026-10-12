@@ -4,6 +4,7 @@ import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { DIRECTOR_EMAIL, WA_URL } from '@/lib/constants'
+import { WaIcon } from '@/components/WaIcon'
 
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = { title: 'Mi cuenta', robots: { index: false } }
@@ -49,12 +50,12 @@ export default async function MiCuentaPage() {
                 Todavía no tenés cursos habilitados. Escribinos por WhatsApp para inscribirte.
               </p>
               <a
-                className="btn btn--primary"
+                className="btn-wa"
                 style={{ alignSelf: 'center', marginTop: 12 }}
                 href={WA_URL('Hola ÉCLAT, quiero inscribirme en un curso.')}
                 target="_blank" rel="noopener noreferrer"
               >
-                Escribir por WhatsApp
+                <WaIcon />Escribir por WhatsApp
               </a>
             </div>
           ) : (

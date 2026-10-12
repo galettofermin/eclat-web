@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { WA_URL } from '@/lib/constants'
+import { WaIcon } from '@/components/WaIcon'
 import ArticleAdminActions, { NewArticleButton } from '@/components/ArticleAdminActions'
 import { AnimatedSection } from '@/components/AnimatedSection'
 import { StaggerList, StaggerItem } from '@/components/StaggerList'
@@ -80,11 +81,11 @@ export default async function PublicacionesPage() {
             <p>Recibimos producciones del equipo y de colegas que quieran compartir su práctica.</p>
           </div>
           <a
-            className="btn btn--primary"
+            className="btn-wa"
             href={WA_URL('Hola ÉCLAT, quisiera proponer una publicación.')}
             target="_blank" rel="noopener noreferrer"
           >
-            Proponer una publicación
+            <WaIcon />Proponer una publicación
           </a>
         </div>
       </section>

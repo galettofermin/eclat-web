@@ -3,6 +3,7 @@
 import { FormEvent } from "react";
 import { FadeIn } from "@/components/AnimatedSection";
 import { WA_URL } from "@/lib/constants";
+import { WaIcon } from "@/components/WaIcon";
 
 const MOTIVOS = [
   "Solicitar una entrevista", "Psicología", "Psicopedagogía", "Fonoaudiología",
@@ -90,7 +91,7 @@ export default function ContactoPage() {
                   <label htmlFor="mensaje">Mensaje</label>
                   <textarea id="mensaje" name="mensaje" placeholder="Contanos brevemente en qué podemos ayudarte"></textarea>
                 </div>
-                <button className="btn btn--primary" type="submit">Enviar por WhatsApp</button>
+                <button className="btn-wa" type="submit"><WaIcon />Enviar por WhatsApp</button>
                 <p style={{ marginTop: "12px", fontSize: "13px", color: "var(--ink-muted)" }}>
                   Al enviar se abre WhatsApp con tu mensaje listo para confirmar.
                 </p>

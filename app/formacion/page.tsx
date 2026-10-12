@@ -5,6 +5,7 @@ import { AnimatedSection } from "@/components/AnimatedSection";
 import { StaggerList, StaggerItem } from "@/components/StaggerList";
 import { getSiteContent } from "@/lib/siteContent";
 import { WA_URL } from "@/lib/constants";
+import { WaIcon } from "@/components/WaIcon";
 import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = 'force-dynamic'
@@ -94,8 +95,8 @@ export default async function FormacionPage() {
               <p style={{ fontSize: 18, color: 'var(--slate-900)', marginBottom: 20 }}>
                 Próximamente nuevas formaciones. Escribinos para recibir el calendario.
               </p>
-              <a className="btn btn--primary" href={WA_URL("Hola ÉCLAT, quiero recibir el calendario de formaciones.")} target="_blank" rel="noopener noreferrer">
-                Escribir por WhatsApp
+              <a className="btn-wa" href={WA_URL("Hola ÉCLAT, quiero recibir el calendario de formaciones.")} target="_blank" rel="noopener noreferrer">
+                <WaIcon />Escribir por WhatsApp
               </a>
             </AnimatedSection>
           )}
@@ -108,8 +109,8 @@ export default async function FormacionPage() {
             <h2>Recibí el calendario de formaciones</h2>
             <p>Te avisamos cuando se abren las inscripciones de cada curso, seminario o jornada.</p>
           </div>
-          <a className="btn btn--primary" href={WA_URL("Hola ÉCLAT, quiero recibir el calendario de formaciones.")} target="_blank" rel="noopener">
-            Quiero el calendario
+          <a className="btn-wa" href={WA_URL("Hola ÉCLAT, quiero recibir el calendario de formaciones.")} target="_blank" rel="noopener">
+            <WaIcon />Quiero el calendario
           </a>
         </div>
       </section>
