@@ -93,6 +93,7 @@ export default function CoursePriceCard({
           <CourseRegistrationModal
             courseId={courseId}
             courseTitle={courseTitle}
+            price={price}
             userEmail={userEmail}
             triggerClassName="block w-full text-center bg-[#25655B] text-white font-bold py-4 rounded-xl hover:bg-[#1d5249] transition-colors text-[16px] mb-2 shadow-lg shadow-[#25655B]/25"
           />

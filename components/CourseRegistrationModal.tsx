@@ -8,6 +8,7 @@ import { REGISTRATION_ROLES } from '@/lib/registrationRoles'
 type Props = {
   courseId: string
   courseTitle: string
+  price?: number
   /** Mail del usuario con sesión: si viene, no se pide contraseña ni se crea cuenta */
   userEmail?: string | null
   /** Clases del botón que abre el modal (cambia según dónde se use) */
@@ -17,6 +18,7 @@ type Props = {
 
 // Cómo terminó el envío: define el mensaje final
 type Outcome = 'new' | 'newWithSession' | 'existing' | 'loggedIn' | 'accountFailed'
+type PayStep = 'form' | 'choose' | 'done'
 
 const EMPTY = { nombre: '', apellido: '', email: '', telefono: '', localidad: '', rol: '', password: '', confirm: '', website: '' }
 
@@ -31,18 +33,23 @@ const OUTCOME_TEXT: Record<Outcome, string> = {
 const isExistingAccountError = (msg: string, code?: string) =>
   code === 'user_already_exists' || code === 'email_exists' || /already (been )?registered|already exists/i.test(msg)
 
-export default function CourseRegistrationModal({ courseId, courseTitle, userEmail, triggerClassName, triggerLabel = 'Inscribirme' }: Props) {
+const formatPrice = (p: number) =>
+  new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(p)
+
+export default function CourseRegistrationModal({ courseId, courseTitle, price, userEmail, triggerClassName, triggerLabel = 'Inscribirme' }: Props) {
   const [open, setOpen] = useState(false)
   const [form, setForm] = useState({ ...EMPTY, email: userEmail ?? '' })
-  const [status, setStatus] = useState<'idle' | 'sending' | 'done'>('idle')
+  const [step, setStep] = useState<PayStep>('form')
   const [outcome, setOutcome] = useState<Outcome>('new')
+  const [savedOutcome, setSavedOutcome] = useState<Outcome>('new')
   const [error, setError] = useState('')
+  const [paying, setPaying] = useState(false)
   const firstField = useRef<HTMLInputElement>(null)
   const trigger = useRef<HTMLButtonElement>(null)
 
   const close = () => {
     setOpen(false)
-    if (status === 'done') { setForm({ ...EMPTY, email: userEmail ?? '' }); setStatus('idle') }
+    if (step === 'done') { setForm({ ...EMPTY, email: userEmail ?? '' }); setStep('form') }
     trigger.current?.focus()
   }
 
@@ -99,10 +106,11 @@ export default function CourseRegistrationModal({ courseId, courseTitle, userEma
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setStatus('sending'); setError('')
+    setStep('form'); setError('')
+    setPaying(true)
     try {
       const result = await createAccount()
-      if (!result) { setStatus('idle'); return }
+      if (!result) { setPaying(false); return }
 
       // Paso 2: guardar la inscripción. La contraseña no se envía.
       const { password: _pw, confirm: _confirm, ...registration } = form
@@ -114,12 +122,47 @@ export default function CourseRegistrationModal({ courseId, courseTitle, userEma
       const data = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error(data.error || 'No pudimos enviar la inscripción.')
 
-      setOutcome(result)
-      setStatus('done')
+      setSavedOutcome(result)
+      // Si hay precio → elegir método de pago; si no → listo
+      if (price && price > 0) {
+        setStep('choose')
+      } else {
+        setOutcome(result)
+        setStep('done')
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No pudimos enviar la inscripción.')
-      setStatus('idle')
+    } finally {
+      setPaying(false)
     }
+  }
+
+  const payWithMP = async () => {
+    setPaying(true)
+    try {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      const res = await fetch('/api/mp/preference', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          courseId,
+          userId: user?.id ?? '',
+          userEmail: user?.email ?? form.email,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error ?? 'Error al crear el pago')
+      window.location.href = data.init_point
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error al conectar con Mercado Pago')
+      setPaying(false)
+    }
+  }
+
+  const payWithTransfer = () => {
+    setOutcome(savedOutcome)
+    setStep('done')
   }
 
   return (
@@ -155,7 +198,7 @@ export default function CourseRegistrationModal({ courseId, courseTitle, userEma
               ✕
             </button>
 
-            {status === 'done' ? (
+            {step === 'done' ? (
               <div style={{ textAlign: 'center', padding: '12px 0' }} role="status">
                 <h2 id="reg-title" style={{ fontSize: 22, fontWeight: 600, marginBottom: 12 }}>¡Tu inscripción fue recibida!</h2>
                 <p style={{ fontSize: 16, lineHeight: 1.6, color: 'var(--slate-700)', marginBottom: 24 }}>
@@ -166,6 +209,64 @@ export default function CourseRegistrationModal({ courseId, courseTitle, userEma
                 ) : (
                   <button type="button" className="btn-wa" style={{ justifyContent: 'center' }} onClick={close}>Cerrar</button>
                 )}
+              </div>
+            ) : step === 'choose' ? (
+              <div style={{ textAlign: 'center', padding: '12px 0' }}>
+                <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--sage-text)', marginBottom: 6 }}>
+                  Elegí cómo pagar
+                </p>
+                <h2 id="reg-title" style={{ fontSize: 20, fontWeight: 600, lineHeight: 1.25, marginBottom: 8, paddingRight: 24 }}>{courseTitle}</h2>
+                {price && price > 0 && (
+                  <p style={{ fontSize: 26, fontWeight: 700, color: 'var(--sage)', marginBottom: 28 }}>{formatPrice(price)}</p>
+                )}
+
+                {error && (
+                  <p role="alert" style={{ fontSize: 13, color: '#c53030', background: '#fff5f5', border: '1px solid #fed7d7', borderRadius: 8, padding: '10px 12px', marginBottom: 16 }}>
+                    {error}
+                  </p>
+                )}
+
+                {/* Mercado Pago */}
+                <button
+                  type="button"
+                  onClick={payWithMP}
+                  disabled={paying}
+                  style={{
+                    width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+                    background: '#009ee3', color: '#fff', border: 'none', borderRadius: 12,
+                    fontSize: 15, fontWeight: 700, padding: '14px 20px', cursor: paying ? 'not-allowed' : 'pointer',
+                    opacity: paying ? .7 : 1, marginBottom: 12,
+                  }}
+                >
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <circle cx="12" cy="12" r="11" fill="#fff" fillOpacity=".2"/>
+                    <path d="M7 12.5c0-2.76 2.24-5 5-5s5 2.24 5 5-2.24 5-5 5-5-2.24-5-5Z" fill="#fff"/>
+                  </svg>
+                  {paying ? 'Redirigiendo…' : 'Pagar con Mercado Pago'}
+                </button>
+
+                {/* Transferencia */}
+                <button
+                  type="button"
+                  onClick={payWithTransfer}
+                  disabled={paying}
+                  style={{
+                    width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+                    background: 'var(--paper-2, #f5f5f3)', color: 'var(--slate-900)', border: '1.5px solid var(--border, #e2e2e0)',
+                    borderRadius: 12, fontSize: 15, fontWeight: 600, padding: '14px 20px',
+                    cursor: paying ? 'not-allowed' : 'pointer', opacity: paying ? .7 : 1,
+                  }}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                    <rect x="2" y="5" width="20" height="14" rx="3"/>
+                    <path d="M2 10h20"/>
+                  </svg>
+                  Pagar por transferencia
+                </button>
+
+                <p style={{ fontSize: 12, color: 'var(--ink-muted)', marginTop: 14 }}>
+                  Con transferencia, el equipo de ÉCLAT confirma el pago y habilita tu acceso.
+                </p>
               </div>
             ) : (
               <form onSubmit={submit}>
@@ -241,10 +342,10 @@ export default function CourseRegistrationModal({ courseId, courseTitle, userEma
                 <button
                   type="submit"
                   className="btn-wa"
-                  disabled={status === 'sending'}
-                  style={{ width: '100%', justifyContent: 'center', opacity: status === 'sending' ? .7 : 1 }}
+                  disabled={paying}
+                  style={{ width: '100%', justifyContent: 'center', opacity: paying ? .7 : 1 }}
                 >
-                  {status === 'sending' ? 'Enviando…' : 'Inscribirme'}
+                  {paying ? 'Enviando…' : 'Inscribirme'}
                 </button>
                 {!userEmail && (
                   <p style={{ fontSize: 12, color: 'var(--ink-muted)', marginTop: 12, textAlign: 'center' }}>
