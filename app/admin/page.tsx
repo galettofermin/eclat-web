@@ -3,10 +3,9 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import StudentsTab from '@/components/admin/StudentsTab'
 import RegistrationsTab from '@/components/admin/RegistrationsTab'
 
-type Tab = 'escritos' | 'servicios' | 'textos' | 'alumnos' | 'inscripciones'
+type Tab = 'escritos' | 'servicios' | 'textos' | 'solicitudes'
 
 type ArticleRow = {
   id: string
@@ -288,8 +287,7 @@ export default function AdminDashboard() {
             { key: 'escritos',  label: 'Escritos' },
             { key: 'servicios', label: 'Servicios' },
             { key: 'textos',    label: 'Textos del sitio' },
-            { key: 'alumnos',   label: 'Alumnos' },
-            { key: 'inscripciones', label: 'Inscripciones' },
+            { key: 'solicitudes', label: 'Solicitudes' },
           ] as { key: Tab; label: string }[]).map(t => (
             <button
               key={t.key}
@@ -317,23 +315,13 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* ── Tab: Inscripciones ── */}
-      {tab === 'inscripciones' && (
+      {/* ── Tab: Solicitudes ── */}
+      {tab === 'solicitudes' && (
         <div style={card}>
           <div style={cardHead}>
-            <h2 style={{ fontSize: 15, fontWeight: 600 }}>Inscripciones</h2>
+            <h2 style={{ fontSize: 15, fontWeight: 600 }}>Solicitudes</h2>
           </div>
           <RegistrationsTab onError={setError} />
-        </div>
-      )}
-
-      {/* ── Tab: Alumnos ── */}
-      {tab === 'alumnos' && (
-        <div style={card}>
-          <div style={cardHead}>
-            <h2 style={{ fontSize: 15, fontWeight: 600 }}>Alumnos</h2>
-          </div>
-          <StudentsTab onError={setError} />
         </div>
       )}
 
