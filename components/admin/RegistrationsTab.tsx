@@ -133,8 +133,10 @@ export default function RegistrationsTab({ onError, onPendingCount }: {
             {/* Datos en grilla 2 columnas (minmax(0,1fr) + overflowWrap: los mails largos no desbordan) */}
             <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)', gap: '6px 16px', fontSize: '13px', color: 'var(--ink-muted)', overflowWrap: 'anywhere' }}>
               <span>📧 <a href={`mailto:${reg.email}`} style={{ color: 'inherit' }}>{reg.email}</a></span>
-              <span>📱 <a href={`https://wa.me/${reg.telefono.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>{reg.telefono}</a></span>
-              <span>📍 {reg.localidad}</span>
+              <span>📱 {reg.telefono
+                ? <a href={`https://wa.me/${reg.telefono.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>{reg.telefono}</a>
+                : '—'}</span>
+              <span>📍 {reg.localidad || '—'}</span>
               <span>👤 {reg.rol || '—'}</span>
               <span style={{ gridColumn: '1/-1' }}>📅 {fmtDate(reg.created_at)}</span>
             </div>

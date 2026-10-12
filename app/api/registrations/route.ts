@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { createClient } from '@/lib/supabase/server'
 import { enviarNuevaInscripcion, enviarConfirmacionInscripcion } from '@/lib/email'
 import { REGISTRATION_ROLES } from '@/lib/registrationRoles'
 
@@ -19,7 +20,23 @@ export async function POST(req: Request) {
   const str = (k: string) => (typeof body[k] === 'string' ? (body[k] as string).trim().slice(0, 200) : '')
   const data = Object.fromEntries(REQUIRED.map(k => [k, str(k)])) as Record<(typeof REQUIRED)[number], string>
 
-  if (REQUIRED.some(k => !data[k])) return NextResponse.json({ error: 'Completá todos los campos obligatorios.' }, { status: 400 })
+  // Alumno con sesión que se inscribe sin el formulario: nombre y apellido salen de su cuenta,
+  // teléfono y localidad quedan vacíos. Solo vale para el mail de la sesión.
+  if (REQUIRED.some(k => !data[k])) {
+    const { data: { user } } = await createClient().auth.getUser()
+    if (user?.email && user.email.toLowerCase() === data.email.toLowerCase()) {
+      const meta = user.user_metadata ?? {}
+      const [first = '', ...rest] = String(meta.full_name ?? '').trim().split(/\s+/)
+      data.nombre ||= String(meta.nombre || first || user.email.split('@')[0]).slice(0, 200)
+      data.apellido ||= String(meta.apellido || rest.join(' ') || '-').slice(0, 200)
+      data.email = user.email
+      data.telefono ||= ''
+      data.localidad ||= ''
+    } else {
+      return NextResponse.json({ error: 'Completá todos los campos obligatorios.' }, { status: 400 })
+    }
+  }
+  if (!data.nombre || !data.apellido) return NextResponse.json({ error: 'Completá todos los campos obligatorios.' }, { status: 400 })
   if (!EMAIL_RE.test(data.email)) return NextResponse.json({ error: 'El mail no es válido.' }, { status: 400 })
   const rol = (REGISTRATION_ROLES as readonly string[]).includes(str('rol')) ? str('rol') : ''
 

@@ -630,6 +630,9 @@ p { margin: 0; text-wrap: pretty; }
 /* ── nav__login ── */
 .nav__login { display: none; }
 @media (min-width: 861px) { .nav__login { display: inline-flex; } }
+/* Registrarse: solo en escritorio (en mobile el botón de ingreso es un ícono) */
+.nav__register { display: none; }
+@media (min-width: 861px) { .nav__register { display: inline-flex; } }
 
 /* ── nav__ham ── */
 .nav__ham { display: none; }
