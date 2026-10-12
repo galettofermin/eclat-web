@@ -57,7 +57,7 @@ export async function POST(req: Request) {
           unit_price: price,
         }],
         back_urls: {
-          success: `${siteUrl}/cursos/${courseId}?pago=ok`,
+          success: `${siteUrl}/mi-cuenta?pago=ok`,
           failure: `${siteUrl}/cursos/${courseId}?pago=error`,
           pending: `${siteUrl}/cursos/${courseId}?pago=pendiente`,
         },
