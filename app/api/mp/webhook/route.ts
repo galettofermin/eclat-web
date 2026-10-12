@@ -5,17 +5,34 @@ import { createAdminClient } from '@/lib/supabase/admin'
 export const dynamic = 'force-dynamic'
 import { enviarAccesoCurso } from '@/lib/email'
 
+// MP test usa GET para verificar que el endpoint responde
+export async function GET() {
+  return NextResponse.json({ ok: true })
+}
+
 export async function POST(req: Request) {
   try {
-    const body = await req.json()
+    // Soporte para formato IPN (topic/id en query) y Webhooks (body.type/data.id)
+    const url = new URL(req.url)
+    const topic = url.searchParams.get('topic')
+    const qId  = url.searchParams.get('id')
 
-    if (body.type !== 'payment') {
-      return NextResponse.json({ ok: true })
+    let paymentId: string | number | null = null
+
+    if (topic === 'payment' && qId) {
+      // Formato IPN clásico
+      paymentId = qId
+    } else {
+      const body = await req.json().catch(() => ({}))
+      if (body.type !== 'payment') return NextResponse.json({ ok: true })
+      paymentId = body.data?.id ?? null
     }
+
+    if (!paymentId) return NextResponse.json({ ok: true })
 
     const mp = new MercadoPagoConfig({ accessToken: (process.env.MP_ACCESS_TOKEN || process.env.MERCADOPAGO_ACCESS_TOKEN)! })
     const paymentClient = new Payment(mp)
-    const payment = await paymentClient.get({ id: body.data.id })
+    const payment = await paymentClient.get({ id: paymentId })
 
     if (payment.status === 'approved') {
       const userId = payment.metadata?.user_id
