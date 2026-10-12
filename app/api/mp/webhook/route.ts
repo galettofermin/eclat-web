@@ -32,7 +32,13 @@ export async function POST(req: Request) {
 
     const mp = new MercadoPagoConfig({ accessToken: (process.env.MP_ACCESS_TOKEN || process.env.MERCADOPAGO_ACCESS_TOKEN)! })
     const paymentClient = new Payment(mp)
-    const payment = await paymentClient.get({ id: paymentId })
+    let payment
+    try {
+      payment = await paymentClient.get({ id: paymentId })
+    } catch {
+      // ID de prueba o pago no encontrado: igual responder 200
+      return NextResponse.json({ ok: true })
+    }
 
     if (payment.status === 'approved') {
       const userId = payment.metadata?.user_id
