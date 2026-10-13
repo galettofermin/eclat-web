@@ -22,7 +22,7 @@ const cormorant = Cormorant_Garamond({
 export const metadata: Metadata = {
   metadataBase: new URL("https://eclatcentro.com"),
   title: {
-    default: "Salud Mental y Educación · ÉCLAT Centro Interdisciplinario, Oncativo",
+    default: "ÉCLAT · Salud Mental, Educación y Acompañamiento Interdisciplinario",
     template: "%s · ÉCLAT",
   },
   description: "Centro interdisciplinario en Oncativo, Córdoba. Psicología, psicopedagogía, fonoaudiología e inclusión escolar. Pedí tu entrevista hoy.",
