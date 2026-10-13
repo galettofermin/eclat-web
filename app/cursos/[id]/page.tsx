@@ -190,7 +190,7 @@ export default async function CursoPage({
       </div>
 
       {/* Price card mobile */}
-      <div className="lg:hidden px-5 -mt-4 mb-6">
+      <div className="lg:hidden px-5 mt-6 mb-6">
         <CoursePriceCard
           price={course.price}
           priceOriginal={priceOriginal}

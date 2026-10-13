@@ -20,6 +20,14 @@ export default async function HomePage() {
   const get = (key: keyof typeof DEFAULTS) => content[key] ?? DEFAULTS[key]
 
   const supabase = createClient()
+  const { data: featuredCourse } = await supabase
+    .from('courses')
+    .select('id, title, description, price, price_original, badge')
+    .eq('published', true)
+    .order('sort_order')
+    .limit(1)
+    .maybeSingle()
+
   const { data: latestArticles } = await supabase
     .from('articles')
     .select('id, title, excerpt, category, image_url')
@@ -39,6 +47,7 @@ export default async function HomePage() {
       heroLede={get('home.hero.lede')}
       latestArticles={latestArticles ?? []}
       services={services ?? []}
+      featuredCourse={featuredCourse ?? null}
     />
   )
 }

@@ -492,6 +492,9 @@ p { margin: 0; text-wrap: pretty; }
 .btn-pulse       { animation: btnPulse 2.4s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .btn-pulse { animation: none; } }
 
+/* Banner del curso destacado en la home */
+.featured-course-banner:hover { box-shadow: 0 12px 32px -12px rgba(47,125,107,.35); transform: translateY(-2px); }
+
 @layer utilities {
   .text-balance { text-wrap: balance; }
   .glass {
