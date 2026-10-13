@@ -33,6 +33,7 @@ export interface Course {
   target_audience: string
   learnings: string        // Una línea por objetivo
   syllabus: string         // Una línea por tema del temario
+  instructors?: string | null  // Una línea por docente
   duration: string
   modality: string
   level: string

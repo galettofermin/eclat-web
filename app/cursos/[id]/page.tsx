@@ -72,6 +72,8 @@ export default async function CursoPage({
   const isApproved = course.is_free || enrollment?.status === 'approved' || isDirector
   const isPending = !course.is_free && enrollment?.status === 'pending'
 
+  const instructors: string[] = course.instructors
+    ? course.instructors.split('\n').map((s: string) => s.trim()).filter(Boolean) : []
   const learnings: string[] = course.learnings
     ? course.learnings.split('\n').map((s: string) => s.trim()).filter(Boolean) : []
   const syllabus: string[] = course.syllabus
@@ -115,6 +117,15 @@ export default async function CursoPage({
               <p className="text-[16px] text-[#424245] leading-relaxed mb-6 max-w-2xl">
                 {course.long_description || course.description}
               </p>
+
+              {instructors.length > 0 && (
+                <div className="flex flex-wrap gap-x-4 gap-y-1 mt-4 mb-2">
+                  <span className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[#2F7D6B] w-full">Docentes</span>
+                  {instructors.map((name, i) => (
+                    <span key={i} className="text-[14px] text-[#424245] font-medium">{name}</span>
+                  ))}
+                </div>
+              )}
 
               {/* Stats row */}
               <div className="flex flex-wrap gap-4">

@@ -20,6 +20,7 @@ export default function CourseForm({ course }: { course?: Course }) {
     target_audience: course?.target_audience ?? '',
     learnings: course?.learnings ?? '',
     syllabus: course?.syllabus ?? '',
+    instructors: course?.instructors ?? '',
     duration: course?.duration ?? '',
     modality: course?.modality ?? 'Online',
     level: course?.level ?? 'Inicial',
@@ -42,7 +43,13 @@ export default function CourseForm({ course }: { course?: Course }) {
     e.preventDefault()
     setLoading(true)
     setError('')
-    const payload = { ...form, link: form.link || null, cta: form.cta || null }
+    const { instructors, ...rest } = form
+    // instructors solo se manda si la columna ya existe en la base (el curso la trae) o si se cargó algo:
+    // así el formulario sigue guardando aunque todavía no se haya corrido el SQL de la columna
+    const payload = {
+      ...rest, link: form.link || null, cta: form.cta || null,
+      ...(course?.instructors !== undefined || instructors.trim() ? { instructors: instructors.trim() || null } : {}),
+    }
     const supabase = createClient()
 
     if (isEditing) {
@@ -112,6 +119,15 @@ export default function CourseForm({ course }: { course?: Course }) {
                 className="w-full px-4 py-3 rounded-xl border border-black/10 text-[14px] focus:outline-none focus:border-[#2F7D6B] transition-colors resize-none font-mono"
                 placeholder={"Comprender el marco teórico de la educación inclusiva\nAplicar estrategias de DUA en el aula\nDiseñar adaptaciones curriculares"} />
               <p className="text-[12px] text-[#86868b] mt-1">Cada línea es un objetivo que aparece con ✓</p>
+            </div>
+            <div>
+              <label className="block text-[13px] font-medium text-[#0A0A0A] mb-1.5">Docentes
+                <span className="text-[#86868b] font-normal ml-1">(uno por línea)</span>
+              </label>
+              <textarea rows={3} value={form.instructors} onChange={(e) => set('instructors', e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-black/10 text-[14px] focus:outline-none focus:border-[#2F7D6B] transition-colors resize-none font-mono"
+                placeholder={"Lic. en Psicopedagogía Nombre Apellido\nLic. en Psicología Nombre Apellido"} />
+              <p className="text-[12px] text-[#86868b] mt-1">Aparecen debajo de la descripción del curso</p>
             </div>
             <div>
               <label className="block text-[13px] font-medium text-[#0A0A0A] mb-1.5">Temario
