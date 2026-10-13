@@ -17,6 +17,7 @@ export default function AdminSuscriptores() {
   const [items, setItems] = useState<Suscriptor[]>([])
   const [loading, setLoading] = useState(true)
   const [lista, setLista] = useState<'todos' | 'pausa' | 'general'>('todos')
+  const [reload, setReload] = useState(0)
 
   // Formulario agregar suscriptor manual
   const [formEmail, setFormEmail] = useState('')
@@ -39,7 +40,7 @@ export default function AdminSuscriptores() {
       setLoading(false)
     }
     load()
-  }, [lista])
+  }, [lista, reload])
 
   const agregarSuscriptor = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -58,13 +59,7 @@ export default function AdminSuscriptores() {
       setFormMsg({ tipo: 'ok', texto: `${email} agregado correctamente.` })
       setFormEmail('')
       setFormNombre('')
-      // Recargar lista
-      setLista(prev => prev) // trigger useEffect
-      const supabase = createClient()
-      let q = supabase.from('suscriptores').select('*').eq('activo', true).order('creado_en', { ascending: false })
-      if (lista !== 'todos') q = q.eq('lista', lista)
-      const { data } = await q
-      setItems(data ?? [])
+      setReload(r => r + 1) // dispara useEffect para recargar lista
     } catch (err: unknown) {
       setFormMsg({ tipo: 'error', texto: err instanceof Error ? err.message : 'Error desconocido' })
     } finally {
