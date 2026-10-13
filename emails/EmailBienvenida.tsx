@@ -1,6 +1,6 @@
 import {
   Body, Container, Head, Heading, Hr, Html,
-  Link, Preview, Section, Text,
+  Img, Link, Preview, Section, Text,
 } from '@react-email/components'
 import * as React from 'react'
 
@@ -16,7 +16,14 @@ export default function EmailBienvenida({ nombre }: Props) {
 
           {/* Header */}
           <Section style={header}>
-            <Text style={logo}>ÉCLAT</Text>
+            <Img
+              src="https://eclatcentro.com/logo-256.png"
+              alt="ÉCLAT"
+              width="64"
+              height="64"
+              style={logoImg}
+            />
+            <Text style={logoText}>ÉCLAT</Text>
             <Text style={tagline}>Centro de Atención Integral · Oncativo</Text>
           </Section>
 
@@ -78,10 +85,11 @@ const header = {
   textAlign: 'center' as const,
 }
 
-const logo = {
-  color: '#FFFFFF', fontSize: '24px',
-  fontWeight: '600', margin: '0',
-  letterSpacing: '-0.5px',
+const logoImg = { display: 'block', margin: '0 auto 10px', borderRadius: '50%' }
+const logoText = {
+  color: '#FFFFFF', fontSize: '20px',
+  fontWeight: '600', margin: '0 0 4px',
+  letterSpacing: '0.15em', textTransform: 'uppercase' as const,
 }
 
 const tagline = {
