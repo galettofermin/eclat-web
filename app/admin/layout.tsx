@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import AdminNav from '@/components/admin/AdminNav'
 
 export const metadata = { title: 'Admin — Centro ÉCLAT' }
 
@@ -24,7 +23,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
       </header>
       <div style={{ maxWidth: 960, margin: '0 auto', padding: '32px clamp(16px, 4vw, 32px) 64px' }}>
-        <AdminNav />
         {children}
       </div>
     </div>

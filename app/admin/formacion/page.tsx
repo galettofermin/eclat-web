@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import type { Course } from '@/lib/types'
+import AdminNav from '@/components/admin/AdminNav'
 
 export default function AdminFormacion() {
   const [courses, setCourses] = useState<Course[]>([])
@@ -33,6 +34,7 @@ export default function AdminFormacion() {
 
   return (
     <div>
+      <AdminNav />
       <div className="flex items-start justify-between mb-8">
         <div>
           <h1 className="text-[28px] font-semibold text-[#0A0A0A]">Formación</h1>

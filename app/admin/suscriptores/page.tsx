@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import AdminNav from '@/components/admin/AdminNav'
 
 interface Suscriptor {
   id: string
@@ -53,6 +54,7 @@ export default function AdminSuscriptores() {
 
   return (
     <div>
+      <AdminNav />
       <div className="flex items-start justify-between mb-2 gap-4 flex-wrap">
         <div>
           <h1 className="text-[28px] font-semibold text-[#0A0A0A]">Suscriptores</h1>

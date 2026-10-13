@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { DIRECTOR_EMAIL } from '@/lib/constants'
+import AdminNav from '@/components/admin/AdminNav'
 
 interface Conversacion {
   otroId: string
@@ -61,6 +62,7 @@ export default function AdminMensajes() {
 
   return (
     <div>
+      <AdminNav />
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-[28px] font-semibold text-[#0A0A0A]">Mensajes</h1>
