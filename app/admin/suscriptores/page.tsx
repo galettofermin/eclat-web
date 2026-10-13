@@ -18,6 +18,12 @@ export default function AdminSuscriptores() {
   const [loading, setLoading] = useState(true)
   const [lista, setLista] = useState<'todos' | 'pausa' | 'general'>('todos')
 
+  // Formulario agregar suscriptor manual
+  const [formEmail, setFormEmail] = useState('')
+  const [formNombre, setFormNombre] = useState('')
+  const [formLoading, setFormLoading] = useState(false)
+  const [formMsg, setFormMsg] = useState<{ tipo: 'ok' | 'error'; texto: string } | null>(null)
+
   useEffect(() => {
     const load = async () => {
       setLoading(true)
@@ -34,6 +40,37 @@ export default function AdminSuscriptores() {
     }
     load()
   }, [lista])
+
+  const agregarSuscriptor = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const email = formEmail.trim()
+    if (!email) return
+    setFormLoading(true)
+    setFormMsg(null)
+    try {
+      const res = await fetch('/api/newsletter/suscribir', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, nombre: formNombre.trim() || undefined }),
+      })
+      const json = await res.json()
+      if (!res.ok || json.error) throw new Error(json.error || 'Error al agregar')
+      setFormMsg({ tipo: 'ok', texto: `${email} agregado correctamente.` })
+      setFormEmail('')
+      setFormNombre('')
+      // Recargar lista
+      setLista(prev => prev) // trigger useEffect
+      const supabase = createClient()
+      let q = supabase.from('suscriptores').select('*').eq('activo', true).order('creado_en', { ascending: false })
+      if (lista !== 'todos') q = q.eq('lista', lista)
+      const { data } = await q
+      setItems(data ?? [])
+    } catch (err: unknown) {
+      setFormMsg({ tipo: 'error', texto: err instanceof Error ? err.message : 'Error desconocido' })
+    } finally {
+      setFormLoading(false)
+    }
+  }
 
   const exportCSV = () => {
     const header = 'email,nombre,lista,fecha'
@@ -75,6 +112,51 @@ export default function AdminSuscriptores() {
           Exportar CSV
         </button>
       </div>
+
+      {/* Agregar suscriptor manual */}
+      <form
+        onSubmit={agregarSuscriptor}
+        className="bg-white border border-black/5 rounded-2xl px-6 py-5 mb-6 flex flex-col sm:flex-row gap-3 items-end"
+      >
+        <div className="flex-1 min-w-0">
+          <label className="block text-[11px] font-semibold uppercase tracking-[0.06em] text-[#6E6E73] mb-1.5">
+            Correo electrónico *
+          </label>
+          <input
+            type="email"
+            required
+            placeholder="nombre@email.com"
+            value={formEmail}
+            onChange={e => setFormEmail(e.target.value)}
+            className="w-full px-3 py-2 rounded-lg border border-black/10 text-[14px] text-[#0A0A0A] focus:outline-none focus:border-[#2F7D6B]"
+          />
+        </div>
+        <div className="flex-1 min-w-0">
+          <label className="block text-[11px] font-semibold uppercase tracking-[0.06em] text-[#6E6E73] mb-1.5">
+            Nombre (opcional)
+          </label>
+          <input
+            type="text"
+            placeholder="Ej: María"
+            value={formNombre}
+            onChange={e => setFormNombre(e.target.value)}
+            className="w-full px-3 py-2 rounded-lg border border-black/10 text-[14px] text-[#0A0A0A] focus:outline-none focus:border-[#2F7D6B]"
+          />
+        </div>
+        <button
+          type="submit"
+          disabled={formLoading || !formEmail.trim()}
+          className="shrink-0 bg-[#2F7D6B] text-white font-semibold text-[13px] px-5 py-2.5 rounded-lg hover:bg-[#245f52] disabled:opacity-50 transition-colors whitespace-nowrap"
+        >
+          {formLoading ? 'Agregando...' : '+ Agregar'}
+        </button>
+      </form>
+
+      {formMsg && (
+        <p className={`-mt-4 mb-4 text-[12px] font-medium px-1 ${formMsg.tipo === 'ok' ? 'text-[#2F7D6B]' : 'text-red-600'}`}>
+          {formMsg.texto}
+        </p>
+      )}
 
       {/* Filtros por lista */}
       <div className="flex gap-2 my-6">
