@@ -1,22 +1,30 @@
 import { createClient } from '@/lib/supabase/server'
 import ArticleForm from '@/components/admin/ArticleForm'
+import NewsletterSender from '@/components/admin/NewsletterSender'
 import { notFound } from 'next/navigation'
 
 export default async function EditarEscrito({ params }: { params: { id: string } }) {
   const supabase = createClient()
-  const { data: article } = await supabase
-    .from('articles')
-    .select('*')
-    .eq('id', params.id)
-    .single()
+  const [{ data: article }, { data: todosLosArticulos }] = await Promise.all([
+    supabase.from('articles').select('*').eq('id', params.id).single(),
+    supabase.from('articles').select('id, title, category').eq('published', true).order('created_at', { ascending: false }),
+  ])
 
   if (!article) notFound()
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-[28px] font-semibold text-[#0A0A0A]">Editar escrito</h1>
-        <p className="text-[15px] text-[#6E6E73] truncate max-w-xl">{article.title}</p>
+      <div className="mb-8 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-[28px] font-semibold text-[#0A0A0A]">Editar escrito</h1>
+          <p className="text-[15px] text-[#6E6E73] truncate max-w-xl">{article.title}</p>
+        </div>
+        {article.published && (
+          <NewsletterSender
+            articuloPreseleccionado={{ id: article.id, title: article.title, category: article.category }}
+            articulos={todosLosArticulos ?? []}
+          />
+        )}
       </div>
       <div className="bg-white rounded-2xl border border-black/5 p-8">
         <ArticleForm article={article} />

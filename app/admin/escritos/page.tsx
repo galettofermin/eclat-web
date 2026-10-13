@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import type { Article } from '@/lib/types'
+import NewsletterSender from '@/components/admin/NewsletterSender'
 
 export default function AdminEscritos() {
   const [articles, setArticles] = useState<Article[]>([])
@@ -41,12 +42,17 @@ export default function AdminEscritos() {
           <h1 className="text-[28px] font-semibold text-[#0A0A0A]">Escritos</h1>
           <p className="text-[15px] text-[#6E6E73]">Gestioná los artículos del blog</p>
         </div>
-        <Link
-          href="/admin/escritos/nuevo"
-          className="bg-[#2F7D6B] text-white font-semibold px-5 py-2.5 rounded-full text-[14px] hover:bg-[#245f52] transition-colors shrink-0"
-        >
-          + Nuevo
-        </Link>
+        <div className="flex items-center gap-3 shrink-0">
+          <NewsletterSender
+            articulos={articles.filter(a => a.published).map(a => ({ id: a.id, title: a.title, category: a.category }))}
+          />
+          <Link
+            href="/admin/escritos/nuevo"
+            className="bg-[#2F7D6B] text-white font-semibold px-5 py-2.5 rounded-full text-[14px] hover:bg-[#245f52] transition-colors"
+          >
+            + Nuevo
+          </Link>
+        </div>
       </div>
 
       {loading ? (

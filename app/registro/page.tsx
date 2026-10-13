@@ -43,6 +43,13 @@ export default function RegistroPage() {
       body: JSON.stringify({ email: form.email, nombre }),
     }).catch(() => {})
 
+    // Suscribir automáticamente al newsletter
+    fetch('/api/newsletter/suscribir', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: form.email, nombre }),
+    }).catch(() => {})
+
     if (data.session) { router.push('/mi-cuenta'); router.refresh() }
     else { setSent(true); setLoading(false) }
   }
