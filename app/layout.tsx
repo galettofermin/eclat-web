@@ -140,7 +140,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="wrap">
             <div className="foot__grid">
               <div>
-                <Image className="foot__logo" src="/logo-256.png" alt="" width={80} height={80} style={{ width: 80, height: 80, filter: "brightness(0) invert(1)" }} />
+                <Image className="foot__logo" src="/logo-256.png" alt="" width={80} height={80} style={{ width: 64, height: 64 }} />
                 <p className="foot__tag">Centro de atención integral en Oncativo, Córdoba. Salud mental, educación y formación desde una mirada interdisciplinaria.</p>
               </div>
               <div>
