@@ -1,616 +1,218 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import AdminNav from '@/components/admin/AdminNav'
 import RegistrationsTab from '@/components/admin/RegistrationsTab'
-import EnrollmentsTab from '@/components/admin/EnrollmentsTab'
-import UsersTab from '@/components/admin/UsersTab'
 
-type Tab = 'solicitudes' | 'inscripciones' | 'usuarios' | 'escritos' | 'formacion' | 'servicios' | 'textos'
-
-type ArticleRow = {
-  id: string
-  title: string
-  category: string
-  created_at: string
-  published: boolean
+interface Stats {
+  inscripcionesPendientes: number
+  alumnosActivos: number
+  suscriptores: number
+  escritosPublicados: number
+  formaciones: number
+  mensajesNoLeidos: number
 }
-
-type CourseRow = {
-  id: string
-  title: string
-  badge: string | null
-  published: boolean
-}
-
-type ServicioRow = {
-  id: number
-  nombre: string
-  descripcion: string | null
-  imagen_url: string | null
-  orden: number
-}
-
-type ContentRow = { key: string; value: string }
-
-const CONTENT_GROUPS = [
-  { label: 'Home',      keys: ['home.hero.title', 'home.hero.lede', 'home.quote'] },
-  { label: 'Conocer',   keys: ['conocer.hero.title', 'conocer.hero.lede'] },
-  { label: 'Servicios', keys: ['servicios.hero.title'] },
-  { label: 'Formación', keys: ['formacion.hero.title', 'formacion.hero.lede'] },
-]
-
-const CONTENT_LABELS: Record<string, string> = {
-  'home.hero.title':      'Título del hero',
-  'home.hero.lede':       'Bajada del hero',
-  'home.quote':           'Frase destacada',
-  'conocer.hero.title':   'Título',
-  'conocer.hero.lede':    'Bajada',
-  'servicios.hero.title': 'Título',
-  'formacion.hero.title': 'Título',
-  'formacion.hero.lede':  'Bajada',
-}
-
-const LONG_KEYS = new Set([
-  'home.hero.lede', 'home.quote', 'conocer.hero.lede', 'formacion.hero.lede',
-])
-
-const Spinner = () => (
-  <div style={{ display: 'flex', justifyContent: 'center', padding: 40 }}>
-    <div style={{ width: 22, height: 22, border: '2px solid var(--line)', borderTop: '2px solid var(--sage-deep)', borderRadius: '50%', animation: 'spin .8s linear infinite' }} />
-  </div>
-)
 
 export default function AdminDashboard() {
-  const [tab, setTab] = useState<Tab>('solicitudes')
+  const [stats, setStats] = useState<Stats>({
+    inscripcionesPendientes: 0,
+    alumnosActivos: 0,
+    suscriptores: 0,
+    escritosPublicados: 0,
+    formaciones: 0,
+    mensajesNoLeidos: 0,
+  })
+  const [loadingStats, setLoadingStats] = useState(true)
   const [pendingCount, setPendingCount] = useState(0)
-
-  // Stats
-  const [stats, setStats] = useState({ alumnos: 0, formaciones: 0 })
-
-  // Escritos
-  const [articles, setArticles]               = useState<ArticleRow[]>([])
-  const [loadingArticles, setLoadingArticles] = useState(false)
-
-  // Formación
-  const [courses, setCourses]               = useState<CourseRow[]>([])
-  const [loadingCourses, setLoadingCourses] = useState(false)
-
-  // Servicios
-  const [servicios, setServicios]                 = useState<ServicioRow[]>([])
-  const [loadingServicios, setLoadingServicios]   = useState(false)
-  const [edits, setEdits]                         = useState<Record<number, { nombre: string; descripcion: string }>>({})
-  const [savingServicio, setSavingServicio]       = useState<number | null>(null)
-  const [uploadingServicio, setUploadingServicio] = useState<number | null>(null)
-  const fileRefs = useRef<Record<number, HTMLInputElement | null>>({})
-
-  // Textos
-  const [content, setContent]               = useState<Record<string, string>>({})
-  const [loadingContent, setLoadingContent] = useState(false)
-  const [savingGroup, setSavingGroup]       = useState<string | null>(null)
-  const [savedGroup, setSavedGroup]         = useState<string | null>(null)
-
-  // Error global
   const [error, setError] = useState('')
 
-  // ── Stats ──────────────────────────────────────────────
   useEffect(() => {
-    const supabase = createClient()
-    Promise.all([
-      supabase.from('enrollments').select('*', { count: 'exact', head: true }).eq('status', 'approved'),
-      supabase.from('courses').select('*', { count: 'exact', head: true }),
-    ]).then(([{ count: alumnos }, { count: formaciones }]) => {
-      setStats({ alumnos: alumnos ?? 0, formaciones: formaciones ?? 0 })
-    })
+    const load = async () => {
+      const supabase = createClient()
+      const [
+        { count: pendientes },
+        { count: alumnos },
+        { count: suscriptores },
+        { count: escritos },
+        { count: formaciones },
+      ] = await Promise.all([
+        supabase.from('enrollments').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+        supabase.from('enrollments').select('*', { count: 'exact', head: true }).eq('status', 'approved'),
+        supabase.from('suscriptores').select('*', { count: 'exact', head: true }).eq('activo', true),
+        supabase.from('articles').select('*', { count: 'exact', head: true }).eq('published', true),
+        supabase.from('courses').select('*', { count: 'exact', head: true }).eq('published', true),
+      ])
+
+      // Mensajes no leídos via API
+      let noLeidos = 0
+      try {
+        const r = await fetch('/api/mensajes')
+        const d = await r.json()
+        noLeidos = (d.conversaciones ?? []).reduce(
+          (acc: number, c: { noLeidos: number }) => acc + c.noLeidos, 0
+        )
+      } catch {}
+
+      setStats({
+        inscripcionesPendientes: pendientes ?? 0,
+        alumnosActivos: alumnos ?? 0,
+        suscriptores: suscriptores ?? 0,
+        escritosPublicados: escritos ?? 0,
+        formaciones: formaciones ?? 0,
+        mensajesNoLeidos: noLeidos,
+      })
+      setPendingCount(pendientes ?? 0)
+      setLoadingStats(false)
+    }
+    load()
   }, [])
 
-  // ── Escritos ────────────────────────────────────────────
-  useEffect(() => {
-    if (tab !== 'escritos') return
-    setLoadingArticles(true)
-    fetch('/api/admin/articulos')
-      .then(r => r.json())
-      .then(data => { setArticles(Array.isArray(data) ? data : []); setLoadingArticles(false) })
-      .catch(() => setLoadingArticles(false))
-  }, [tab])
+  const STAT_CARDS = [
+    {
+      label: 'Inscripciones pendientes',
+      value: stats.inscripcionesPendientes,
+      href: '/admin/inscripciones',
+      urgent: stats.inscripcionesPendientes > 0,
+      icon: 'M9 11l3 3L22 4',
+    },
+    {
+      label: 'Alumnos activos',
+      value: stats.alumnosActivos,
+      href: '/admin/usuarios',
+      urgent: false,
+      icon: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M23 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75',
+    },
+    {
+      label: 'Suscriptores',
+      value: stats.suscriptores,
+      href: '/admin/suscriptores',
+      urgent: false,
+      icon: 'M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z M22 6l-10 7L2 6',
+    },
+    {
+      label: 'Mensajes sin leer',
+      value: stats.mensajesNoLeidos,
+      href: '/admin/mensajes',
+      urgent: stats.mensajesNoLeidos > 0,
+      icon: 'M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z',
+    },
+    {
+      label: 'Escritos publicados',
+      value: stats.escritosPublicados,
+      href: '/admin/escritos',
+      urgent: false,
+      icon: 'M12 20h9 M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z',
+    },
+    {
+      label: 'Formaciones activas',
+      value: stats.formaciones,
+      href: '/admin/formacion',
+      urgent: false,
+      icon: 'M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z',
+    },
+  ]
 
-  const deleteArticle = async (id: string) => {
-    if (!confirm('¿Eliminar este artículo? Esta acción no se puede deshacer.')) return
-    await fetch(`/api/admin/articulos/${id}`, { method: 'DELETE' })
-    setArticles(prev => prev.filter(a => a.id !== id))
-  }
-
-  // ── Formación ───────────────────────────────────────────
-  useEffect(() => {
-    if (tab !== 'formacion') return
-    setLoadingCourses(true)
-    createClient().from('courses').select('id, title, badge, published').order('sort_order')
-      .then(({ data, error }) => {
-        if (error) setError('No se pudieron cargar las formaciones.')
-        setCourses(data ?? [])
-        setLoadingCourses(false)
-      })
-  }, [tab])
-
-  // ── Servicios ───────────────────────────────────────────
-  useEffect(() => {
-    if (tab !== 'servicios') return
-    setLoadingServicios(true)
-    fetch('/api/servicios')
-      .then(r => r.json())
-      .then((data: ServicioRow[]) => {
-        if (Array.isArray(data)) {
-          setServicios(data)
-          const map: Record<number, { nombre: string; descripcion: string }> = {}
-          data.forEach(s => { map[s.id] = { nombre: s.nombre, descripcion: s.descripcion ?? '' } })
-          setEdits(map)
-        }
-        setLoadingServicios(false)
-      })
-      .catch(() => setLoadingServicios(false))
-  }, [tab])
-
-  const saveServicio = async (id: number) => {
-    setSavingServicio(id)
-    const { nombre, descripcion } = edits[id] ?? {}
-    const res = await fetch(`/api/admin/servicios/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre, descripcion }),
-    })
-    setSavingServicio(null)
-    if (!res.ok) setError('Error al guardar servicio')
-  }
-
-  const uploadServicioImage = async (
-    e: React.ChangeEvent<HTMLInputElement>,
-    id: number,
-    nombre: string,
-  ) => {
-    const file = e.target.files?.[0]
-    console.log('[upload] onChange fired — file:', file?.name, file?.size, file?.type)
-    if (!file) { console.log('[upload] no file, aborting'); return }
-
-    setUploadingServicio(id)
-    setError('')
-
-    const fd = new FormData()
-    fd.append('file', file)
-    fd.append('nombre', nombre)
-
-    console.log('[upload] POST /api/servicios/upload — nombre:', nombre)
-    let uploadRes: Response
-    try {
-      uploadRes = await fetch('/api/servicios/upload', { method: 'POST', body: fd })
-    } catch (err) {
-      console.error('[upload] network error on upload:', err)
-      setError(`Error de red al subir imagen: ${String(err)}`)
-      setUploadingServicio(null)
-      return
-    }
-
-    let uploadData: { url?: string; error?: string }
-    try {
-      uploadData = await uploadRes.json()
-    } catch (err) {
-      console.error('[upload] failed to parse upload response:', err)
-      setError(`Respuesta inválida del servidor (${uploadRes.status})`)
-      setUploadingServicio(null)
-      return
-    }
-    console.log('[upload] upload response:', uploadRes.status, uploadData)
-
-    if (!uploadRes.ok) {
-      const msg = uploadData.error ?? `Error al subir imagen (HTTP ${uploadRes.status})`
-      console.error('[upload] upload failed:', msg)
-      setError(msg)
-      setUploadingServicio(null)
-      return
-    }
-
-    console.log('[upload] image URL:', uploadData.url)
-    console.log('[upload] POST /api/admin/servicios — guardando URL en DB')
-    let dbRes: Response
-    try {
-      dbRes = await fetch('/api/admin/servicios', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nombre, imagen_url: uploadData.url }),
-      })
-    } catch (err) {
-      console.error('[upload] network error on DB update:', err)
-      setError(`Error de red al guardar en DB: ${String(err)}`)
-      setUploadingServicio(null)
-      return
-    }
-
-    const dbData = await dbRes.json().catch(() => ({}))
-    console.log('[upload] DB response:', dbRes.status, dbData)
-
-    if (!dbRes.ok) {
-      const msg = (dbData as { error?: string }).error ?? `Error al guardar en DB (HTTP ${dbRes.status})`
-      console.error('[upload] DB update failed:', msg)
-      setError(msg)
-      setUploadingServicio(null)
-      return
-    }
-
-    console.log('[upload] done! updating UI')
-    setServicios(prev => prev.map(s => s.id === id ? { ...s, imagen_url: uploadData.url! } : s))
-    setUploadingServicio(null)
-    if (fileRefs.current[id]) fileRefs.current[id]!.value = ''
-  }
-
-  // ── Textos ──────────────────────────────────────────────
-  useEffect(() => {
-    if (tab !== 'textos') return
-    setLoadingContent(true)
-    fetch('/api/admin/site-content')
-      .then(r => r.json())
-      .then((data: ContentRow[]) => {
-        if (Array.isArray(data)) {
-          const map: Record<string, string> = {}
-          data.forEach(r => { map[r.key] = r.value })
-          setContent(map)
-        }
-        setLoadingContent(false)
-      })
-      .catch(() => setLoadingContent(false))
-  }, [tab])
-
-  const saveContentGroup = async (groupLabel: string, keys: string[]) => {
-    setSavingGroup(groupLabel)
-    const items = keys.map(k => ({ key: k, value: content[k] ?? '' }))
-    const res = await fetch('/api/admin/site-content', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(items),
-    })
-    setSavingGroup(null)
-    if (res.ok) {
-      setSavedGroup(groupLabel)
-      setTimeout(() => setSavedGroup(null), 2500)
-    } else {
-      setError('Error al guardar textos')
-    }
-  }
-
-  const fmtDate = (iso: string) =>
-    new Date(iso).toLocaleDateString('es-AR', { day: 'numeric', month: 'short', year: 'numeric' })
-
-  // ── Shared styles ───────────────────────────────────────
-  const card: React.CSSProperties = {
-    background: '#fff',
-    borderRadius: 16,
-    border: '1px solid var(--eclat-border)',
-    overflow: 'hidden',
-  }
-  const cardHead: React.CSSProperties = {
-    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-    padding: '16px 22px', borderBottom: '1px solid var(--eclat-border)',
-  }
+  const QUICK_LINKS = [
+    { href: '/admin/escritos/nuevo', label: 'Nuevo escrito', icon: 'M12 20h9 M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z' },
+    { href: '/admin/formacion/nuevo', label: 'Nueva formación', icon: 'M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z' },
+    { href: '/admin/configuracion', label: 'Editar textos', icon: 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z' },
+    { href: '/admin/mensajes', label: 'Ver mensajes', icon: 'M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z' },
+  ]
 
   return (
     <div>
-      {/* ── Stats ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 24 }}>
-        {[
-          { label: 'Alumnos registrados', value: stats.alumnos },
-          { label: 'Formaciones activas', value: stats.formaciones },
-        ].map(s => (
-          <div key={s.label} style={{ background: '#fff', borderRadius: 16, padding: '20px 22px', border: '1px solid var(--eclat-border)' }}>
-            <p style={{ fontSize: 30, fontWeight: 300, color: 'var(--eclat-dark)', marginBottom: 2 }}>{s.value}</p>
-            <p style={{ fontSize: 12, color: 'var(--eclat-text-3)' }}>{s.label}</p>
-          </div>
-        ))}
+      <AdminNav />
+
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-[28px] font-semibold text-[#0A0A0A]">Panel de administración</h1>
+        <p className="text-[15px] text-[#6E6E73]">ÉCLAT Centro de Atención Integral</p>
       </div>
 
-      {/* ── Tabs ── */}
-      <div style={{ borderBottom: '1px solid var(--eclat-border)', marginBottom: 24 }}>
-        <div style={{ display: 'flex', overflowX: 'auto' }}>
-          {([
-            { key: 'solicitudes',   label: 'Solicitudes' },
-            { key: 'inscripciones', label: 'Inscripciones' },
-            { key: 'usuarios',      label: 'Usuarios' },
-            { key: 'escritos',    label: 'Escritos' },
-            { key: 'formacion',   label: 'Formación' },
-            { key: 'servicios',   label: 'Servicios' },
-            { key: 'textos',      label: 'Textos del sitio' },
-          ] as { key: Tab; label: string }[]).map(t => (
-            <button
-              key={t.key}
-              onClick={() => setTab(t.key)}
-              style={{
-                padding: '10px 20px', whiteSpace: 'nowrap', flexShrink: 0,
-                fontSize: 14, fontWeight: 600,
-                background: 'transparent', border: 'none',
-                borderBottom: tab === t.key ? '2px solid var(--slate-900)' : '2px solid transparent',
-                color: tab === t.key ? 'var(--slate-900)' : 'var(--ink-muted)',
-                cursor: 'pointer', transition: 'color .15s',
-              }}
+      {/* Stats grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
+        {loadingStats
+          ? Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="bg-white rounded-2xl border border-black/5 p-5 animate-pulse">
+                <div className="h-8 w-12 bg-gray-100 rounded mb-2" />
+                <div className="h-3 w-28 bg-gray-100 rounded" />
+              </div>
+            ))
+          : STAT_CARDS.map(card => (
+              <Link
+                key={card.label}
+                href={card.href}
+                className={`group rounded-2xl border p-5 transition-all hover:shadow-sm ${
+                  card.urgent
+                    ? 'bg-[#FFF8F0] border-orange-200 hover:border-orange-300'
+                    : 'bg-white border-black/5 hover:border-[#2F7D6B]/20'
+                }`}
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <span className={`text-[32px] font-light leading-none ${
+                    card.urgent ? 'text-orange-600' : 'text-[#0A0A0A]'
+                  }`}>
+                    {card.value}
+                  </span>
+                  <svg
+                    width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke={card.urgent ? '#ea580c' : '#86868b'}
+                    strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"
+                    className="mt-1 shrink-0"
+                  >
+                    <path d={card.icon} />
+                  </svg>
+                </div>
+                <p className={`text-[12px] font-medium leading-snug ${
+                  card.urgent ? 'text-orange-700' : 'text-[#6E6E73]'
+                }`}>
+                  {card.label}
+                </p>
+                {card.urgent && card.value > 0 && (
+                  <p className="text-[11px] font-semibold text-orange-500 mt-1">Requiere atención →</p>
+                )}
+              </Link>
+            ))}
+      </div>
+
+      {/* Accesos rápidos */}
+      <div className="mb-8">
+        <h2 className="text-[13px] font-semibold text-[#6E6E73] uppercase tracking-wider mb-3">Acciones rápidas</h2>
+        <div className="flex flex-wrap gap-2">
+          {QUICK_LINKS.map(link => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="flex items-center gap-2 bg-white border border-black/[0.08] px-4 py-2.5 rounded-xl text-[13px] font-medium text-[#424245] hover:border-[#2F7D6B]/40 hover:text-[#2F7D6B] transition-all"
             >
-              {t.label}
-              {t.key === 'solicitudes' && pendingCount > 0 && (
-                <span
-                  aria-label={`${pendingCount} pendientes`}
-                  style={{ marginLeft: 6, padding: '1px 7px', borderRadius: 999, fontSize: 11, fontWeight: 700, background: '#dc2626', color: '#fff' }}
-                >
-                  {pendingCount}
-                </span>
-              )}
-            </button>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d={link.icon} />
+              </svg>
+              {link.label}
+            </Link>
           ))}
         </div>
       </div>
 
-      {/* Error banner */}
-      {error && (
-        <div style={{ marginBottom: 16, padding: '11px 16px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 10, fontSize: 13, color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          {error}
-          <button onClick={() => setError('')} style={{ fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', color: '#dc2626', marginLeft: 12 }}>✕</button>
-        </div>
-      )}
-
-      {/* ── Tab: Solicitudes ── */}
-      {tab === 'solicitudes' && (
-        <div style={card}>
-          <div style={cardHead}>
-            <h2 style={{ fontSize: 15, fontWeight: 600 }}>Solicitudes</h2>
-          </div>
+      {/* Solicitudes recientes — siempre visibles */}
+      <div>
+        <h2 className="text-[13px] font-semibold text-[#6E6E73] uppercase tracking-wider mb-3">
+          Solicitudes de ingreso
+          {pendingCount > 0 && (
+            <span className="ml-2 text-[11px] font-bold bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full normal-case tracking-normal">
+              {pendingCount} pendiente{pendingCount !== 1 ? 's' : ''}
+            </span>
+          )}
+        </h2>
+        <div className="bg-white rounded-2xl border border-black/5 overflow-hidden">
           <RegistrationsTab onError={setError} onPendingCount={setPendingCount} />
         </div>
-      )}
-
-      {tab === 'inscripciones' && <EnrollmentsTab />}
-      {tab === 'usuarios' && <UsersTab />}
-
-      {/* ── Tab: Escritos ── */}
-      {tab === 'escritos' && (
-        <div style={card}>
-          <div style={cardHead}>
-            <h2 style={{ fontSize: 15, fontWeight: 600 }}>Escritos</h2>
-            <Link
-              href="/admin/escritos/nuevo"
-              style={{ fontSize: 13, fontWeight: 600, background: 'var(--slate-900)', color: '#fff', padding: '8px 16px', borderRadius: 999, textDecoration: 'none' }}
-            >
-              + Nuevo escrito
-            </Link>
-          </div>
-          {loadingArticles ? <Spinner /> : articles.length === 0 ? (
-            <div style={{ padding: '48px 24px', textAlign: 'center' }}>
-              <p style={{ fontSize: 15, color: 'var(--ink-muted)', marginBottom: 16 }}>Todavía no hay escritos.</p>
-              <Link href="/admin/escritos/nuevo" style={{ fontSize: 14, fontWeight: 600, color: 'var(--sage-deep)' }}>Crear el primero →</Link>
-            </div>
-          ) : (
-            <div>
-              {articles.map((a, i) => (
-                <div
-                  key={a.id}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: 14,
-                    padding: '14px 22px',
-                    borderBottom: i < articles.length - 1 ? '1px solid var(--eclat-border)' : 'none',
-                  }}
-                >
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--slate-900)', marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {a.title}
-                    </p>
-                    <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-                      <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--green-700)', background: '#edf3f0', padding: '2px 7px', borderRadius: 4 }}>
-                        {a.category}
-                      </span>
-                      <span style={{ fontSize: 12, color: 'var(--ink-muted)' }}>{fmtDate(a.created_at)}</span>
-                      {!a.published && (
-                        <span style={{ fontSize: 11, color: '#b45309', background: '#fef3c7', padding: '2px 7px', borderRadius: 4, fontWeight: 600 }}>Borrador</span>
-                      )}
-                    </div>
-                  </div>
-                  <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
-                    <Link
-                      href={`/admin/escritos/${a.id}`}
-                      style={{ fontSize: 13, fontWeight: 600, color: 'var(--slate-900)', background: '#f5f5f7', padding: '6px 14px', borderRadius: 8, textDecoration: 'none' }}
-                    >
-                      Editar
-                    </Link>
-                    <button
-                      onClick={() => deleteArticle(a.id)}
-                      style={{ fontSize: 13, fontWeight: 600, color: '#dc2626', background: '#fef2f2', border: 'none', padding: '6px 14px', borderRadius: 8, cursor: 'pointer' }}
-                    >
-                      Borrar
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* ── Tab: Formación ── */}
-      {tab === 'formacion' && (
-        <div style={card}>
-          <div style={cardHead}>
-            <h2 style={{ fontSize: 15, fontWeight: 600 }}>Formación</h2>
-            <Link
-              href="/admin/formacion/nuevo"
-              style={{ fontSize: 13, fontWeight: 600, background: 'var(--slate-900)', color: '#fff', padding: '8px 16px', borderRadius: 999, textDecoration: 'none' }}
-            >
-              + Nueva formación
-            </Link>
-          </div>
-          {loadingCourses ? <Spinner /> : courses.length === 0 ? (
-            <div style={{ padding: '48px 24px', textAlign: 'center' }}>
-              <p style={{ fontSize: 15, color: 'var(--ink-muted)', marginBottom: 16 }}>Todavía no hay formaciones.</p>
-              <Link href="/admin/formacion/nuevo" style={{ fontSize: 14, fontWeight: 600, color: 'var(--sage-deep)' }}>Crear la primera →</Link>
-            </div>
-          ) : (
-            <div>
-              {courses.map((c, i) => (
-                <div
-                  key={c.id}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: 14,
-                    padding: '14px 22px',
-                    borderBottom: i < courses.length - 1 ? '1px solid var(--eclat-border)' : 'none',
-                  }}
-                >
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--slate-900)', marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {c.title}
-                    </p>
-                    <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-                      {c.badge && (
-                        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--green-700)', background: '#edf3f0', padding: '2px 7px', borderRadius: 4 }}>
-                          {c.badge}
-                        </span>
-                      )}
-                      {!c.published && (
-                        <span style={{ fontSize: 11, color: '#b45309', background: '#fef3c7', padding: '2px 7px', borderRadius: 4, fontWeight: 600 }}>Oculto</span>
-                      )}
-                    </div>
-                  </div>
-                  <Link
-                    href={`/admin/formacion/${c.id}`}
-                    style={{ fontSize: 13, fontWeight: 600, color: 'var(--slate-900)', background: '#f5f5f7', padding: '6px 14px', borderRadius: 8, textDecoration: 'none', flexShrink: 0 }}
-                  >
-                    Editar
-                  </Link>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* ── Tab: Servicios ── */}
-      {tab === 'servicios' && (
-        <div style={card}>
-          <div style={{ padding: '16px 22px', borderBottom: '1px solid var(--eclat-border)' }}>
-            <h2 style={{ fontSize: 15, fontWeight: 600 }}>Servicios</h2>
-            <p style={{ fontSize: 13, color: 'var(--ink-muted)', marginTop: 2 }}>Editá nombre, descripción e imagen.</p>
-          </div>
-          {loadingServicios ? <Spinner /> : (
-            <div>
-              {servicios.map((s, i) => {
-                const edit = edits[s.id] ?? { nombre: s.nombre, descripcion: s.descripcion ?? '' }
-                return (
-                  <div
-                    key={s.id}
-                    style={{
-                      display: 'grid', gridTemplateColumns: '64px 1fr auto', gap: 16, alignItems: 'start',
-                      padding: '16px 22px',
-                      borderBottom: i < servicios.length - 1 ? '1px solid var(--eclat-border)' : 'none',
-                    }}
-                  >
-                    {/* Thumbnail */}
-                    {s.imagen_url ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={s.imagen_url} alt={s.nombre} style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 8 }} />
-                    ) : (
-                      <div style={{ width: 60, height: 60, background: 'var(--sage-50)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, color: 'var(--sage-deep)', textAlign: 'center', padding: 4 }}>
-                        Sin imagen
-                      </div>
-                    )}
-
-                    {/* Campos */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                      <input
-                        value={edit.nombre}
-                        onChange={e => setEdits(prev => ({ ...prev, [s.id]: { ...edit, nombre: e.target.value } }))}
-                        style={{ padding: '7px 12px', borderRadius: 8, border: '1px solid var(--line-strong)', fontSize: 14, fontWeight: 600, outline: 'none', width: '100%' }}
-                      />
-                      <textarea
-                        rows={2}
-                        value={edit.descripcion}
-                        onChange={e => setEdits(prev => ({ ...prev, [s.id]: { ...edit, descripcion: e.target.value } }))}
-                        style={{ padding: '7px 12px', borderRadius: 8, border: '1px solid var(--line-strong)', fontSize: 13, outline: 'none', resize: 'none', width: '100%', lineHeight: 1.5 }}
-                      />
-                      <input
-                        ref={el => { fileRefs.current[s.id] = el }}
-                        type="file"
-                        accept="image/*"
-                        style={{ display: 'none' }}
-                        onChange={e => uploadServicioImage(e, s.id, edit.nombre)}
-                      />
-                      <button
-                        onClick={() => {
-                          const ref = fileRefs.current[s.id]
-                          console.log('[upload] button clicked — id:', s.id, 'ref:', ref)
-                          if (!ref) { setError('No se encontró el input de archivo (id: ' + s.id + ')'); return }
-                          ref.click()
-                        }}
-                        disabled={uploadingServicio === s.id}
-                        style={{ alignSelf: 'flex-start', fontSize: 12, fontWeight: 600, color: 'var(--sage-deep)', background: 'var(--sage-50)', border: 'none', padding: '5px 12px', borderRadius: 6, cursor: 'pointer' }}
-                      >
-                        {uploadingServicio === s.id ? 'Subiendo…' : 'Cambiar imagen'}
-                      </button>
-                    </div>
-
-                    {/* Guardar */}
-                    <button
-                      onClick={() => saveServicio(s.id)}
-                      disabled={savingServicio === s.id}
-                      style={{ fontSize: 13, fontWeight: 600, color: '#fff', background: 'var(--slate-900)', border: 'none', padding: '8px 16px', borderRadius: 8, cursor: 'pointer', opacity: savingServicio === s.id ? .6 : 1, whiteSpace: 'nowrap' }}
-                    >
-                      {savingServicio === s.id ? 'Guardando…' : 'Guardar'}
-                    </button>
-                  </div>
-                )
-              })}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* ── Tab: Textos del sitio ── */}
-      {tab === 'textos' && (
-        loadingContent ? <Spinner /> : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            {CONTENT_GROUPS.map(group => (
-              <div key={group.label} style={card}>
-                <div style={cardHead}>
-                  <h2 style={{ fontSize: 15, fontWeight: 600 }}>{group.label}</h2>
-                  {savedGroup === group.label && (
-                    <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--green-700)' }}>✓ Guardado</span>
-                  )}
-                </div>
-                <div style={{ padding: '20px 22px', display: 'flex', flexDirection: 'column', gap: 14 }}>
-                  {group.keys.map(key => (
-                    <div key={key}>
-                      <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: 'var(--ink-muted)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '.1em' }}>
-                        {CONTENT_LABELS[key] ?? key}
-                      </label>
-                      {LONG_KEYS.has(key) ? (
-                        <textarea
-                          rows={3}
-                          value={content[key] ?? ''}
-                          onChange={e => setContent(prev => ({ ...prev, [key]: e.target.value }))}
-                          style={{ width: '100%', padding: '10px 14px', borderRadius: 10, border: '1px solid var(--line-strong)', fontSize: 14, outline: 'none', resize: 'vertical', lineHeight: 1.6, fontFamily: 'inherit', boxSizing: 'border-box' }}
-                        />
-                      ) : (
-                        <input
-                          value={content[key] ?? ''}
-                          onChange={e => setContent(prev => ({ ...prev, [key]: e.target.value }))}
-                          style={{ width: '100%', padding: '10px 14px', borderRadius: 10, border: '1px solid var(--line-strong)', fontSize: 14, outline: 'none', boxSizing: 'border-box' }}
-                        />
-                      )}
-                    </div>
-                  ))}
-                  <button
-                    onClick={() => saveContentGroup(group.label, group.keys)}
-                    disabled={savingGroup === group.label}
-                    style={{ alignSelf: 'flex-start', fontSize: 13, fontWeight: 600, color: '#fff', background: 'var(--slate-900)', border: 'none', padding: '10px 20px', borderRadius: 999, cursor: 'pointer', opacity: savingGroup === group.label ? .6 : 1, marginTop: 4 }}
-                  >
-                    {savingGroup === group.label ? 'Guardando…' : 'Guardar cambios'}
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )
-      )}
+        {error && (
+          <p className="mt-3 text-[13px] text-red-500">{error}</p>
+        )}
+      </div>
     </div>
   )
 }
