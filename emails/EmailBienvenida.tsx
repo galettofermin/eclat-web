@@ -15,16 +15,13 @@ export default function EmailBienvenida({ nombre }: Props) {
         <Container style={container}>
 
           {/* Header */}
-          <Section style={header}>
+          <Section>
             <Img
-              src="https://eclatcentro.com/logo-256.png"
-              alt="ÉCLAT"
-              width="64"
-              height="64"
-              style={logoImg}
+              src="https://eclatcentro.com/email-header.jpg"
+              alt="ÉCLAT · Salud mental, educación y acompañamiento interdisciplinario"
+              width="560"
+              style={headerImg}
             />
-            <Text style={logoText}>ÉCLAT</Text>
-            <Text style={tagline}>Centro de Atención Integral · Oncativo</Text>
           </Section>
 
           <Section style={content}>
@@ -79,24 +76,7 @@ const container = {
   boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
 }
 
-const header = {
-  backgroundColor: '#1B2B26',
-  padding: '28px 40px',
-  textAlign: 'center' as const,
-}
-
-const logoImg = { display: 'block', margin: '0 auto 10px', borderRadius: '50%' }
-const logoText = {
-  color: '#FFFFFF', fontSize: '20px',
-  fontWeight: '600', margin: '0 0 4px',
-  letterSpacing: '0.15em', textTransform: 'uppercase' as const,
-}
-
-const tagline = {
-  color: 'rgba(255,255,255,0.55)',
-  fontSize: '12px', margin: '4px 0 0',
-  letterSpacing: '0.1em', textTransform: 'uppercase' as const,
-}
+const headerImg = { width: '100%', display: 'block' }
 
 const content = { padding: '36px 40px 28px' }
 
