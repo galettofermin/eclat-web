@@ -134,7 +134,7 @@ export default function HomeClient({ heroTitle, heroLede, latestArticles, servic
                     >
                       <div className="rphoto">
                         {svcList[active].imagen_url ? (
-                          <img src={svcList[active].imagen_url!} alt={svcList[active].name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '14px' }} />
+                          <img src={svcList[active].imagen_url!} alt={svcList[active].name} loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '14px' }} />
                         ) : (
                           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', fontSize: '13px', color: 'var(--sage-deep)', fontWeight: 600 }}>
                             Foto · {svcList[active].name}

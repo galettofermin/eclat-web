@@ -54,7 +54,7 @@ export default async function PublicacionesPage() {
                     <Link href={`/publicaciones/${a.id}`} tabIndex={-1} aria-hidden="true"
                       style={{ display: 'block', width: '100%', aspectRatio: '16/9', overflow: 'hidden', borderRadius: '10px', marginBottom: '14px' }}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={a.image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <img src={a.image_url} alt="" loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     </Link>
                   )}
                   <h3>

@@ -22,14 +22,15 @@ const cormorant = Cormorant_Garamond({
 export const metadata: Metadata = {
   metadataBase: new URL("https://eclatcentro.com"),
   title: {
-    default: "Psicólogo en Oncativo · ÉCLAT Centro de Salud Mental y Educación",
+    default: "Salud Mental y Educación · ÉCLAT Centro Interdisciplinario, Oncativo",
     template: "%s · ÉCLAT",
   },
   description: "Centro interdisciplinario en Oncativo, Córdoba. Psicología, psicopedagogía, fonoaudiología e inclusión escolar. Pedí tu entrevista hoy.",
   keywords: [
-    "psicología Oncativo", "psicopedagogía Córdoba", "fonoaudiología", "psicomotricidad",
-    "centro de atención integral", "ÉCLAT", "salud mental niños", "inclusión escolar",
-    "terapia Oncativo", "salud mental Córdoba", "evaluación interdisciplinaria",
+    "salud mental Oncativo", "psicología Oncativo", "psicopedagogía Córdoba",
+    "fonoaudiología", "psicomotricidad", "inclusión escolar", "ÉCLAT",
+    "centro interdisciplinario Oncativo", "salud mental niños", "educación y salud mental",
+    "formación profesional salud mental", "terapia Oncativo", "acompañamiento terapéutico",
   ],
   robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
   icons: { icon: "/logo-256.png", apple: "/logo-256.png" },
@@ -140,7 +141,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="wrap">
             <div className="foot__grid">
               <div>
-                <Image className="foot__logo" src="/logo-256.png" alt="" width={80} height={80} style={{ width: 80, height: 80, filter: "brightness(0) invert(1)" }} />
+                <Image className="foot__logo" src="/logo-256.png" alt="" width={80} height={80} style={{ width: 64, height: 64 }} />
                 <p className="foot__tag">Centro de atención integral en Oncativo, Córdoba. Salud mental, educación y formación desde una mirada interdisciplinaria.</p>
               </div>
               <div>
