@@ -1,5 +1,5 @@
 import {
-  Body, Container, Head, Html,
+  Body, Container, Font, Head, Html,
   Img, Link, Preview, Section, Text, Hr,
 } from '@react-email/components'
 import * as React from 'react'
@@ -26,7 +26,28 @@ const BASE = 'https://eclatcentro.com'
 export default function EmailNewsletter({ asunto, intro, articulos, unsubscribeUrl, siteUrl = BASE }: Props) {
   return (
     <Html lang="es">
-      <Head />
+      <Head>
+        <Font
+          fontFamily="Plus Jakarta Sans"
+          fallbackFontFamily="Arial"
+          webFont={{
+            url: 'https://fonts.gstatic.com/s/plusjakartasans/v8/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_KU7NSg.woff2',
+            format: 'woff2',
+          }}
+          fontWeight={400}
+          fontStyle="normal"
+        />
+        <Font
+          fontFamily="Plus Jakarta Sans"
+          fallbackFontFamily="Arial"
+          webFont={{
+            url: 'https://fonts.gstatic.com/s/plusjakartasans/v8/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_ck7NSg.woff2',
+            format: 'woff2',
+          }}
+          fontWeight={600}
+          fontStyle="normal"
+        />
+      </Head>
       <Preview>{asunto}</Preview>
       <Body style={body}>
         <Container style={container}>
@@ -102,7 +123,7 @@ export default function EmailNewsletter({ asunto, intro, articulos, unsubscribeU
   )
 }
 
-const body = { backgroundColor: '#F5F5F5', fontFamily: 'Georgia, serif' }
+const body = { backgroundColor: '#F5F5F5', fontFamily: "'Plus Jakarta Sans', Arial, sans-serif" }
 
 const container = {
   maxWidth: '560px', margin: '32px auto',
@@ -120,18 +141,21 @@ const header = {
 }
 const logoText = {
   color: '#1B2B26',
-  fontSize: '26px',
-  fontWeight: '700',
-  margin: '0 0 4px',
-  letterSpacing: '0.25em',
+  fontSize: '24px',
+  fontWeight: '600',
+  margin: '0 0 6px',
+  letterSpacing: '0.3em',
   textTransform: 'uppercase' as const,
+  fontFamily: "'Plus Jakarta Sans', Arial, sans-serif",
 }
 const tagline = {
-  color: '#9CA8A3',
-  fontSize: '10px',
+  color: '#7FA294',
+  fontSize: '11px',
   margin: '0',
-  letterSpacing: '0.15em',
+  letterSpacing: '0.12em',
   textTransform: 'uppercase' as const,
+  fontFamily: "'Plus Jakarta Sans', Arial, sans-serif",
+  fontWeight: '400',
 }
 
 const content = { padding: '36px 40px 28px' }
