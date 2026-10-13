@@ -53,7 +53,7 @@ export default function FormacionClient({ heroTitle, heroLede, cursos, waUrl }: 
         <div className="flex flex-col gap-4">
           {cursos.map((c) => (
             <Link key={c.id} href={`/cursos/${c.id}`}
-              className="flex items-center justify-between p-5 border border-[#2F7D6B]/30 rounded-xl hover:border-[#2F7D6B] hover:bg-[#DCEFE8]/40 transition-all duration-300 group hover:shadow-md hover:-translate-y-0.5 hover:scale-[1.01]">
+              className="flex items-center justify-between p-5 border border-[#2F7D6B]/30 rounded-xl card-pulse hover:border-[#2F7D6B] hover:bg-[#DCEFE8]/40 transition-all duration-300 group hover:shadow-md hover:-translate-y-0.5 hover:scale-[1.01]">
               <div>
                 {c.badge && <span className="text-xs font-semibold text-[#2F7D6B] uppercase tracking-wide block mb-1">{c.badge}</span>}
                 <p className="font-semibold text-gray-900">{c.title}</p>
