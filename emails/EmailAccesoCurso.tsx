@@ -21,7 +21,7 @@ export default function EmailAccesoCurso({ nombre, tituloCurso, urlCurso }: Prop
 
           <Section style={header}>
             <Text style={logo}>ÉCLAT</Text>
-            <Text style={tagline}>Centro de Atención Integral · Rosario</Text>
+            <Text style={tagline}>Centro de Atención Integral · Oncativo</Text>
           </Section>
 
           <Section style={successBanner}>
@@ -50,13 +50,13 @@ export default function EmailAccesoCurso({ nombre, tituloCurso, urlCurso }: Prop
 
             <Text style={noteText}>
               Podés acceder a tus cursos en cualquier momento desde{' '}
-              <Link href="https://eclatcentro.com/mis-cursos" style={inlineLink}>Mis cursos</Link>.
+              <Link href="https://eclatcentro.com/mi-cuenta" style={inlineLink}>Mi cuenta</Link>.
             </Text>
           </Section>
 
           <Hr style={divider} />
           <Section style={footer}>
-            <Text style={footerText}>ÉCLAT Centro de Atención Integral · Rosario, Argentina</Text>
+            <Text style={footerText}>ÉCLAT Centro de Atención Integral · Oncativo, Córdoba</Text>
             <Text style={footerText}>
               ¿Problemas? Escribinos a{' '}
               <Link href="https://wa.link/vyi5uv" style={footerLink}>WhatsApp</Link>
