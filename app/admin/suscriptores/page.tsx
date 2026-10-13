@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
 import AdminNav from '@/components/admin/AdminNav'
 
 interface Suscriptor {
@@ -28,15 +27,10 @@ export default function AdminSuscriptores() {
   useEffect(() => {
     const load = async () => {
       setLoading(true)
-      const supabase = createClient()
-      let q = supabase
-        .from('suscriptores')
-        .select('*')
-        .eq('activo', true)
-        .order('creado_en', { ascending: false })
-      if (lista !== 'todos') q = q.eq('lista', lista)
-      const { data } = await q
-      setItems(data ?? [])
+      const params = lista !== 'todos' ? `?lista=${lista}` : ''
+      const res = await fetch(`/api/admin/suscriptores${params}`)
+      const data = await res.json()
+      setItems(Array.isArray(data) ? data : [])
       setLoading(false)
     }
     load()
