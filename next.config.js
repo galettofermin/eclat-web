@@ -21,7 +21,7 @@ const nextConfig = {
       { source: '/formaciones',      destination: '/formacion', permanent: true },
       { source: '/mis-cursos',           destination: '/mi-cuenta', permanent: true },
       { source: '/mi-cuenta/mis-cursos', destination: '/mi-cuenta', permanent: true },
-      { source: '/evaluaciones-diagnósticas',       destination: '/servicios', permanent: true },
+      { source: '/evaluaciones-diagnósticas', destination: '/servicios', permanent: true },
       { source: '/evaluaciones-diagn%C3%B3sticas', destination: '/servicios', permanent: true },
       { source: '/evaluaciones-diagnosticas',       destination: '/servicios', permanent: true },
     ]
@@ -39,12 +39,6 @@ const nextConfig = {
       {
         source: '/(.*)',
         headers: securityHeaders,
-      },
-      {
-        source: '/',
-        headers: [
-          { key: 'Cache-Control', value: 'no-store, no-cache, must-revalidate' },
-        ],
       },
     ]
   },

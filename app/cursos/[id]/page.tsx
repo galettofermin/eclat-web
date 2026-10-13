@@ -72,8 +72,6 @@ export default async function CursoPage({
   const isApproved = course.is_free || enrollment?.status === 'approved' || isDirector
   const isPending = !course.is_free && enrollment?.status === 'pending'
 
-  const instructors: string[] = course.instructors
-    ? course.instructors.split('\n').map((s: string) => s.trim()).filter(Boolean) : []
   const learnings: string[] = course.learnings
     ? course.learnings.split('\n').map((s: string) => s.trim()).filter(Boolean) : []
   const syllabus: string[] = course.syllabus
@@ -94,9 +92,9 @@ export default async function CursoPage({
       )}
 
       {/* ── HERO DEL CURSO ── */}
-      <div className="bg-gradient-to-b from-[#f5f3ef] to-[#faf9f6] text-[#1d1d1f] border-b border-black/[0.06]">
+      <div className="bg-gradient-to-b from-[#0A0A0A] to-[#1a1a1a] text-white">
         <div className="max-w-6xl mx-auto px-5 pt-12 pb-12">
-          <Link href="/formacion" className="inline-flex items-center gap-1.5 text-[13px] text-[#6e6e73] hover:text-[#1d1d1f] transition-colors mb-6">
+          <Link href="/formacion" className="inline-flex items-center gap-1.5 text-[13px] text-white/50 hover:text-white/80 transition-colors mb-6">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
             Formación
           </Link>
@@ -105,60 +103,51 @@ export default async function CursoPage({
             <div className="flex-1">
               {/* Badge */}
               <span className={`inline-block text-[11px] font-bold tracking-[0.15em] uppercase px-3 py-1 rounded-full mb-5 ${
-                course.is_free ? 'bg-[#DCEFE8] text-[#2F7D6B]' : 'bg-[#DCEFE8] text-[#2F7D6B] border border-[#2F7D6B]/20'
+                course.is_free ? 'bg-[#DCEFE8] text-[#2F7D6B]' : 'bg-[#2F7D6B]/20 text-[#7bc4b5] border border-[#2F7D6B]/30'
               }`}>
                 {course.badge}
               </span>
 
-              <h1 className="text-[clamp(2rem,5vw,3.2rem)] font-bold tracking-tight text-[#1d1d1f] leading-[1.05] mb-4">
+              <h1 className="text-[clamp(2rem,5vw,3.2rem)] font-bold tracking-tight text-white leading-[1.05] mb-4">
                 {course.title}
               </h1>
 
-              <p className="text-[16px] text-[#424245] leading-relaxed mb-6 max-w-2xl">
+              <p className="text-[16px] text-white/70 leading-relaxed mb-6 max-w-2xl">
                 {course.long_description || course.description}
               </p>
-
-              {instructors.length > 0 && (
-                <div className="flex flex-wrap gap-x-4 gap-y-1 mt-4 mb-2">
-                  <span className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[#2F7D6B] w-full">Docentes</span>
-                  {instructors.map((name, i) => (
-                    <span key={i} className="text-[14px] text-[#424245] font-medium">{name}</span>
-                  ))}
-                </div>
-              )}
 
               {/* Stats row */}
               <div className="flex flex-wrap gap-4">
                 {(studentCount ?? 0) > 0 && (
-                  <div className="flex items-center gap-1.5 text-[13px] text-[#6e6e73]">
+                  <div className="flex items-center gap-1.5 text-[13px] text-white/60">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                       <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                       <circle cx="9" cy="7" r="4"/>
                       <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
                     </svg>
-                    <span className="text-[#1d1d1f] font-semibold">{studentCount}</span> alumno{(studentCount ?? 0) !== 1 ? 's' : ''} inscripto{(studentCount ?? 0) !== 1 ? 's' : ''}
+                    <span className="text-white font-semibold">{studentCount}</span> alumno{(studentCount ?? 0) !== 1 ? 's' : ''} inscripto{(studentCount ?? 0) !== 1 ? 's' : ''}
                   </div>
                 )}
                 {course.duration && (
-                  <div className="flex items-center gap-1.5 text-[13px] text-[#6e6e73]">
+                  <div className="flex items-center gap-1.5 text-[13px] text-white/60">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
                     {course.duration}
                   </div>
                 )}
                 {course.modality && (
-                  <div className="flex items-center gap-1.5 text-[13px] text-[#6e6e73]">
+                  <div className="flex items-center gap-1.5 text-[13px] text-white/60">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
                     {course.modality}
                   </div>
                 )}
                 {course.level && (
-                  <div className="flex items-center gap-1.5 text-[13px] text-[#6e6e73]">
+                  <div className="flex items-center gap-1.5 text-[13px] text-white/60">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2 20h20M6 20V10M12 20V4M18 20v-6"/></svg>
                     {course.level}
                   </div>
                 )}
                 {modules.length > 0 && (
-                  <div className="flex items-center gap-1.5 text-[13px] text-[#6e6e73]">
+                  <div className="flex items-center gap-1.5 text-[13px] text-white/60">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 2L2 7l10 5 10-5-10-5Z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
                     {modules.length} módulo{modules.length !== 1 ? 's' : ''}
                   </div>
@@ -190,7 +179,7 @@ export default async function CursoPage({
       </div>
 
       {/* Price card mobile */}
-      <div className="lg:hidden px-5 mt-6 mb-6">
+      <div className="lg:hidden px-5 -mt-4 mb-6">
         <CoursePriceCard
           price={course.price}
           priceOriginal={priceOriginal}
@@ -213,14 +202,6 @@ export default async function CursoPage({
           <div className="bg-[#DCEFE8] border border-[#2F7D6B]/20 rounded-2xl px-5 py-4 flex items-center gap-3">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2F7D6B" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg>
             <p className="text-[15px] font-semibold text-[#2F7D6B]">¡Pago confirmado! Ya tenés acceso al curso.</p>
-          </div>
-        </div>
-      )}
-
-      {searchParams.pago === 'error' && (
-        <div className="max-w-4xl mx-auto px-5 pt-4">
-          <div className="bg-red-50 border border-red-200 rounded-2xl px-5 py-4">
-            <p className="text-[15px] font-semibold text-red-700">El pago no se completó. Podés volver a intentarlo o elegir pagar por transferencia.</p>
           </div>
         </div>
       )}
@@ -305,7 +286,7 @@ export default async function CursoPage({
               {modules.map((mod, i) => (
                 <div key={mod.id} className="bg-white">
                   <div className={`flex items-center gap-3 px-5 py-4 ${isApproved ? '' : 'opacity-80'}`}>
-                    <span className={`w-8 h-8 rounded-full flex items-center justify-center text-[13px] font-bold shrink-0 ${isApproved ? 'bg-[#2F7D6B] text-white' : 'bg-[#DCEFE8] text-[#2F7D6B]'}`}>
+                    <span className={`w-8 h-8 rounded-full flex items-center justify-center text-[13px] font-bold shrink-0 ${isApproved ? 'bg-[#2F7D6B] text-white' : 'bg-[#F5F5F7] text-[#86868b]'}`}>
                       {i + 1}
                     </span>
                     <div className="flex-1">
@@ -359,12 +340,12 @@ export default async function CursoPage({
 
           {/* CTA sin acceso: el modal guarda la inscripción y el admin habilita el curso */}
           {!isApproved && !isPending && !course.is_free && (
-            <div className="mt-6 bg-[#DCEFE8] border border-[#2F7D6B]/25 rounded-2xl p-7 md:p-8 text-center">
-              <p className="text-[17px] font-semibold mb-2 text-[#1d1d1f]">Desbloqueá el contenido completo</p>
-              <p className="text-[#424245] text-[14px] mb-6">
+            <div className="mt-6 bg-[#0A0A0A] rounded-2xl p-7 md:p-8 text-center text-white">
+              <p className="text-[17px] font-semibold mb-2">Desbloqueá el contenido completo</p>
+              <p className="text-white/55 text-[14px] mb-6">
                 Inscribite y te contactamos para confirmar tu lugar.
                 {!user && ' Para ver los módulos vas a necesitar una cuenta.'}
-                {course.price > 0 && ` ${formatPrice(course.price)} · Acceso ilimitado.`}
+                {course.price > 0 && ` ${formatPrice(course.price)} · Acceso ilimitado al contenido.`}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <CourseRegistrationModal
@@ -372,10 +353,10 @@ export default async function CursoPage({
                   courseTitle={course.title}
                   price={course.price}
                   userEmail={user?.email ?? null}
-                  triggerClassName="bg-[#2F7D6B] text-white font-semibold px-8 py-3 rounded-full text-[15px] hover:bg-[#245f52] transition-colors shadow-sm btn-pulse"
+                  triggerClassName="bg-white text-[#0A0A0A] font-semibold px-8 py-3 rounded-full text-[15px] hover:bg-white/90 transition-colors btn-pulse-white"
                 />
                 {!user && (
-                  <Link href="/registro" className="border border-[#2F7D6B]/40 text-[#2F7D6B] font-semibold px-6 py-3 rounded-full text-[15px] hover:bg-[#2F7D6B]/10 transition-colors">
+                  <Link href="/registro" className="border border-white/20 text-white font-semibold px-6 py-3 rounded-full text-[15px] hover:bg-white/10 transition-colors">
                     Crear cuenta
                   </Link>
                 )}

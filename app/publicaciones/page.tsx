@@ -7,7 +7,7 @@ import { AnimatedSection } from '@/components/AnimatedSection'
 import { StaggerList, StaggerItem } from '@/components/StaggerList'
 import { HoverCard } from '@/components/HoverCard'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 export default async function PublicacionesPage() {
   const supabase = createClient()

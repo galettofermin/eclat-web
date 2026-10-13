@@ -43,14 +43,6 @@ interface Props {
   heroLede: string;
   latestArticles: LatestArticle[];
   services: ServiceImage[];
-  featuredCourse: {
-    id: string
-    title: string
-    description: string | null
-    price: number
-    price_original: number | null
-    badge: string | null
-  } | null
 }
 
 // La última palabra del título va en cursiva verde (.hero3 h1 em)
@@ -59,7 +51,7 @@ function splitLastWord(text: string): [string, string] {
   return i === -1 ? ['', text] : [text.slice(0, i + 1), text.slice(i + 1)];
 }
 
-export default function HomeClient({ heroTitle, heroLede, latestArticles, services, featuredCourse }: Props) {
+export default function HomeClient({ heroTitle, heroLede, latestArticles, services }: Props) {
   const [heroStart, heroEnd] = splitLastWord(heroTitle);
   const svcList = SERVICES.map(s => {
     const fromDB = services.find(db =>
@@ -299,58 +291,6 @@ export default function HomeClient({ heroTitle, heroLede, latestArticles, servic
           </StaggerList>
         </div>
       </section>
-
-      {/* Curso destacado: el primer curso publicado */}
-      {featuredCourse && (
-        <section style={{ padding: '0 var(--gut) 4rem' }}>
-          <a
-            href={`/cursos/${featuredCourse.id}`}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '1rem',
-              background: '#DCEFE8',
-              border: '1.5px solid rgba(47,125,107,.25)',
-              borderRadius: '20px',
-              padding: '2rem 2.4rem',
-              textDecoration: 'none',
-              transition: 'box-shadow .25s, transform .25s',
-              maxWidth: '860px',
-              margin: '0 auto',
-            }}
-            className="featured-course-banner"
-          >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
-              <div>
-                <span style={{ fontSize: '.7rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: '#2F7D6B' }}>
-                  {featuredCourse.badge || 'Formación'} · Inscripciones abiertas
-                </span>
-                <h2 style={{ fontSize: 'clamp(1.2rem, 3vw, 1.7rem)', fontWeight: 700, color: '#1d1d1f', margin: '.3rem 0 .5rem', letterSpacing: '-.02em' }}>
-                  {featuredCourse.title}
-                </h2>
-                {featuredCourse.description && (
-                  <p style={{ fontSize: '.9rem', color: '#424245', margin: 0, maxWidth: '520px', lineHeight: 1.55 }}>
-                    {featuredCourse.description}
-                  </p>
-                )}
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '.4rem', flexShrink: 0 }}>
-                {featuredCourse.price_original && featuredCourse.price_original > featuredCourse.price && (
-                  <span style={{ fontSize: '.8rem', color: '#86868b', textDecoration: 'line-through' }}>
-                    {new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(featuredCourse.price_original)}
-                  </span>
-                )}
-                <span style={{ fontSize: '1.4rem', fontWeight: 700, color: '#2F7D6B' }}>
-                  {featuredCourse.price === 0 ? 'Gratis' : new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(featuredCourse.price)}
-                </span>
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', background: '#2F7D6B', color: '#fff', borderRadius: '999px', padding: '.55rem 1.4rem', fontSize: '.85rem', fontWeight: 600 }}>
-                  Inscribirme →
-                </span>
-              </div>
-            </div>
-          </a>
-        </section>
-      )}
 
       {/* PUBLICACIONES teaser — se oculta si no hay artículos publicados */}
       {latestArticles.length > 0 && (

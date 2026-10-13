@@ -1,7 +1,7 @@
 import { getSiteContent } from '@/lib/siteContent'
 import ConocerClient from '@/components/ConocerClient'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 const DEFAULTS = {
   'conocer.hero.title': 'ÉCLAT, de cerca.',

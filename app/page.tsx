@@ -3,7 +3,7 @@ import { getSiteContent } from '@/lib/siteContent'
 import { createClient } from '@/lib/supabase/server'
 import HomeClient from '@/components/HomeClient'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 export const metadata: Metadata = {
   title: 'Psicólogo en Oncativo · ÉCLAT Centro de Salud Mental y Educación',
@@ -20,26 +20,31 @@ export default async function HomePage() {
   const get = (key: keyof typeof DEFAULTS) => content[key] ?? DEFAULTS[key]
 
   const supabase = createClient()
-  const { data: featuredCourse } = await supabase
-    .from('courses')
-    .select('id, title, description, price, price_original, badge')
-    .eq('published', true)
-    .order('sort_order')
-    .limit(1)
-    .maybeSingle()
 
-  const { data: latestArticles } = await supabase
-    .from('articles')
-    .select('id, title, excerpt, category, image_url')
-    .eq('published', true)
-    .order('created_at', { ascending: false })
-    .limit(3)
-
-  // Imágenes de los servicios de la caja rotadora (antes se pedían desde el cliente)
-  const { data: services } = await supabase
-    .from('servicios')
-    .select('nombre, imagen_url')
-    .not('imagen_url', 'is', null)
+  // Consultas en paralelo para reducir latencia
+  const [
+    { data: latestArticles },
+    { data: services },
+    { data: featuredCourse },
+  ] = await Promise.all([
+    supabase
+      .from('articles')
+      .select('id, title, excerpt, category, image_url')
+      .eq('published', true)
+      .order('created_at', { ascending: false })
+      .limit(3),
+    supabase
+      .from('servicios')
+      .select('nombre, imagen_url')
+      .not('imagen_url', 'is', null),
+    supabase
+      .from('courses')
+      .select('id, title, description, price, price_original, badge')
+      .eq('published', true)
+      .order('sort_order')
+      .limit(1)
+      .maybeSingle(),
+  ])
 
   return (
     <HomeClient

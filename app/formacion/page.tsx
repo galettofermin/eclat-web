@@ -1,10 +1,13 @@
+// app/formacion/page.tsx
 import type { Metadata } from "next";
+import Link from "next/link";
 import { getSiteContent } from "@/lib/siteContent";
 import { WA_URL } from "@/lib/constants";
+import { WaIcon } from "@/components/WaIcon";
 import { createClient } from "@/lib/supabase/server";
 import FormacionClient from "./FormacionClient";
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 export const metadata: Metadata = {
   title: "Formación",
@@ -25,10 +28,15 @@ const DEFAULTS = {
 export default async function FormacionPage() {
   const content = await getSiteContent(Object.keys(DEFAULTS))
   const get = (key: keyof typeof DEFAULTS) => content[key] ?? DEFAULTS[key]
+
   const { data: cursos } = await createClient()
-    .from('courses').select('id, title, description, badge')
-    .eq('published', true).order('sort_order')
+    .from('courses')
+    .select('id, title, description, badge')
+    .eq('published', true)
+    .order('sort_order')
+
   const waUrl = WA_URL("Hola ÉCLAT, quiero recibir el calendario de formaciones.")
+
   return (
     <FormacionClient
       heroTitle={get('formacion.hero.title')}
