@@ -73,20 +73,21 @@ const container = {
 }
 
 const header = {
-  backgroundColor: '#1B2B26',
-  padding: '32px 40px',
+  backgroundColor: '#EDF3F0',
+  borderBottom: '3px solid #C6E0D6',
+  padding: '36px 40px',
   textAlign: 'center' as const,
 }
 const logoText = {
-  color: '#FFFFFF',
-  fontSize: '26px',
+  color: '#29332F',
+  fontSize: '28px',
   fontWeight: '600',
   margin: '0 0 6px',
-  letterSpacing: '0.18em',
+  letterSpacing: '0.2em',
   textTransform: 'uppercase' as const,
 }
 const tagline = {
-  color: 'rgba(255,255,255,0.5)',
+  color: '#7FA294',
   fontSize: '11px',
   margin: '0',
   letterSpacing: '0.12em',
