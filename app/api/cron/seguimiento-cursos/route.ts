@@ -1,6 +1,6 @@
 /**
  * GET /api/cron/seguimiento-cursos
- * Cron job — se ejecuta cada hora (Vercel Cron).
+ * Cron job — se ejecuta una vez por día, 10:00 ART (Vercel Cron, plan Hobby).
  * Envía el mail de seguimiento a usuarios que visitaron un curso
  * hace más de 24hs y todavía no compraron.
  */

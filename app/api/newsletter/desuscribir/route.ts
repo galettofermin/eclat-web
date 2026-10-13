@@ -12,11 +12,11 @@ export async function GET(req: Request) {
   const id = searchParams.get('id')
 
   if (id) {
+    // supabase-js no lanza: devuelve { error }. Se ignora para redirigir igual.
     await createAdminClient()
       .from('suscriptores')
       .update({ activo: false })
       .eq('id', id)
-      .catch(() => {})
   }
 
   // Redirigir a la página de desuscripción

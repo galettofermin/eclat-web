@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/cron/seguimiento-cursos",
-      "schedule": "0 * * * *"
+      "schedule": "0 13 * * *"
     }
   ]
 }

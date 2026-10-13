@@ -92,7 +92,7 @@ export async function POST(req: Request) {
       total_enviados: enviados,
       total_errores: errores,
       enviado_por: user.email,
-    }).catch(() => {}) // no bloquear si falla el registro
+    }) // supabase-js no lanza: si falla el registro, no bloquea
 
     return NextResponse.json({ ok: true, enviados, errores })
   } catch (error) {

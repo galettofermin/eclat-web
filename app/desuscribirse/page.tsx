@@ -20,7 +20,6 @@ export default async function DesuscribirsePage({
       .from('suscriptores')
       .update({ activo: false })
       .eq('id', searchParams.id)
-      .catch(() => {})
   }
 
   const confirmado = !!searchParams.ok || !!searchParams.id
