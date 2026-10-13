@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
 const SECTIONS = [
@@ -68,7 +68,7 @@ export default function AdminConfiguracion() {
       const supabase = createClient()
       const { data } = await supabase.from('site_config').select('*')
       const map: Record<string, string> = {}
-      data?.forEach((row) => { map[row.key] = row.value })
+      data?.forEach((row: { key: string; value: string }) => { map[row.key] = row.value })
       setConfig(map)
       setLoading(false)
     }
@@ -85,7 +85,7 @@ export default function AdminConfiguracion() {
         supabase.from('site_config').upsert({ key, value, updated_at: new Date().toISOString() })
       )
     )
-    const err = results.find((r) => r.error)
+    const err = results.find((r: { error: unknown }) => r.error)
     if (err?.error) {
       setError(err.error.message)
     } else {
