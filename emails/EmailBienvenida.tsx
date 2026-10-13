@@ -17,7 +17,7 @@ export default function EmailBienvenida({ nombre }: Props) {
           {/* Header */}
           <Section style={header}>
             <Text style={logo}>ÉCLAT</Text>
-            <Text style={tagline}>Centro de Atención Integral · Rosario</Text>
+            <Text style={tagline}>Centro de Atención Integral · Oncativo</Text>
           </Section>
 
           <Section style={content}>
@@ -48,7 +48,7 @@ export default function EmailBienvenida({ nombre }: Props) {
           <Hr style={divider} />
           <Section style={footer}>
             <Text style={footerText}>
-              ÉCLAT Centro de Atención Integral · Rosario, Argentina
+              ÉCLAT Centro de Atención Integral · Oncativo, Córdoba
             </Text>
             <Text style={footerText}>
               <Link href="https://eclatcentro.com" style={footerLink}>eclatcentro.com</Link>

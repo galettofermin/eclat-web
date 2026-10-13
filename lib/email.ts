@@ -4,6 +4,7 @@ import EmailBienvenida from '@/emails/EmailBienvenida'
 import EmailAccesoCurso from '@/emails/EmailAccesoCurso'
 import EmailModuloCompletado from '@/emails/EmailModuloCompletado'
 import EmailMensajeNuevo from '@/emails/EmailMensajeNuevo'
+import EmailSeguimientoCurso from '@/emails/EmailSeguimientoCurso'
 
 const FROM = 'ÉCLAT <hola@eclatcentro.com>'
 
@@ -68,6 +69,23 @@ export async function enviarNotificacionMensaje(params: {
     from: FROM,
     to: params.email,
     subject: `Nuevo mensaje de ${params.nombreRemitente}`,
+    html,
+  })
+}
+
+export async function enviarSeguimientoCurso(params: {
+  email: string
+  nombre: string
+  tituloCurso: string
+  urlCurso: string
+  descripcionCurso?: string
+}) {
+  const resend = new Resend(process.env.RESEND_API_KEY)
+  const html = await render(EmailSeguimientoCurso(params))
+  return resend.emails.send({
+    from: FROM,
+    to: params.email,
+    subject: `¿Te quedó alguna duda sobre "${params.tituloCurso}"?`,
     html,
   })
 }

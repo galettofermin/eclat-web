@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import CourseQuiz from '@/components/CourseQuiz'
+import CourseInterestTracker from '@/components/course/CourseInterestTracker'
 import DirectorModules from '@/components/admin/DirectorModules'
 import CourseAccordion from '@/components/course/CourseAccordion'
 import CoursePriceCard from '@/components/course/CoursePriceCard'
@@ -83,6 +84,10 @@ export default async function CursoPage({
 
   return (
     <main className="min-h-screen bg-white">
+      {/* Registra la visita para mail de seguimiento (solo si no está inscripto) */}
+      {user && !isApproved && !course.is_free && (
+        <CourseInterestTracker courseId={course.id} />
+      )}
 
       {/* Director banner */}
       {isDirector && (
