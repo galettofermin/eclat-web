@@ -18,7 +18,7 @@ export default function EmailHeader() {
         height="72"
         style={logo}
       />
-      <Text style={tagline}>Centro de Atención Integral</Text>
+      <Text style={tagline}>Salud Mental · Educación y Acompañamiento Interdisciplinario</Text>
 
       <div style={decorBottom} />
     </Section>

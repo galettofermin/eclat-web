@@ -139,7 +139,7 @@ export async function enviarConfirmacionInscripcion(params: {
         <div style="background:#F7F5F0;padding:36px 40px 28px;text-align:center;border-bottom:1px solid #D8E8E0;position:relative">
           <div style="height:3px;background:linear-gradient(90deg,transparent 0%,#A8C9BC 30%,#2F7D6B 50%,#A8C9BC 70%,transparent 100%);margin-bottom:24px"></div>
           <img src="https://eclatcentro.com/logo-256.png" width="72" height="72" alt="ÉCLAT" style="display:block;margin:0 auto 10px" />
-          <p style="color:#7FA294;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;margin:0">Centro de Atención Integral</p>
+          <p style="color:#7FA294;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;margin:0">Salud Mental · Educación y Acompañamiento Interdisciplinario</p>
           <div style="margin-top:20px;height:1px;background:linear-gradient(90deg,transparent 0%,#C5DDD5 20%,#8BBDAD 50%,#C5DDD5 80%,transparent 100%)"></div>
         </div>
         <div style="padding:36px 40px 28px;font-size:15px;line-height:1.7;color:#4B6B5E">
@@ -170,7 +170,7 @@ export async function enviarResetPassword(params: { email: string; link: string 
         <div style="background:#F7F5F0;padding:36px 40px 28px;text-align:center;border-bottom:1px solid #D8E8E0">
           <div style="height:3px;background:linear-gradient(90deg,transparent 0%,#A8C9BC 30%,#2F7D6B 50%,#A8C9BC 70%,transparent 100%);margin-bottom:24px"></div>
           <img src="https://eclatcentro.com/logo-256.png" width="72" height="72" alt="ÉCLAT" style="display:block;margin:0 auto 10px" />
-          <p style="color:#7FA294;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;margin:0">Centro de Atención Integral</p>
+          <p style="color:#7FA294;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;margin:0">Salud Mental · Educación y Acompañamiento Interdisciplinario</p>
           <div style="margin-top:20px;height:1px;background:linear-gradient(90deg,transparent 0%,#C5DDD5 20%,#8BBDAD 50%,#C5DDD5 80%,transparent 100%)"></div>
         </div>
         <div style="padding:36px 40px 28px;font-size:15px;line-height:1.7;color:#4B6B5E">
