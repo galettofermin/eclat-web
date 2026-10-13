@@ -38,11 +38,21 @@ export interface ServiceImage {
   imagen_url: string | null;
 }
 
+interface FeaturedCourse {
+  id: string;
+  title: string;
+  description: string | null;
+  price: number | null;
+  price_original: number | null;
+  badge: string | null;
+}
+
 interface Props {
   heroTitle: string;
   heroLede: string;
   latestArticles: LatestArticle[];
   services: ServiceImage[];
+  featuredCourse: FeaturedCourse | null;
 }
 
 // La última palabra del título va en cursiva verde (.hero3 h1 em)
@@ -51,7 +61,7 @@ function splitLastWord(text: string): [string, string] {
   return i === -1 ? ['', text] : [text.slice(0, i + 1), text.slice(i + 1)];
 }
 
-export default function HomeClient({ heroTitle, heroLede, latestArticles, services }: Props) {
+export default function HomeClient({ heroTitle, heroLede, latestArticles, services, featuredCourse }: Props) {
   const [heroStart, heroEnd] = splitLastWord(heroTitle);
   const svcList = SERVICES.map(s => {
     const fromDB = services.find(db =>
@@ -291,6 +301,53 @@ export default function HomeClient({ heroTitle, heroLede, latestArticles, servic
           </StaggerList>
         </div>
       </section>
+
+      {/* BANNER CURSO DESTACADO */}
+      {featuredCourse && (
+        <section style={{ background: '#DCEFE8', padding: '48px 24px' }}>
+          <div className="wrap" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 32, flexWrap: 'wrap' }}>
+            <div style={{ flex: 1, minWidth: 260 }}>
+              {featuredCourse.badge && (
+                <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#2F7D6B', display: 'block', marginBottom: 8 }}>
+                  {featuredCourse.badge}
+                </span>
+              )}
+              <h2 style={{ fontFamily: 'var(--font-cormorant), Georgia, serif', fontSize: 'clamp(22px, 4vw, 32px)', fontWeight: 500, color: '#1d1d1f', margin: '0 0 10px', lineHeight: 1.2 }}>
+                {featuredCourse.title}
+              </h2>
+              {featuredCourse.description && (
+                <p style={{ fontSize: 15, color: '#424245', lineHeight: 1.6, margin: '0 0 16px', maxWidth: 480 }}>
+                  {featuredCourse.description}
+                </p>
+              )}
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
+                {featuredCourse.price_original && (
+                  <span style={{ fontSize: 14, color: '#6e6e73', textDecoration: 'line-through' }}>
+                    ${featuredCourse.price_original.toLocaleString('es-AR')}
+                  </span>
+                )}
+                {featuredCourse.price && (
+                  <span style={{ fontSize: 22, fontWeight: 700, color: '#2F7D6B' }}>
+                    ${featuredCourse.price.toLocaleString('es-AR')}
+                  </span>
+                )}
+              </div>
+            </div>
+            <Link
+              href={`/cursos/${featuredCourse.id}`}
+              style={{
+                background: '#2F7D6B', color: '#fff',
+                padding: '14px 32px', borderRadius: 999,
+                fontWeight: 600, fontSize: 15,
+                textDecoration: 'none', display: 'inline-block',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              Inscribirme →
+            </Link>
+          </div>
+        </section>
+      )}
 
       {/* PUBLICACIONES teaser — se oculta si no hay artículos publicados */}
       {latestArticles.length > 0 && (
