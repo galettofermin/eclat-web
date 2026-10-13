@@ -1,6 +1,6 @@
 import {
   Body, Container, Head, Html,
-  Img, Link, Preview, Section, Text, Hr,
+  Link, Preview, Section, Text, Hr,
 } from '@react-email/components'
 import * as React from 'react'
 
@@ -19,13 +19,9 @@ export default function EmailSeguimientoCurso({ nombre, tituloCurso, urlCurso, d
       <Body style={body}>
         <Container style={container}>
 
-          <Section>
-            <Img
-              src="https://eclatcentro.com/email-header.jpg"
-              alt="ÉCLAT · Salud mental, educación y acompañamiento interdisciplinario"
-              width="560"
-              style={headerImg}
-            />
+          <Section style={header}>
+            <Text style={logoText}>ÉCLAT</Text>
+            <Text style={tagline}>Centro de Atención Integral · Oncativo</Text>
           </Section>
 
           <Section style={content}>
@@ -90,7 +86,26 @@ const container = {
   boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
 }
 
-const headerImg = { width: '100%', display: 'block' }
+const header = {
+  backgroundColor: '#1B2B26',
+  padding: '32px 40px',
+  textAlign: 'center' as const,
+}
+const logoText = {
+  color: '#FFFFFF',
+  fontSize: '26px',
+  fontWeight: '600',
+  margin: '0 0 6px',
+  letterSpacing: '0.18em',
+  textTransform: 'uppercase' as const,
+}
+const tagline = {
+  color: 'rgba(255,255,255,0.5)',
+  fontSize: '11px',
+  margin: '0',
+  letterSpacing: '0.12em',
+  textTransform: 'uppercase' as const,
+}
 
 const content = { padding: '36px 40px 28px' }
 
