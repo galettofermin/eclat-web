@@ -14,7 +14,7 @@ import { DIRECTOR_EMAIL } from '@/lib/constants'
 import CourseRegistrationModal from '@/components/CourseRegistrationModal'
 import { courseMetadata } from '@/lib/courseMetadata'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 export function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   return courseMetadata(params.id)
