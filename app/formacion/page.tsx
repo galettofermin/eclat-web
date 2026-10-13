@@ -11,11 +11,16 @@ export const revalidate = 60
 
 export const metadata: Metadata = {
   title: "Formación",
-  description: "Cursos, seminarios, jornadas y trayectos formativos de ÉCLAT sobre inclusión escolar, salud mental infantil, trabajo interdisciplinario y educación.",
+  description: "Cursos y seminarios virtuales sobre inclusión escolar, salud mental infantil, autismo, TDAH y trabajo interdisciplinario. Formación para profesionales de la salud y la educación.",
+  keywords: [
+    'cursos salud mental', 'formación inclusión escolar', 'seminario autismo',
+    'capacitación TDAH', 'psicoanálisis y educación', 'formación profesional Córdoba',
+    'cursos virtuales salud mental', 'trabajo interdisciplinario', 'infancia y adolescencia formación',
+  ],
   alternates: { canonical: "https://eclatcentro.com/formacion" },
   openGraph: {
     title: "Formación · ÉCLAT",
-    description: "Cursos, seminarios y jornadas sobre inclusión escolar, salud mental y trabajo interdisciplinario.",
+    description: "Cursos y seminarios virtuales sobre inclusión escolar, salud mental infantil, autismo, TDAH y trabajo interdisciplinario.",
     url: "https://eclatcentro.com/formacion",
   },
 };

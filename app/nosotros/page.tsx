@@ -1,7 +1,14 @@
+import type { Metadata } from 'next'
 import { getSiteContent } from '@/lib/siteContent'
 import ConocerClient from '@/components/ConocerClient'
 
 export const revalidate = 60
+
+export const metadata: Metadata = {
+  title: 'Nosotros',
+  description: 'ÉCLAT es un centro interdisciplinario en Oncativo, Córdoba, que articula salud mental, educación y formación. Psicólogos, psicopedagogas, fonoaudiólogas y psicomotricistas trabajando en equipo.',
+  alternates: { canonical: 'https://eclatcentro.com/nosotros' },
+}
 
 const DEFAULTS = {
   'conocer.hero.title': 'ÉCLAT, de cerca.',

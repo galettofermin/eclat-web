@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { WA_URL } from '@/lib/constants'
@@ -8,6 +9,17 @@ import { StaggerList, StaggerItem } from '@/components/StaggerList'
 import { HoverCard } from '@/components/HoverCard'
 
 export const revalidate = 60
+
+export const metadata: Metadata = {
+  title: 'Publicaciones',
+  description: 'Artículos y recursos sobre salud mental, infancia, adolescencia, educación e inclusión escolar. Producción clínica y reflexión sobre la práctica interdisciplinaria del equipo ÉCLAT.',
+  keywords: [
+    'artículos salud mental', 'infancia y salud mental', 'adolescencia psicología',
+    'inclusión escolar recursos', 'autismo educación', 'TDAH estrategias',
+    'psicopedagogía artículos', 'fonoaudiología infancia', 'práctica clínica',
+  ],
+  alternates: { canonical: 'https://eclatcentro.com/publicaciones' },
+}
 
 export default async function PublicacionesPage() {
   const supabase = createClient()
