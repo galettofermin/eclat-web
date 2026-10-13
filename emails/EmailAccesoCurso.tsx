@@ -3,6 +3,7 @@ import {
   Link, Preview, Section, Text,
 } from '@react-email/components'
 import * as React from 'react'
+import EmailHeader from './components/EmailHeader'
 
 interface Props {
   nombre: string
@@ -19,10 +20,7 @@ export default function EmailAccesoCurso({ nombre, tituloCurso, urlCurso }: Prop
       <Body style={body}>
         <Container style={container}>
 
-          <Section style={header}>
-            <Text style={logo}>ÉCLAT</Text>
-            <Text style={tagline}>Centro de Atención Integral · Oncativo</Text>
-          </Section>
+          <EmailHeader />
 
           <Section style={successBanner}>
             <Text style={successIcon}>✓</Text>
@@ -78,13 +76,6 @@ const container = {
   boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
 }
 
-const header = {
-  backgroundColor: '#1B2B26', padding: '28px 40px',
-  textAlign: 'center' as const,
-}
-
-const logo = { color: '#FFFFFF', fontSize: '24px', fontWeight: '600', margin: '0', letterSpacing: '-0.5px' }
-const tagline = { color: 'rgba(255,255,255,0.55)', fontSize: '12px', margin: '4px 0 0', letterSpacing: '0.1em', textTransform: 'uppercase' as const }
 
 const successBanner = {
   backgroundColor: '#DCEFE8', padding: '16px 40px',

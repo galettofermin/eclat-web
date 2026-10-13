@@ -3,6 +3,7 @@ import {
   Link, Preview, Section, Text, Hr,
 } from '@react-email/components'
 import * as React from 'react'
+import EmailHeader from './components/EmailHeader'
 
 interface Props {
   nombre: string
@@ -40,10 +41,7 @@ export default function EmailSeguimientoCurso({ nombre, tituloCurso, urlCurso, d
       <Body style={body}>
         <Container style={container}>
 
-          <Section style={header}>
-            <Text style={logoText}>ÉCLAT</Text>
-            <Text style={tagline}>Centro de Atención Integral · Oncativo</Text>
-          </Section>
+          <EmailHeader />
 
           <Section style={content}>
             <Text style={greeting}>Hola, {nombre}.</Text>
@@ -107,31 +105,6 @@ const container = {
   boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
 }
 
-const header = {
-  backgroundColor: '#FFFFFF',
-  borderTop: '4px solid #2F7D6B',
-  borderBottom: '1px solid #E8EDE9',
-  padding: '28px 40px',
-  textAlign: 'center' as const,
-}
-const logoText = {
-  color: '#1B2B26',
-  fontSize: '24px',
-  fontWeight: '600',
-  margin: '0 0 6px',
-  letterSpacing: '0.3em',
-  textTransform: 'uppercase' as const,
-  fontFamily: "'Plus Jakarta Sans', Arial, sans-serif",
-}
-const tagline = {
-  color: '#7FA294',
-  fontSize: '11px',
-  margin: '0',
-  letterSpacing: '0.12em',
-  textTransform: 'uppercase' as const,
-  fontFamily: "'Plus Jakarta Sans', Arial, sans-serif",
-  fontWeight: '400',
-}
 
 const content = { padding: '36px 40px 28px' }
 
