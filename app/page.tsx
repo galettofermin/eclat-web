@@ -6,7 +6,7 @@ import HomeClient from '@/components/HomeClient'
 export const revalidate = 60
 
 export const metadata: Metadata = {
-  title: 'Psicólogo en Oncativo · ÉCLAT Centro de Salud Mental y Educación',
+  title: 'Salud Mental y Educación · ÉCLAT Centro Interdisciplinario, Oncativo',
   alternates: { canonical: 'https://eclatcentro.com' },
 }
 
