@@ -9,7 +9,7 @@ interface Suscriptor {
   nombre: string | null
   lista: string
   activo: boolean
-  creado_en: string
+  creado_es: string
 }
 
 export default function AdminSuscriptores() {
@@ -64,7 +64,7 @@ export default function AdminSuscriptores() {
   const exportCSV = () => {
     const header = 'email,nombre,lista,fecha'
     const rows = items.map(s =>
-      `${s.email},${s.nombre ?? ''},${s.lista},${new Date(s.creado_en).toLocaleDateString('es-AR')}`
+      `${s.email},${s.nombre ?? ''},${s.lista},${new Date(s.creado_es).toLocaleDateString('es-AR')}`
     )
     const blob = new Blob([header + '\n' + rows.join('\n')], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)
@@ -195,7 +195,7 @@ export default function AdminSuscriptores() {
                       {s.lista}
                     </span>
                   </td>
-                  <td className="px-5 py-3.5 text-[13px] text-[#6E6E73]">{formatDate(s.creado_en)}</td>
+                  <td className="px-5 py-3.5 text-[13px] text-[#6E6E73]">{formatDate(s.creado_es)}</td>
                 </tr>
               ))}
             </tbody>
