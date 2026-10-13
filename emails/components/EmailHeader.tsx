@@ -8,9 +8,6 @@ import * as React from 'react'
 export default function EmailHeader() {
   return (
     <Section style={header}>
-      {/* Líneas decorativas SVG incrustadas como imagen data URI */}
-      <div style={decorTop} />
-
       <Img
         src="https://eclatcentro.com/logo-256.png"
         alt="ÉCLAT"
@@ -26,12 +23,10 @@ export default function EmailHeader() {
 }
 
 const header: React.CSSProperties = {
-  backgroundColor: '#F7F5F0',
+  backgroundColor: '#FFFFFF',
   padding: '36px 40px 28px',
   textAlign: 'center',
-  position: 'relative',
   borderBottom: '1px solid #D8E8E0',
-  overflow: 'hidden',
 }
 
 const logo: React.CSSProperties = {
@@ -48,17 +43,7 @@ const tagline: React.CSSProperties = {
   fontFamily: "'Plus Jakarta Sans', Arial, sans-serif",
 }
 
-// Línea decorativa superior — borde verde muy sutil
-const decorTop: React.CSSProperties = {
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  right: 0,
-  height: '3px',
-  background: 'linear-gradient(90deg, transparent 0%, #A8C9BC 30%, #2F7D6B 50%, #A8C9BC 70%, transparent 100%)',
-}
-
-// Línea decorativa inferior — más sutil
+// Línea decorativa inferior
 const decorBottom: React.CSSProperties = {
   marginTop: '20px',
   height: '1px',
