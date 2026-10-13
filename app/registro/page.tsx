@@ -37,18 +37,19 @@ export default function RegistroPage() {
       return
     }
 
-    fetch('/api/email/bienvenida', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: form.email, nombre }),
-    }).catch(() => {})
-
-    // Suscribir automáticamente al newsletter
-    fetch('/api/newsletter/suscribir', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: form.email, nombre }),
-    }).catch(() => {})
+    // Disparar en paralelo sin bloquear — pero con await para que no se cancelen si el browser navega
+    await Promise.allSettled([
+      fetch('/api/email/bienvenida', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: form.email, nombre }),
+      }),
+      fetch('/api/newsletter/suscribir', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: form.email, nombre }),
+      }),
+    ])
 
     if (data.session) { router.push('/mi-cuenta'); router.refresh() }
     else { setSent(true); setLoading(false) }

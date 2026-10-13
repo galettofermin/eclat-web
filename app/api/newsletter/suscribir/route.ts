@@ -13,15 +13,18 @@ export async function POST(req: Request) {
     const { email, nombre } = await req.json()
     if (!email) return NextResponse.json({ ok: true })
 
-    await createAdminClient()
+    const { error } = await createAdminClient()
       .from('suscriptores')
       .upsert(
         { email, nombre: nombre || null, lista: 'general', activo: true },
-        { onConflict: 'email', ignoreDuplicates: false }
+        { onConflict: 'email', ignoreDuplicates: true }
       )
 
+    if (error) console.error('[newsletter/suscribir] upsert error:', error)
+
     return NextResponse.json({ ok: true })
-  } catch {
+  } catch (err) {
+    console.error('[newsletter/suscribir] unexpected error:', err)
     return NextResponse.json({ ok: true })
   }
 }
