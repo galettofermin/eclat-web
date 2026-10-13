@@ -34,6 +34,16 @@ export async function POST(req: Request) {
       })
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
+  // Agregar al newsletter automáticamente al dar acceso
+  const { error: susError } = await admin
+    .from('suscriptores')
+    .upsert(
+      { email: user.email, nombre: user.user_metadata?.nombre || null, lista: 'general', activo: true },
+      { onConflict: 'email', ignoreDuplicates: true }
+    )
+  if (susError) console.error('[grant-access] suscriptores upsert error:', susError)
+
   return NextResponse.json({ ok: true })
 }
 

@@ -64,5 +64,14 @@ export async function POST(req: Request) {
     if (err) console.error(i === 0 ? 'Aviso de inscripción al admin:' : 'Confirmación al alumno:', err)
   })
 
+  // Agregar al newsletter automáticamente
+  const { error: susError } = await admin
+    .from('suscriptores')
+    .upsert(
+      { email: data.email, nombre: data.nombre, lista: 'general', activo: true },
+      { onConflict: 'email', ignoreDuplicates: true }
+    )
+  if (susError) console.error('[registrations] suscriptores upsert error:', susError)
+
   return NextResponse.json({ ok: true })
 }
