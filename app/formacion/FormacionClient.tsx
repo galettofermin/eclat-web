@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { WaIcon } from '@/components/WaIcon'
 
@@ -29,17 +29,73 @@ interface Props {
   waUrl: string
 }
 
+// Hook: detecta cuando un elemento entra al viewport
+function useInView(threshold = 0.15) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [inView, setInView] = useState(false)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { setInView(true); obs.disconnect() }
+    }, { threshold })
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [threshold])
+  return { ref, inView }
+}
+
 export default function FormacionClient({ heroTitle, heroLede, cursos, waUrl }: Props) {
   const heroRef = useRef<HTMLDivElement>(null)
   const [scrolled, setScrolled] = useState(false)
   const [mounted, setMounted] = useState(false)
 
+  // Ticker: ejes animados en bucle
+  const tickerRef = useRef<HTMLDivElement>(null)
+
+  // Sección cursos con entrada
+  const cursosAnim = useInView(0.1)
+
+  // Cards staggered
+  const cardRefs = useRef<(HTMLAnchorElement | null)[]>([])
+  const [visibleCards, setVisibleCards] = useState<boolean[]>([])
+
+  const setCardRef = useCallback((el: HTMLAnchorElement | null, i: number) => {
+    cardRefs.current[i] = el
+  }, [])
+
   useEffect(() => {
     setMounted(true)
+    setVisibleCards(new Array(cursos.length).fill(false))
+
     const onScroll = () => setScrolled(window.scrollY > 60)
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+  }, [cursos.length])
+
+  // Observar cada card individualmente para stagger
+  useEffect(() => {
+    if (!mounted) return
+    const observers: IntersectionObserver[] = []
+    cardRefs.current.forEach((el, i) => {
+      if (!el) return
+      const obs = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            setVisibleCards(prev => {
+              const next = [...prev]
+              next[i] = true
+              return next
+            })
+          }, i * 90)
+          obs.disconnect()
+        }
+      }, { threshold: 0.1 })
+      obs.observe(el)
+      observers.push(obs)
+    })
+    return () => observers.forEach(o => o.disconnect())
+  }, [mounted, cursos.length])
 
   return (
     <>
@@ -52,8 +108,12 @@ export default function FormacionClient({ heroTitle, heroLede, cursos, waUrl }: 
             <span>Formación</span>
           </nav>
 
-          <h1 className="fhero__title">{heroTitle}</h1>
+          <div className="fhero__eyebrow" aria-hidden="true">
+            <span className="fhero__dot" />
+            Próximas formaciones
+          </div>
 
+          <h1 className="fhero__title">{heroTitle}</h1>
           <p className="fhero__lede">{heroLede}</p>
 
           <div className="fhero__cta">
@@ -70,6 +130,9 @@ export default function FormacionClient({ heroTitle, heroLede, cursos, waUrl }: 
         {/* Decoración tipográfica de fondo */}
         <div className="fhero__word" aria-hidden="true">Formación</div>
 
+        {/* Orbe decorativo animado */}
+        <div className="fhero__orb" aria-hidden="true" />
+
         {/* Scroll indicator */}
         <div className={`fhero__scroll ${scrolled ? 'fhero__scroll--gone' : ''}`} aria-hidden="true">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -78,13 +141,42 @@ export default function FormacionClient({ heroTitle, heroLede, cursos, waUrl }: 
         </div>
       </div>
 
-      {/* ── Ejes temáticos ── */}
-      <section className="fejes">
-        <div className="fejes__inner">
-          <p className="fejes__label">Ejes temáticos</p>
-          <div className="fejes__flow">
-            {EJES.map((e, i) => (
-              <span key={i} className="fejes__eje">{e}</span>
+      {/* ── Ticker de ejes temáticos ── */}
+      <section className="fejes" aria-label="Ejes temáticos">
+        <div className="fejes__ticker-wrap">
+          <div className="fejes__ticker" ref={tickerRef} aria-hidden="true">
+            {/* Duplicado para bucle continuo */}
+            {[...EJES, ...EJES].map((e, i) => (
+              <span key={i} className="fejes__eje">
+                <span className="fejes__dot-sm" aria-hidden="true">·</span>
+                {e}
+              </span>
+            ))}
+          </div>
+        </div>
+        {/* Versión accesible oculta visualmente */}
+        <ul className="fejes__accessible">
+          {EJES.map((e, i) => <li key={i}>{e}</li>)}
+        </ul>
+      </section>
+
+      {/* ── Sección "¿Para quién?" ── */}
+      <section className="fquien">
+        <div className="fquien__inner" ref={cursosAnim.ref}>
+          <div className={`fquien__pill ${cursosAnim.inView ? 'fquien__pill--in' : ''}`}>
+            ¿Para quién es?
+          </div>
+          <div className={`fquien__grid ${cursosAnim.inView ? 'fquien__grid--in' : ''}`}>
+            {[
+              { icon: '🎓', label: 'Profesionales de la salud' },
+              { icon: '🏫', label: 'Docentes y equipos escolares' },
+              { icon: '👨‍👩‍👧', label: 'Familias y referentes' },
+              { icon: '🤝', label: 'Equipos interdisciplinarios' },
+            ].map((item, i) => (
+              <div key={i} className="fquien__item" style={{ transitionDelay: `${i * 80}ms` }}>
+                <span className="fquien__icon">{item.icon}</span>
+                <span className="fquien__label">{item.label}</span>
+              </div>
             ))}
           </div>
         </div>
@@ -94,14 +186,19 @@ export default function FormacionClient({ heroTitle, heroLede, cursos, waUrl }: 
       <section id="formaciones" className="fcursos">
         <div className="fcursos__inner">
           <header className="fcursos__header">
+            <p className="fcursos__eyebrow">Inscripciones abiertas · Modalidad presencial y virtual</p>
             <h2 className="fcursos__title">Próximas formaciones</h2>
-            <p className="fcursos__sub">Inscripciones abiertas · Modalidad presencial y virtual</p>
           </header>
 
           {cursos.length > 0 ? (
             <div className="fcursos__grid">
               {cursos.map((c, i) => (
-                <Link key={c.id} href={`/cursos/${c.id}`} className="fcard">
+                <Link
+                  key={c.id}
+                  href={`/cursos/${c.id}`}
+                  className={`fcard ${visibleCards[i] ? 'fcard--visible' : ''}`}
+                  ref={el => setCardRef(el, i)}
+                >
                   <div className="fcard__num" aria-hidden="true">
                     {String(i + 1).padStart(2, '0')}
                   </div>
@@ -112,11 +209,16 @@ export default function FormacionClient({ heroTitle, heroLede, cursos, waUrl }: 
                       <p className="fcard__desc">{c.description}</p>
                     )}
                   </div>
-                  <div className="fcard__arrow" aria-hidden="true">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                      <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
+                  <div className="fcard__footer">
+                    <span className="fcard__cta-text">Ver más</span>
+                    <span className="fcard__arrow" aria-hidden="true">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                      </svg>
+                    </span>
                   </div>
+                  {/* Brillo en hover */}
+                  <span className="fcard__shine" aria-hidden="true" />
                 </Link>
               ))}
             </div>
