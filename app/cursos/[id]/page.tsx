@@ -9,6 +9,7 @@ import CourseAccordion from '@/components/course/CourseAccordion'
 import CoursePriceCard from '@/components/course/CoursePriceCard'
 import ModuleCompleteBtn from '@/components/course/ModuleCompleteBtn'
 import ModuleContent from '@/components/course/ModuleContent'
+import CourseProgress from '@/components/course/CourseProgress'
 import type { QuizQuestion } from '@/lib/types'
 import type { Metadata } from 'next'
 import { DIRECTOR_EMAIL } from '@/lib/constants'
@@ -268,6 +269,16 @@ export default async function CursoPage({
 
         {/* Módulos / Contenido */}
         <div>
+          {/* Progreso — solo alumnos aprobados con módulos */}
+          {isApproved && !isDirector && user && modules.length > 0 && (
+            <CourseProgress
+              courseId={course.id}
+              userId={user.id}
+              totalModules={modules.filter(m => m.questions.length === 0).length + modules.filter(m => m.questions.length > 0).length}
+              moduleIds={modules.map(m => m.id)}
+            />
+          )}
+
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-[22px] md:text-[26px] font-bold text-[#0A0A0A]">
               Contenido del curso
