@@ -98,9 +98,9 @@ export default async function CursoPage({
       )}
 
       {/* ── HERO DEL CURSO ── */}
-      <div className="bg-gradient-to-b from-[#0A0A0A] to-[#1a1a1a] text-white">
+      <div className="bg-[#EDF3F0] border-b border-[#D6E4DC]">
         <div className="max-w-6xl mx-auto px-5 pt-12 pb-12">
-          <Link href="/formacion" className="inline-flex items-center gap-1.5 text-[13px] text-white/50 hover:text-white/80 transition-colors mb-6">
+          <Link href="/formacion" className="inline-flex items-center gap-1.5 text-[13px] text-[#4F7566] hover:text-[#29332F] transition-colors mb-6">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
             Formación
           </Link>
@@ -109,51 +109,51 @@ export default async function CursoPage({
             <div className="flex-1">
               {/* Badge */}
               <span className={`inline-block text-[11px] font-bold tracking-[0.15em] uppercase px-3 py-1 rounded-full mb-5 ${
-                course.is_free ? 'bg-[#DCEFE8] text-[#2F7D6B]' : 'bg-[#2F7D6B]/20 text-[#7bc4b5] border border-[#2F7D6B]/30'
+                course.is_free ? 'bg-white text-[#2F7D6B] border border-[#2F7D6B]/20' : 'bg-[#2F7D6B] text-white'
               }`}>
                 {course.badge}
               </span>
 
-              <h1 className="text-[clamp(2rem,5vw,3.2rem)] font-bold tracking-tight text-white leading-[1.05] mb-4">
+              <h1 className="text-[clamp(2rem,5vw,3.2rem)] font-bold tracking-tight text-[#1A2420] leading-[1.05] mb-4">
                 {course.title}
               </h1>
 
-              <p className="text-[16px] text-white/70 leading-relaxed mb-6 max-w-2xl">
+              <p className="text-[16px] text-[#4F5D58] leading-relaxed mb-6 max-w-2xl">
                 {course.long_description || course.description}
               </p>
 
               {/* Stats row */}
               <div className="flex flex-wrap gap-4">
                 {(studentCount ?? 0) > 0 && (
-                  <div className="flex items-center gap-1.5 text-[13px] text-white/60">
+                  <div className="flex items-center gap-1.5 text-[13px] text-[#4F7566]">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                       <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                       <circle cx="9" cy="7" r="4"/>
                       <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
                     </svg>
-                    <span className="text-white font-semibold">{studentCount}</span> alumno{(studentCount ?? 0) !== 1 ? 's' : ''} inscripto{(studentCount ?? 0) !== 1 ? 's' : ''}
+                    <span className="font-semibold text-[#1A2420]">{studentCount}</span> alumno{(studentCount ?? 0) !== 1 ? 's' : ''} inscripto{(studentCount ?? 0) !== 1 ? 's' : ''}
                   </div>
                 )}
                 {course.duration && (
-                  <div className="flex items-center gap-1.5 text-[13px] text-white/60">
+                  <div className="flex items-center gap-1.5 text-[13px] text-[#4F7566]">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
                     {course.duration}
                   </div>
                 )}
                 {course.modality && (
-                  <div className="flex items-center gap-1.5 text-[13px] text-white/60">
+                  <div className="flex items-center gap-1.5 text-[13px] text-[#4F7566]">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
                     {course.modality}
                   </div>
                 )}
                 {course.level && (
-                  <div className="flex items-center gap-1.5 text-[13px] text-white/60">
+                  <div className="flex items-center gap-1.5 text-[13px] text-[#4F7566]">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2 20h20M6 20V10M12 20V4M18 20v-6"/></svg>
                     {course.level}
                   </div>
                 )}
                 {modules.length > 0 && (
-                  <div className="flex items-center gap-1.5 text-[13px] text-white/60">
+                  <div className="flex items-center gap-1.5 text-[13px] text-[#4F7566]">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 2L2 7l10 5 10-5-10-5Z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
                     {modules.length} módulo{modules.length !== 1 ? 's' : ''}
                   </div>

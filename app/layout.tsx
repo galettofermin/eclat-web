@@ -9,6 +9,8 @@ import AdminBar from "@/components/AdminBar";
 import HideOnAdmin from "@/components/HideOnAdmin";
 import { RevealScript } from "@/components/RevealScript";
 import { ProgressBar } from "@/components/ProgressBar";
+import { NavFormacionDropdown } from "@/components/NavFormacionDropdown";
+import { createClient } from "@/lib/supabase/server";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -60,7 +62,26 @@ const NAV_LINKS = [
   { href: "/contacto",      label: "Contacto" },
 ];
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+const NAV_LINKS_BEFORE_FORM = [
+  { href: "/",              label: "Inicio" },
+  { href: "/nosotros",      label: "Nosotros" },
+  { href: "/servicios",     label: "Servicios" },
+];
+const NAV_LINKS_AFTER_FORM = [
+  { href: "/publicaciones", label: "Publicaciones" },
+  { href: "/contacto",      label: "Contacto" },
+];
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // Cargar cursos para el dropdown de Formación
+  const supabase = createClient()
+  const { data: cursosNav } = await supabase
+    .from('courses')
+    .select('id, title, badge')
+    .eq('published', true)
+    .order('sort_order')
+    .limit(6)
+
   return (
     <html lang="es" className={cormorant.variable}>
       <head>
@@ -120,7 +141,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Image src="/logo-256.png" alt="ÉCLAT" width={44} height={44} priority />
             </Link>
             <nav className="nav__links">
-              {NAV_LINKS.map((l) => (
+              {NAV_LINKS_BEFORE_FORM.map((l) => (
+                <Link key={l.href} href={l.href}>{l.label}</Link>
+              ))}
+              <NavFormacionDropdown cursos={cursosNav ?? []} />
+              {NAV_LINKS_AFTER_FORM.map((l) => (
                 <Link key={l.href} href={l.href}>{l.label}</Link>
               ))}
             </nav>
@@ -177,7 +202,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <div>
                 <p className="foot__col-title">Institución</p>
                 <ul className="foot__col-list">
-                  {NAV_LINKS.map((l) => (
+                  {[...NAV_LINKS_BEFORE_FORM, { href: '/formacion', label: 'Formación' }, ...NAV_LINKS_AFTER_FORM].map((l) => (
                     <li key={l.href}>
                       <Link href={l.href}>{l.label}</Link>
                     </li>
