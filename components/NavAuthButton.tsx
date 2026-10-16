@@ -80,7 +80,7 @@ export function NavAuthButton() {
     <div ref={ref} style={{ position: 'relative' }}>
       <button
         onClick={() => setOpen(o => !o)}
-        className="btn btn--primary nav__login"
+        className={`btn btn--primary nav__login${user.isAdmin ? ' nav__login--admin' : ''}`}
         style={{ padding: '11px 20px', fontSize: '15px', maxWidth: 220, display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', border: 'none' }}
         aria-haspopup="true"
         aria-expanded={open}
@@ -88,7 +88,7 @@ export function NavAuthButton() {
       >
         <Icon />
         <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          Hola, {user.nombre}
+          {user.isAdmin ? 'Admin' : `Hola, ${user.nombre}`}
         </span>
         <ChevronIcon />
       </button>
