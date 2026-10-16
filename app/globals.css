@@ -1003,6 +1003,47 @@ p { margin: 0; text-wrap: pretty; }
   width: clamp(60px, 12vw, 120px);
 }
 
+/* ── Ticker dentro del hero ── */
+.fhero__ticker-wrap {
+  position: relative;
+  overflow: hidden;
+  margin: clamp(20px,3vw,32px) 0 clamp(24px,3.5vw,40px);
+  /* fade en los bordes */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 8%, #000 92%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 8%, #000 92%, transparent 100%);
+  max-width: 680px;
+}
+.fhero__ticker {
+  display: flex;
+  width: max-content;
+  gap: 0;
+  animation: fTickerScroll 22s linear infinite;
+}
+@keyframes fTickerScroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.fhero__eje {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 20px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--sage-text);
+  white-space: nowrap;
+}
+.fhero__dot-sm {
+  color: var(--sage-deep);
+  font-size: 18px;
+  line-height: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .fhero__ticker { animation: none; }
+}
+
 .fhero__lede {
   font-size: clamp(17px, 1.5vw, 20px);
   color: var(--ink-muted);

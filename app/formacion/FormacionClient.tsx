@@ -96,6 +96,22 @@ export default function FormacionClient({ heroTitle, heroLede, cursos, waUrl }: 
           </div>
 
           <h1 className="fhero__title">{heroTitle}</h1>
+
+          {/* ── Ticker dentro del hero, justo bajo el título ── */}
+          <div className="fhero__ticker-wrap" aria-hidden="true">
+            <div className="fhero__ticker">
+              {[...EJES, ...EJES].map((e, i) => (
+                <span key={i} className="fhero__eje">
+                  <span className="fhero__dot-sm">·</span>
+                  {e}
+                </span>
+              ))}
+            </div>
+          </div>
+          <ul className="fejes__accessible">
+            {EJES.map((e, i) => <li key={i}>{e}</li>)}
+          </ul>
+
           <p className="fhero__lede">{heroLede}</p>
 
           <div className="fhero__cta">
@@ -109,18 +125,6 @@ export default function FormacionClient({ heroTitle, heroLede, cursos, waUrl }: 
           </div>
         </div>
 
-        {/* Decoración tipográfica de fondo */}
-        <div className="fhero__word" aria-hidden="true">Formación</div>
-
-        {/* Logo marca de agua — esquina inferior derecha */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/LOGO CON NOMBRE.png"
-          alt=""
-          aria-hidden="true"
-          className="fhero__watermark"
-        />
-
         {/* Scroll indicator */}
         <div className={`fhero__scroll ${scrolled ? 'fhero__scroll--gone' : ''}`} aria-hidden="true">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -129,24 +133,7 @@ export default function FormacionClient({ heroTitle, heroLede, cursos, waUrl }: 
         </div>
       </div>
 
-      {/* ── Ticker de ejes temáticos ── */}
-      <section className="fejes" aria-label="Ejes temáticos">
-        <div className="fejes__ticker-wrap">
-          <div className="fejes__ticker" ref={tickerRef} aria-hidden="true">
-            {/* Duplicado para bucle continuo */}
-            {[...EJES, ...EJES].map((e, i) => (
-              <span key={i} className="fejes__eje">
-                <span className="fejes__dot-sm" aria-hidden="true">·</span>
-                {e}
-              </span>
-            ))}
-          </div>
-        </div>
-        {/* Versión accesible oculta visualmente */}
-        <ul className="fejes__accessible">
-          {EJES.map((e, i) => <li key={i}>{e}</li>)}
-        </ul>
-      </section>
+      {/* ── Sección ejes separada — ya no necesaria, ticker está en hero ── */}
 
       {/* ── Cursos ── */}
       <section id="formaciones" className="fcursos">
