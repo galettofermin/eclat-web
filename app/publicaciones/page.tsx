@@ -3,10 +3,9 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { WA_URL } from '@/lib/constants'
 import { WaIcon } from '@/components/WaIcon'
-import ArticleAdminActions, { NewArticleButton } from '@/components/ArticleAdminActions'
+import { NewArticleButton } from '@/components/ArticleAdminActions'
 import { AnimatedSection } from '@/components/AnimatedSection'
-import { StaggerList, StaggerItem } from '@/components/StaggerList'
-import { HoverCard } from '@/components/HoverCard'
+import { PublicacionesSearch } from '@/components/PublicacionesSearch'
 
 export const revalidate = 60
 
@@ -56,32 +55,7 @@ export default async function PublicacionesPage() {
               <p style={{ fontSize: 15 }}>Estamos preparando los primeros artículos.</p>
             </AnimatedSection>
           ) : (
-            <StaggerList className="writings">
-              {articles.map(a => (
-                <StaggerItem key={a.id}>
-                <HoverCard className="writing" style={{ position: 'relative' }}>
-                  <ArticleAdminActions id={a.id} />
-                  {a.image_url && (
-                    // La imagen también lleva al artículo; fuera del orden de tabulación para no duplicar el link del título
-                    <Link href={`/publicaciones/${a.id}`} tabIndex={-1} aria-hidden="true"
-                      style={{ display: 'block', width: '100%', aspectRatio: '16/9', overflow: 'hidden', borderRadius: '10px', marginBottom: '14px' }}>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={a.image_url} alt="" loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    </Link>
-                  )}
-                  <h3>
-                    <Link href={`/publicaciones/${a.id}`} style={{ color: 'inherit' }}>{a.title}</Link>
-                  </h3>
-                  <p>{a.excerpt}</p>
-                  <span className="writing__meta">
-                    <Link href={`/publicaciones/${a.id}`} style={{ color: 'var(--sage-text)', fontWeight: 700 }}>
-                      Leer →
-                    </Link>
-                  </span>
-                </HoverCard>
-                </StaggerItem>
-              ))}
-            </StaggerList>
+            <PublicacionesSearch articles={articles} />
           )}
         </div>
       </section>
