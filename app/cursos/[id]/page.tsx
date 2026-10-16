@@ -359,10 +359,10 @@ export default async function CursoPage({
             <div className="mt-6 bg-[#EDF3F0] border border-[#C6D9D1] rounded-2xl p-7 md:p-8 text-center">
               <p className="text-[17px] font-semibold mb-2 text-[#1A2420]">Desbloqueá el contenido completo</p>
               <p className="text-[#4F5D58] text-[14px] mb-6">
-                {course.price > 0 && `${formatPrice(course.price)} · `}
                 {user
-                  ? 'Inscribite y te contactamos para confirmar tu lugar.'
-                  : 'Creá tu cuenta para inscribirte. Te contactamos para confirmar tu lugar.'}
+                  ? <>Inscribite y te contactamos para confirmar tu lugar.{course.price > 0 && <> · <strong className="text-[#1A2420]">{formatPrice(course.price)}</strong></>}</>
+                  : <>Creá tu cuenta e inscribite. Te contactamos para confirmar tu lugar.{course.price > 0 && <> · <strong className="text-[#1A2420]">{formatPrice(course.price)}</strong></>}</>
+                }
               </p>
               <div className="flex justify-center">
                 {user ? (
