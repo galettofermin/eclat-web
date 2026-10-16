@@ -169,8 +169,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               {/* Columna marca */}
               <div className="foot__brand">
                 <div className="foot__logo-wrap">
-                  <Image className="foot__logo" src="/logo-256.png" alt="" width={40} height={40} />
-                  <span className="foot__name">ÉCLAT</span>
+                  <Image
+                    className="foot__logo-full"
+                    src="/LOGO CON NOMBRE.png"
+                    alt="ÉCLAT Centro de Atención Integral"
+                    width={220}
+                    height={80}
+                  />
                 </div>
                 <p className="foot__tag">Centro de atención integral en Oncativo, Córdoba. Salud mental, educación y formación desde una mirada interdisciplinaria.</p>
                 <div className="foot__social">
