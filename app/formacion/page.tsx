@@ -26,8 +26,8 @@ export const metadata: Metadata = {
 };
 
 const DEFAULTS = {
-  'formacion.hero.title': 'Cursos, seminarios y trayectos formativos.',
-  'formacion.hero.lede': 'Un espacio donde la práctica se piensa y se transmite. Compartimos herramientas, experiencias y conocimientos vinculados a la salud mental, la educación y el trabajo interdisciplinario.',
+  'formacion.hero.title': 'Un espacio de transmisión.',
+  'formacion.hero.lede': 'Porque hay un saber que no se enseña sino que se transmite. Seminarios, trayectos y encuentros para quienes trabajan con la infancia, la clínica y la escuela.',
 }
 
 export default async function FormacionPage() {

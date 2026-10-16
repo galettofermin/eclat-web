@@ -92,7 +92,7 @@ export default function FormacionClient({ heroTitle, heroLede, cursos, waUrl }: 
 
           <div className="fhero__eyebrow" aria-hidden="true">
             <span className="fhero__dot" />
-            Próximas formaciones
+            Formación desde una perspectiva clínica
           </div>
 
           <h1 className="fhero__title">{heroTitle}</h1>
@@ -139,8 +139,8 @@ export default function FormacionClient({ heroTitle, heroLede, cursos, waUrl }: 
       <section id="formaciones" className="fcursos">
         <div className="fcursos__inner">
           <header className="fcursos__header">
-            <p className="fcursos__eyebrow">Inscripciones abiertas · Modalidad presencial y virtual</p>
-            <h2 className="fcursos__title">Próximas formaciones</h2>
+            <p className="fcursos__eyebrow">Modalidad presencial y virtual</p>
+            <h2 className="fcursos__title">Próximos trayectos</h2>
           </header>
 
           {cursos.length > 0 ? (
@@ -192,8 +192,8 @@ export default function FormacionClient({ heroTitle, heroLede, cursos, waUrl }: 
       <section className="fband">
         <div className="fband__inner">
           <div className="fband__text">
-            <h2 className="fband__title">Recibí el calendario</h2>
-            <p className="fband__sub">Te avisamos cuando se abren las inscripciones de cada curso, seminario o jornada.</p>
+            <h2 className="fband__title">Seguí el calendario</h2>
+            <p className="fband__sub">Te avisamos cuando se abren las inscripciones de cada seminario, trayecto o jornada.</p>
           </div>
           <a href={waUrl} target="_blank" rel="noopener noreferrer" className="fband__cta">
             <WaIcon />
