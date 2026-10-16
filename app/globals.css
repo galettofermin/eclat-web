@@ -696,6 +696,8 @@ p { margin: 0; text-wrap: pretty; }
     justify-content: center; align-items: center;
   }
   .nav__login svg { width: 19px; height: 19px; flex-shrink: 0; }
+  /* Ocultar botón "Registrarse" en mobile — solo mostrar ingreso */
+  .nav__register { display: none !important; }
 }
 
 /* ── Hero home mobile ── */

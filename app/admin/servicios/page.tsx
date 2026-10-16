@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { Service, Servicio } from '@/lib/types'
-import AdminNav from '@/components/admin/AdminNav'
 
 export default function AdminServicios() {
   const [services, setServices] = useState<Service[]>([])
@@ -104,7 +103,6 @@ export default function AdminServicios() {
 
   return (
     <div>
-      <AdminNav />
       <h1 className="text-[28px] font-semibold text-[#0A0A0A] mb-1">Servicios</h1>
       <p className="text-[15px] text-[#6E6E73] mb-8">Editá los títulos, descripciones e imágenes de cada servicio</p>
 

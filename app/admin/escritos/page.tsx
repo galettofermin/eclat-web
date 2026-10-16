@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import type { Article } from '@/lib/types'
 import NewsletterSender from '@/components/admin/NewsletterSender'
-import AdminNav from '@/components/admin/AdminNav'
 
 export default function AdminEscritos() {
   const [articles, setArticles] = useState<Article[]>([])
@@ -38,7 +37,6 @@ export default function AdminEscritos() {
 
   return (
     <div>
-      <AdminNav />
       <div className="flex items-start justify-between mb-8">
         <div>
           <h1 className="text-[28px] font-semibold text-[#0A0A0A]">Escritos</h1>

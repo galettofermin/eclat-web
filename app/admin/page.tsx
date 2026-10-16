@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import AdminNav from '@/components/admin/AdminNav'
 import RegistrationsTab from '@/components/admin/RegistrationsTab'
 
 interface Stats {
@@ -123,8 +122,6 @@ export default function AdminDashboard() {
 
   return (
     <div>
-      <AdminNav />
-
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-[28px] font-semibold text-[#0A0A0A]">Panel de administración</h1>
