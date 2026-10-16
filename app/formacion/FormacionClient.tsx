@@ -29,21 +29,6 @@ interface Props {
   waUrl: string
 }
 
-// Hook: detecta cuando un elemento entra al viewport
-function useInView(threshold = 0.15) {
-  const ref = useRef<HTMLDivElement>(null)
-  const [inView, setInView] = useState(false)
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const obs = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) { setInView(true); obs.disconnect() }
-    }, { threshold })
-    obs.observe(el)
-    return () => obs.disconnect()
-  }, [threshold])
-  return { ref, inView }
-}
 
 export default function FormacionClient({ heroTitle, heroLede, cursos, waUrl }: Props) {
   const heroRef = useRef<HTMLDivElement>(null)
@@ -52,9 +37,6 @@ export default function FormacionClient({ heroTitle, heroLede, cursos, waUrl }: 
 
   // Ticker: ejes animados en bucle
   const tickerRef = useRef<HTMLDivElement>(null)
-
-  // Sección cursos con entrada
-  const cursosAnim = useInView(0.1)
 
   // Cards staggered
   const cardRefs = useRef<(HTMLAnchorElement | null)[]>([])
@@ -158,28 +140,6 @@ export default function FormacionClient({ heroTitle, heroLede, cursos, waUrl }: 
         <ul className="fejes__accessible">
           {EJES.map((e, i) => <li key={i}>{e}</li>)}
         </ul>
-      </section>
-
-      {/* ── Sección "¿Para quién?" ── */}
-      <section className="fquien">
-        <div className="fquien__inner" ref={cursosAnim.ref}>
-          <div className={`fquien__pill ${cursosAnim.inView ? 'fquien__pill--in' : ''}`}>
-            ¿Para quién es?
-          </div>
-          <div className={`fquien__grid ${cursosAnim.inView ? 'fquien__grid--in' : ''}`}>
-            {[
-              { icon: '🎓', label: 'Profesionales de la salud' },
-              { icon: '🏫', label: 'Docentes y equipos escolares' },
-              { icon: '👨‍👩‍👧', label: 'Familias y referentes' },
-              { icon: '🤝', label: 'Equipos interdisciplinarios' },
-            ].map((item, i) => (
-              <div key={i} className="fquien__item" style={{ transitionDelay: `${i * 80}ms` }}>
-                <span className="fquien__icon">{item.icon}</span>
-                <span className="fquien__label">{item.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
       </section>
 
       {/* ── Cursos ── */}

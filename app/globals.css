@@ -1135,89 +1135,9 @@ p { margin: 0; text-wrap: pretty; }
   list-style: none;
 }
 
-/* ── Sección ¿Para quién? ── */
-.fquien {
-  background: var(--f-dark);
-  padding-block: clamp(52px,7vw,80px);
-  border-top: 1px solid rgba(168,201,188,.07);
-}
-
-.fquien__inner {
-  max-width: var(--maxw);
-  margin: 0 auto;
-  padding-inline: var(--gut);
-}
-
-.fquien__pill {
-  display: inline-block;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: .13em;
-  text-transform: uppercase;
-  color: var(--f-mid);
-  background: rgba(47,125,107,.12);
-  border: 1px solid rgba(47,125,107,.25);
-  border-radius: 999px;
-  padding: 6px 14px;
-  margin-bottom: clamp(28px,4vw,40px);
-  opacity: 0;
-  transform: translateY(12px);
-  transition: opacity .5s ease, transform .5s ease;
-}
-.fquien__pill--in {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.fquien__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
-  gap: 2px;
-}
-
-.fquien__item {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: clamp(20px,3vw,28px) clamp(20px,3vw,28px);
-  background: var(--f-card);
-  opacity: 0;
-  transform: translateY(16px);
-  transition: opacity .5s ease, transform .5s ease, background .2s ease;
-}
-.fquien__grid--in .fquien__item {
-  opacity: 1;
-  transform: translateY(0);
-}
-.fquien__item:hover { background: rgba(47,125,107,.12); }
-
-.fquien__icon {
-  font-size: 24px;
-  flex-shrink: 0;
-  line-height: 1;
-}
-
-.fquien__label {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--f-ink);
-  line-height: 1.3;
-}
-
-/* Bordes redondeados del grid de ¿para quién? */
-.fquien__grid .fquien__item:first-child { border-radius: 16px 0 0 16px; }
-.fquien__grid .fquien__item:last-child  { border-radius: 0 16px 16px 0; }
-@media (max-width: 600px) {
-  .fquien__grid { grid-template-columns: 1fr 1fr; }
-  .fquien__grid .fquien__item:first-child { border-radius: 16px 0 0 0; }
-  .fquien__grid .fquien__item:nth-child(2) { border-radius: 0 16px 0 0; }
-  .fquien__grid .fquien__item:nth-last-child(2) { border-radius: 0 0 0 16px; }
-  .fquien__grid .fquien__item:last-child { border-radius: 0 0 16px 0; }
-}
-
 /* ── Sección de cursos ── */
 .fcursos {
-  background: #F5F7F5;
+  background: var(--paper);
   padding-block: clamp(64px,9vw,120px);
 }
 
@@ -1244,7 +1164,7 @@ p { margin: 0; text-wrap: pretty; }
   font-family: Georgia, 'Times New Roman', serif;
   font-size: clamp(32px,4.5vw,56px);
   font-weight: 400;
-  color: var(--f-dark);
+  color: var(--ink);
   letter-spacing: -0.025em;
   line-height: 1.1;
   margin: 0;
@@ -1257,10 +1177,11 @@ p { margin: 0; text-wrap: pretty; }
   gap: 3px;
 }
 
-/* Tarjeta individual */
+/* Tarjeta individual — estilo claro */
 .fcard {
-  background: var(--f-dark);
-  padding: clamp(32px,4vw,48px) clamp(28px,3vw,40px);
+  background: #fff;
+  border: 1.5px solid var(--line);
+  padding: clamp(28px,3.5vw,44px) clamp(24px,3vw,36px);
   display: flex;
   flex-direction: column;
   gap: 0;
@@ -1268,124 +1189,118 @@ p { margin: 0; text-wrap: pretty; }
   position: relative;
   overflow: hidden;
   border-radius: 0;
-  transition: background .3s ease, transform .3s cubic-bezier(.2,.8,.2,1);
-  min-height: 260px;
+  transition: border-color .25s ease, box-shadow .25s ease, transform .3s cubic-bezier(.2,.8,.2,1);
+  min-height: 240px;
 
   /* Entrada animada */
   opacity: 0;
-  transform: translateY(24px);
+  transform: translateY(20px);
 }
 .fcard--visible {
   opacity: 1;
   transform: translateY(0);
-  transition: opacity .55s cubic-bezier(.2,.8,.2,1),
-              transform .55s cubic-bezier(.2,.8,.2,1),
-              background .3s ease;
+  transition: opacity .5s cubic-bezier(.2,.8,.2,1),
+              transform .5s cubic-bezier(.2,.8,.2,1),
+              border-color .25s ease,
+              box-shadow .25s ease;
 }
 
-/* Gradiente de hover */
+.fcard:hover {
+  border-color: var(--sage-deep);
+  box-shadow: 0 8px 32px rgba(79,117,102,.1);
+  transform: translateY(-3px);
+}
+
+/* Línea verde superior que aparece en hover */
 .fcard::before {
   content: '';
   position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(47,125,107,.2) 0%, transparent 65%);
-  opacity: 0;
-  transition: opacity .4s ease;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--sage-text), var(--green-accent));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .35s cubic-bezier(.2,.8,.2,1);
+  border-radius: 0;
 }
-.fcard:hover { background: #1a3d35; }
-.fcard:hover::before { opacity: 1; }
-
-/* Línea verde lateral que aparece en hover */
-.fcard::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 20%;
-  height: 60%;
-  width: 3px;
-  background: var(--f-mid);
-  border-radius: 0 3px 3px 0;
-  transform: scaleY(0);
-  transform-origin: center;
-  transition: transform .3s cubic-bezier(.2,.8,.2,1);
-}
-.fcard:hover::after { transform: scaleY(1); }
+.fcard:hover::before { transform: scaleX(1); }
 
 /* Brillo que pasa en hover */
 .fcard__shine {
   position: absolute;
   top: 0; left: -100%;
-  width: 60%;
+  width: 55%;
   height: 100%;
-  background: linear-gradient(105deg, transparent 40%, rgba(168,201,188,.06) 50%, transparent 60%);
-  transition: left .5s ease;
+  background: linear-gradient(105deg, transparent 40%, rgba(198,224,214,.18) 50%, transparent 60%);
+  transition: left .55s ease;
   pointer-events: none;
 }
-.fcard:hover .fcard__shine { left: 140%; }
+.fcard:hover .fcard__shine { left: 150%; }
 
+/* Número decorativo */
 .fcard__num {
   font-family: Georgia, serif;
-  font-size: clamp(52px,8vw,80px);
+  font-size: clamp(52px,7vw,76px);
   font-weight: 700;
-  color: rgba(168,201,188,.09);
+  color: rgba(79,117,102,.07);
   line-height: 1;
   letter-spacing: -0.04em;
   position: absolute;
-  top: 16px;
-  right: 20px;
+  top: 14px;
+  right: 18px;
   pointer-events: none;
   transition: color .3s ease, transform .3s ease;
 }
 .fcard:hover .fcard__num {
-  color: rgba(168,201,188,.16);
-  transform: scale(1.05) translateX(-4px);
+  color: rgba(79,117,102,.13);
+  transform: scale(1.04) translateX(-3px);
 }
 
 .fcard__body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   position: relative;
   z-index: 1;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .fcard__badge {
   font-size: 10px;
   font-weight: 800;
-  letter-spacing: .16em;
+  letter-spacing: .14em;
   text-transform: uppercase;
-  color: var(--f-mid);
-  background: rgba(47,125,107,.15);
-  border: 1px solid rgba(47,125,107,.25);
+  color: var(--sage-text);
+  background: var(--sage-50);
+  border: 1px solid var(--line);
   border-radius: 999px;
   padding: 4px 10px;
   display: inline-block;
   width: fit-content;
-  transition: background .25s ease, border-color .25s ease;
+  transition: background .2s ease, border-color .2s ease;
 }
 .fcard:hover .fcard__badge {
-  background: rgba(47,125,107,.28);
-  border-color: rgba(47,125,107,.5);
+  background: var(--sage-200);
+  border-color: var(--sage-deep);
 }
 
 .fcard__title {
   font-family: Georgia, 'Times New Roman', serif;
-  font-size: clamp(21px,2.2vw,28px);
+  font-size: clamp(20px,2.1vw,26px);
   font-weight: 400;
-  color: var(--f-ink);
-  line-height: 1.2;
+  color: var(--ink);
+  line-height: 1.22;
   letter-spacing: -0.015em;
   margin: 0;
-  transition: color .25s ease;
+  transition: color .2s ease;
 }
-.fcard:hover .fcard__title { color: #fff; }
+.fcard:hover .fcard__title { color: var(--sage-text); }
 
 .fcard__desc {
   font-size: 14px;
-  color: var(--f-muted);
-  line-height: 1.58;
+  color: var(--ink-muted);
+  line-height: 1.6;
   margin: 0;
   max-width: 40ch;
 }
@@ -1397,43 +1312,42 @@ p { margin: 0; text-wrap: pretty; }
   justify-content: space-between;
   position: relative;
   z-index: 1;
-  border-top: 1px solid rgba(168,201,188,.1);
-  padding-top: 16px;
-  transition: border-color .25s ease;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  transition: border-color .2s ease;
 }
-.fcard:hover .fcard__footer { border-color: rgba(168,201,188,.2); }
+.fcard:hover .fcard__footer { border-color: var(--sage-deep); }
 
 .fcard__cta-text {
   font-size: 13px;
   font-weight: 700;
-  letter-spacing: .04em;
-  color: var(--f-mid);
-  transition: color .25s ease;
+  letter-spacing: .03em;
+  color: var(--ink-muted);
+  transition: color .2s ease;
 }
-.fcard:hover .fcard__cta-text { color: var(--f-accent); }
+.fcard:hover .fcard__cta-text { color: var(--sage-text); }
 
 .fcard__arrow {
-  color: var(--f-mid);
-  transition: transform .3s cubic-bezier(.2,.8,.2,1), color .25s ease;
+  color: var(--ink-muted);
+  transition: transform .3s cubic-bezier(.2,.8,.2,1), color .2s ease;
   display: flex;
   align-items: center;
 }
 .fcard:hover .fcard__arrow {
-  transform: translateX(6px);
-  color: var(--f-accent);
+  transform: translateX(5px);
+  color: var(--sage-text);
 }
 
-/* Bordes redondeados en esquinas del grid */
-.fcursos__grid > .fcard:first-child { border-radius: 20px 0 0 0; }
-.fcursos__grid > .fcard:nth-child(2) { border-radius: 0 20px 0 0; }
-.fcursos__grid > .fcard:last-child:nth-child(odd) { border-radius: 0 0 20px 20px; }
-.fcursos__grid > .fcard:nth-last-child(1):nth-child(even),
-.fcursos__grid > .fcard:nth-last-child(2) { border-radius: 0 0 0 20px; }
-.fcursos__grid > .fcard:nth-last-child(1):nth-child(even) { border-radius: 0 0 20px 0; }
+/* Grid — bordes redondeados en esquinas exteriores */
+.fcursos__grid > .fcard:first-child { border-radius: 18px 0 0 0; }
+.fcursos__grid > .fcard:nth-child(2) { border-radius: 0 18px 0 0; }
+.fcursos__grid > .fcard:last-child:nth-child(odd) { border-radius: 0 0 18px 18px; }
+.fcursos__grid > .fcard:nth-last-child(2):nth-child(odd) { border-radius: 0 0 0 18px; }
+.fcursos__grid > .fcard:nth-last-child(1):nth-child(even) { border-radius: 0 0 18px 0; }
 @media (max-width: 720px) {
-  .fcursos__grid > .fcard:first-child { border-radius: 20px 20px 0 0; }
-  .fcursos__grid > .fcard:nth-child(2) { border-radius: 0; }
-  .fcursos__grid > .fcard:last-child { border-radius: 0 0 20px 20px; }
+  .fcursos__grid > .fcard { border-radius: 0 !important; }
+  .fcursos__grid > .fcard:first-child { border-radius: 18px 18px 0 0 !important; }
+  .fcursos__grid > .fcard:last-child { border-radius: 0 0 18px 18px !important; }
 }
 
 /* Estado vacío */
