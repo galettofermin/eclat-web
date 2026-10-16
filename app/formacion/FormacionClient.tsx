@@ -115,6 +115,11 @@ export default function FormacionClient({ heroTitle, heroLede, cursos, waUrl }: 
         {/* Orbe decorativo animado */}
         <div className="fhero__orb" aria-hidden="true" />
 
+        {/* Círculos flotantes visibles inmediatamente */}
+        <div className="fhero__float fhero__float--a" aria-hidden="true" />
+        <div className="fhero__float fhero__float--b" aria-hidden="true" />
+        <div className="fhero__float fhero__float--c" aria-hidden="true" />
+
         {/* Scroll indicator */}
         <div className={`fhero__scroll ${scrolled ? 'fhero__scroll--gone' : ''}`} aria-hidden="true">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">

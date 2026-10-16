@@ -882,46 +882,94 @@ p { margin: 0; text-wrap: pretty; }
 .fhero {
   position: relative;
   min-height: 100svh;
-  background: var(--f-dark);
+  background: #FAFBF9;
   display: flex;
   align-items: center;
   overflow: hidden;
 }
 
-/* Orbe decorativo animado */
+/* Orbe decorativo animado — centrado en el hero, visible inmediatamente */
 .fhero__orb {
   position: absolute;
-  width: clamp(400px, 60vw, 800px);
-  height: clamp(400px, 60vw, 800px);
+  width: clamp(500px, 70vw, 900px);
+  height: clamp(500px, 70vw, 900px);
   border-radius: 50%;
-  background: radial-gradient(circle at center, rgba(198,224,214,.55) 0%, rgba(198,224,214,.18) 50%, transparent 70%);
-  top: -20%;
-  right: -15%;
+  background: radial-gradient(circle at center, rgba(79,117,102,.13) 0%, rgba(164,200,185,.10) 40%, transparent 70%);
+  top: 50%;
+  right: -10%;
+  transform: translateY(-50%);
   pointer-events: none;
-  animation: fOrbPulse 8s ease-in-out infinite;
-}
-@keyframes fOrbPulse {
-  0%, 100% { transform: scale(1) translate(0, 0); opacity: .8; }
-  33%       { transform: scale(1.08) translate(-2%, 3%); opacity: 1; }
-  66%       { transform: scale(.96) translate(3%, -2%); opacity: .7; }
+  animation: fOrbPulse 7s ease-in-out infinite;
 }
 
-/* Texto decorativo de fondo */
+/* Segundo orbe más pequeño, izquierda */
+.fhero__orb::after {
+  content: '';
+  position: absolute;
+  width: 45%;
+  height: 45%;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(47,125,107,.10) 0%, transparent 70%);
+  bottom: 5%;
+  left: -30%;
+  animation: fOrbPulse 5s ease-in-out infinite reverse;
+}
+
+@keyframes fOrbPulse {
+  0%, 100% { transform: translateY(-50%) scale(1);    opacity: .9; }
+  50%       { transform: translateY(-50%) scale(1.07); opacity: 1;  }
+}
+
+/* Texto decorativo de fondo — más visible y centrado en la pantalla */
 .fhero__word {
   position: absolute;
-  right: -0.05em;
-  bottom: -0.18em;
+  right: -0.02em;
+  top: 50%;
+  transform: translateY(-50%);
   font-family: Georgia, 'Times New Roman', serif;
-  font-size: clamp(120px, 22vw, 280px);
+  font-size: clamp(140px, 24vw, 320px);
   font-weight: 700;
   letter-spacing: -0.04em;
   color: transparent;
-  -webkit-text-stroke: 1.5px rgba(79,117,102,.1);
-  text-stroke: 1.5px rgba(79,117,102,.1);
+  -webkit-text-stroke: 1.5px rgba(79,117,102,.12);
+  text-stroke: 1.5px rgba(79,117,102,.12);
   pointer-events: none;
   user-select: none;
   line-height: 1;
   white-space: nowrap;
+}
+
+/* Círculos flotantes decorativos */
+.fhero__float {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  border: 1.5px solid rgba(79,117,102,.18);
+  animation: fFloat 6s ease-in-out infinite;
+}
+.fhero__float--a {
+  width: 80px; height: 80px;
+  top: 18%; left: 60%;
+  animation-duration: 7s;
+}
+.fhero__float--b {
+  width: 44px; height: 44px;
+  top: 65%; left: 72%;
+  animation-duration: 5s;
+  animation-delay: -2s;
+  border-color: rgba(79,117,102,.12);
+}
+.fhero__float--c {
+  width: 120px; height: 120px;
+  top: 30%; left: 50%;
+  animation-duration: 9s;
+  animation-delay: -4s;
+  border-color: rgba(79,117,102,.08);
+}
+@keyframes fFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33%       { transform: translateY(-18px) rotate(4deg); }
+  66%       { transform: translateY(10px) rotate(-3deg); }
 }
 
 .fhero__inner {
@@ -943,6 +991,7 @@ p { margin: 0; text-wrap: pretty; }
 @media (prefers-reduced-motion: reduce) {
   .fhero__inner { opacity: 1; transform: none; transition: none; }
   .fhero__orb { animation: none; }
+  .fhero__float { animation: none; }
 }
 
 .fhero__crumb {
