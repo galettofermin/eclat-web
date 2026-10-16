@@ -371,12 +371,12 @@ export default async function CursoPage({
                     courseTitle={course.title}
                     price={course.price}
                     userEmail={user?.email ?? null}
-                    triggerClassName="bg-[#2F7D6B] text-white font-semibold px-8 py-3 rounded-full text-[15px] hover:bg-[#266859] transition-colors"
+                    triggerClassName="bg-[#2F7D6B] text-white font-semibold px-8 py-3 rounded-full text-[15px] hover:bg-[#266859] transition-colors btn-pulse"
                   />
                 ) : (
                   <Link
                     href={`/registro?next=/cursos/${course.id}`}
-                    className="bg-[#2F7D6B] text-white font-semibold px-8 py-3 rounded-full text-[15px] hover:bg-[#266859] transition-colors"
+                    className="bg-[#2F7D6B] text-white font-semibold px-8 py-3 rounded-full text-[15px] hover:bg-[#266859] transition-colors btn-pulse"
                   >
                     Inscribirme
                   </Link>
