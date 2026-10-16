@@ -354,26 +354,31 @@ export default async function CursoPage({
             </div>
           )}
 
-          {/* CTA sin acceso: el modal guarda la inscripción y el admin habilita el curso */}
+          {/* CTA sin acceso */}
           {!isApproved && !isPending && !course.is_free && (
             <div className="mt-6 bg-[#EDF3F0] border border-[#C6D9D1] rounded-2xl p-7 md:p-8 text-center">
               <p className="text-[17px] font-semibold mb-2 text-[#1A2420]">Desbloqueá el contenido completo</p>
               <p className="text-[#4F5D58] text-[14px] mb-6">
-                Inscribite y te contactamos para confirmar tu lugar.
-                {!user && ' Para ver los módulos vas a necesitar una cuenta.'}
-                {course.price > 0 && ` ${formatPrice(course.price)} · Acceso ilimitado al contenido.`}
+                {course.price > 0 && `${formatPrice(course.price)} · `}
+                {user
+                  ? 'Inscribite y te contactamos para confirmar tu lugar.'
+                  : 'Creá tu cuenta para inscribirte. Te contactamos para confirmar tu lugar.'}
               </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <CourseRegistrationModal
-                  courseId={course.id}
-                  courseTitle={course.title}
-                  price={course.price}
-                  userEmail={user?.email ?? null}
-                  triggerClassName="bg-[#2F7D6B] text-white font-semibold px-8 py-3 rounded-full text-[15px] hover:bg-[#266859] transition-colors"
-                />
-                {!user && (
-                  <Link href="/registro" className="border border-[#2F7D6B] text-[#2F7D6B] font-semibold px-6 py-3 rounded-full text-[15px] hover:bg-white transition-colors">
-                    Crear cuenta
+              <div className="flex justify-center">
+                {user ? (
+                  <CourseRegistrationModal
+                    courseId={course.id}
+                    courseTitle={course.title}
+                    price={course.price}
+                    userEmail={user?.email ?? null}
+                    triggerClassName="bg-[#2F7D6B] text-white font-semibold px-8 py-3 rounded-full text-[15px] hover:bg-[#266859] transition-colors"
+                  />
+                ) : (
+                  <Link
+                    href={`/registro?next=/cursos/${course.id}`}
+                    className="bg-[#2F7D6B] text-white font-semibold px-8 py-3 rounded-full text-[15px] hover:bg-[#266859] transition-colors"
+                  >
+                    Inscribirme
                   </Link>
                 )}
               </div>

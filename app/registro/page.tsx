@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Eye, EyeOff } from 'lucide-react'
@@ -9,6 +9,8 @@ import { createClient } from '@/lib/supabase/client'
 
 export default function RegistroPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const nextUrl = searchParams.get('next') || '/mi-cuenta'
   const [form, setForm] = useState({ nombre: '', apellido: '', email: '', password: '' })
   const [showPass, setShowPass] = useState(false)
   const [error, setError] = useState('')
@@ -51,7 +53,7 @@ export default function RegistroPage() {
       }),
     ])
 
-    if (data.session) { router.push('/mi-cuenta'); router.refresh() }
+    if (data.session) { router.push(nextUrl); router.refresh() }
     else { setSent(true); setLoading(false) }
   }
 
