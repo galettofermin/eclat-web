@@ -888,89 +888,32 @@ p { margin: 0; text-wrap: pretty; }
   overflow: hidden;
 }
 
-/* Orbe decorativo animado — centrado en el hero, visible inmediatamente */
+/* Orbe único — derecha, grande, suave. El único elemento decorativo */
 .fhero__orb {
   position: absolute;
-  width: clamp(500px, 70vw, 900px);
-  height: clamp(500px, 70vw, 900px);
+  width: clamp(420px, 55vw, 680px);
+  height: clamp(420px, 55vw, 680px);
   border-radius: 50%;
-  background: radial-gradient(circle at center, rgba(79,117,102,.13) 0%, rgba(164,200,185,.10) 40%, transparent 70%);
+  background: radial-gradient(circle at 40% 40%,
+    rgba(79,117,102,.18) 0%,
+    rgba(164,200,185,.09) 50%,
+    transparent 72%);
   top: 50%;
-  right: -10%;
+  right: -8%;
   transform: translateY(-50%);
   pointer-events: none;
-  animation: fOrbPulse 7s ease-in-out infinite;
+  animation: fOrbDrift 9s ease-in-out infinite;
+}
+@keyframes fOrbDrift {
+  0%, 100% { transform: translateY(-50%) scale(1)    translateX(0);   }
+  50%       { transform: translateY(-54%) scale(1.05) translateX(-2%); }
 }
 
-/* Segundo orbe más pequeño, izquierda */
-.fhero__orb::after {
-  content: '';
-  position: absolute;
-  width: 45%;
-  height: 45%;
-  border-radius: 50%;
-  background: radial-gradient(circle at center, rgba(47,125,107,.10) 0%, transparent 70%);
-  bottom: 5%;
-  left: -30%;
-  animation: fOrbPulse 5s ease-in-out infinite reverse;
-}
+/* Texto decorativo — eliminado (sobrecargaba) */
+.fhero__word { display: none; }
 
-@keyframes fOrbPulse {
-  0%, 100% { transform: translateY(-50%) scale(1);    opacity: .9; }
-  50%       { transform: translateY(-50%) scale(1.07); opacity: 1;  }
-}
-
-/* Texto decorativo de fondo — más visible y centrado en la pantalla */
-.fhero__word {
-  position: absolute;
-  right: -0.02em;
-  top: 50%;
-  transform: translateY(-50%);
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: clamp(140px, 24vw, 320px);
-  font-weight: 700;
-  letter-spacing: -0.04em;
-  color: transparent;
-  -webkit-text-stroke: 1.5px rgba(79,117,102,.12);
-  text-stroke: 1.5px rgba(79,117,102,.12);
-  pointer-events: none;
-  user-select: none;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-/* Círculos flotantes decorativos */
-.fhero__float {
-  position: absolute;
-  border-radius: 50%;
-  pointer-events: none;
-  border: 1.5px solid rgba(79,117,102,.18);
-  animation: fFloat 6s ease-in-out infinite;
-}
-.fhero__float--a {
-  width: 80px; height: 80px;
-  top: 18%; left: 60%;
-  animation-duration: 7s;
-}
-.fhero__float--b {
-  width: 44px; height: 44px;
-  top: 65%; left: 72%;
-  animation-duration: 5s;
-  animation-delay: -2s;
-  border-color: rgba(79,117,102,.12);
-}
-.fhero__float--c {
-  width: 120px; height: 120px;
-  top: 30%; left: 50%;
-  animation-duration: 9s;
-  animation-delay: -4s;
-  border-color: rgba(79,117,102,.08);
-}
-@keyframes fFloat {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  33%       { transform: translateY(-18px) rotate(4deg); }
-  66%       { transform: translateY(10px) rotate(-3deg); }
-}
+/* Círculos flotantes — eliminados */
+.fhero__float { display: none; }
 
 .fhero__inner {
   position: relative;
@@ -1042,6 +985,24 @@ p { margin: 0; text-wrap: pretty; }
   letter-spacing: -0.025em;
   max-width: 18ch;
   margin: 0 0 clamp(20px,3vw,32px);
+  position: relative;
+  padding-bottom: clamp(16px,2vw,24px);
+}
+
+/* Línea verde animada bajo el título */
+.fhero__title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 0;
+  background: linear-gradient(90deg, var(--sage-text), rgba(79,117,102,.3));
+  border-radius: 2px;
+  transition: width 1.2s cubic-bezier(.2,.8,.2,1) .6s;
+}
+.fhero__inner--visible .fhero__title::after {
+  width: clamp(60px, 12vw, 120px);
 }
 
 .fhero__lede {
