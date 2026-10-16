@@ -112,13 +112,14 @@ export default function FormacionClient({ heroTitle, heroLede, cursos, waUrl }: 
         {/* Decoración tipográfica de fondo */}
         <div className="fhero__word" aria-hidden="true">Formación</div>
 
-        {/* Orbe decorativo animado */}
-        <div className="fhero__orb" aria-hidden="true" />
-
-        {/* Círculos flotantes visibles inmediatamente */}
-        <div className="fhero__float fhero__float--a" aria-hidden="true" />
-        <div className="fhero__float fhero__float--b" aria-hidden="true" />
-        <div className="fhero__float fhero__float--c" aria-hidden="true" />
+        {/* Logo marca de agua — esquina inferior derecha */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/LOGO CON NOMBRE.png"
+          alt=""
+          aria-hidden="true"
+          className="fhero__watermark"
+        />
 
         {/* Scroll indicator */}
         <div className={`fhero__scroll ${scrolled ? 'fhero__scroll--gone' : ''}`} aria-hidden="true">

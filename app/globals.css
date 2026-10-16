@@ -888,32 +888,29 @@ p { margin: 0; text-wrap: pretty; }
   overflow: hidden;
 }
 
-/* Orbe único — derecha, grande, suave. El único elemento decorativo */
-.fhero__orb {
-  position: absolute;
-  width: clamp(420px, 55vw, 680px);
-  height: clamp(420px, 55vw, 680px);
-  border-radius: 50%;
-  background: radial-gradient(circle at 40% 40%,
-    rgba(79,117,102,.18) 0%,
-    rgba(164,200,185,.09) 50%,
-    transparent 72%);
-  top: 50%;
-  right: -8%;
-  transform: translateY(-50%);
-  pointer-events: none;
-  animation: fOrbDrift 9s ease-in-out infinite;
-}
-@keyframes fOrbDrift {
-  0%, 100% { transform: translateY(-50%) scale(1)    translateX(0);   }
-  50%       { transform: translateY(-54%) scale(1.05) translateX(-2%); }
-}
-
-/* Texto decorativo — eliminado (sobrecargaba) */
+/* Orbe — eliminado, reemplazado por marca de agua */
+.fhero__orb { display: none; }
 .fhero__word { display: none; }
-
-/* Círculos flotantes — eliminados */
 .fhero__float { display: none; }
+
+/* Marca de agua: logo ÉCLAT grande, esquina inferior derecha */
+.fhero__watermark {
+  position: absolute;
+  bottom: -4%;
+  right: -2%;
+  width: clamp(300px, 42vw, 540px);
+  height: auto;
+  opacity: .07;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  user-select: none;
+  filter: grayscale(1);
+  animation: fWatermarkBreath 8s ease-in-out infinite;
+}
+@keyframes fWatermarkBreath {
+  0%, 100% { opacity: .07; transform: scale(1); }
+  50%       { opacity: .10; transform: scale(1.015); }
+}
 
 .fhero__inner {
   position: relative;
@@ -935,6 +932,7 @@ p { margin: 0; text-wrap: pretty; }
   .fhero__inner { opacity: 1; transform: none; transition: none; }
   .fhero__orb { animation: none; }
   .fhero__float { animation: none; }
+  .fhero__watermark { animation: none; }
 }
 
 .fhero__crumb {
