@@ -356,9 +356,9 @@ export default async function CursoPage({
 
           {/* CTA sin acceso: el modal guarda la inscripción y el admin habilita el curso */}
           {!isApproved && !isPending && !course.is_free && (
-            <div className="mt-6 bg-[#0A0A0A] rounded-2xl p-7 md:p-8 text-center text-white">
-              <p className="text-[17px] font-semibold mb-2">Desbloqueá el contenido completo</p>
-              <p className="text-white/55 text-[14px] mb-6">
+            <div className="mt-6 bg-[#EDF3F0] border border-[#C6D9D1] rounded-2xl p-7 md:p-8 text-center">
+              <p className="text-[17px] font-semibold mb-2 text-[#1A2420]">Desbloqueá el contenido completo</p>
+              <p className="text-[#4F5D58] text-[14px] mb-6">
                 Inscribite y te contactamos para confirmar tu lugar.
                 {!user && ' Para ver los módulos vas a necesitar una cuenta.'}
                 {course.price > 0 && ` ${formatPrice(course.price)} · Acceso ilimitado al contenido.`}
@@ -369,10 +369,10 @@ export default async function CursoPage({
                   courseTitle={course.title}
                   price={course.price}
                   userEmail={user?.email ?? null}
-                  triggerClassName="bg-white text-[#0A0A0A] font-semibold px-8 py-3 rounded-full text-[15px] hover:bg-white/90 transition-colors btn-pulse-white"
+                  triggerClassName="bg-[#2F7D6B] text-white font-semibold px-8 py-3 rounded-full text-[15px] hover:bg-[#266859] transition-colors"
                 />
                 {!user && (
-                  <Link href="/registro" className="border border-white/20 text-white font-semibold px-6 py-3 rounded-full text-[15px] hover:bg-white/10 transition-colors">
+                  <Link href="/registro" className="border border-[#2F7D6B] text-[#2F7D6B] font-semibold px-6 py-3 rounded-full text-[15px] hover:bg-white transition-colors">
                     Crear cuenta
                   </Link>
                 )}
