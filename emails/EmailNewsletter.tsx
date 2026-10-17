@@ -1,9 +1,13 @@
-import {
-  Body, Container, Font, Head, Html,
-  Img, Link, Preview, Section, Text, Hr,
-} from '@react-email/components'
+/**
+ * EmailNewsletter — newsletter de ÉCLAT.
+ * Modos: artículos publicados | escrito propio.
+ * Al final muestra los cursos activos disponibles.
+ */
+import { Hr, Img, Link, Section, Text } from '@react-email/components'
 import * as React from 'react'
-import EmailHeader from './components/EmailHeader'
+import EmailBase, { styles } from './components/EmailBase'
+
+const BASE = 'https://eclatcentro.com'
 
 interface Articulo {
   id: string
@@ -14,162 +18,197 @@ interface Articulo {
   author?: string | null
 }
 
-interface Props {
-  asunto: string
-  /** Texto libre para newsletters escritos directamente (sin artículos) */
-  contenido?: string
-  intro?: string
-  articulos?: Articulo[]
-  unsubscribeUrl: string
-  siteUrl?: string
+interface Curso {
+  id: string
+  title: string
+  description: string
+  badge: string
+  badge_type: 'free' | 'soon'
+  link?: string | null
+  cta?: string | null
+  duration?: string
+  modality?: string
 }
 
-const BASE = 'https://eclatcentro.com'
+interface Props {
+  asunto: string
+  contenido?: string          // Modo escrito
+  intro?: string              // Intro para modo artículos
+  articulos?: Articulo[]
+  cursos?: Curso[]            // Cursos a mostrar al final
+  unsubscribeUrl: string
+  siteUrl?: string
+  nombreDestinatario?: string
+}
 
-export default function EmailNewsletter({ asunto, contenido, intro, articulos = [], unsubscribeUrl, siteUrl = BASE }: Props) {
+export default function EmailNewsletter({
+  asunto,
+  contenido,
+  intro,
+  articulos = [],
+  cursos = [],
+  unsubscribeUrl,
+  siteUrl = BASE,
+  nombreDestinatario,
+}: Props) {
+  const nombre = nombreDestinatario?.split(' ')[0] || ''
+  const saludo = nombre ? `Hola ${nombre},` : 'Hola,'
+  const modoEscrito = !!contenido?.trim()
+
   return (
-    <Html lang="es">
-      <Head>
-        <Font
-          fontFamily="Plus Jakarta Sans"
-          fallbackFontFamily="Arial"
-          webFont={{
-            url: 'https://fonts.gstatic.com/s/plusjakartasans/v8/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_KU7NSg.woff2',
-            format: 'woff2',
-          }}
-          fontWeight={400}
-          fontStyle="normal"
-        />
-        <Font
-          fontFamily="Plus Jakarta Sans"
-          fallbackFontFamily="Arial"
-          webFont={{
-            url: 'https://fonts.gstatic.com/s/plusjakartasans/v8/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_ck7NSg.woff2',
-            format: 'woff2',
-          }}
-          fontWeight={600}
-          fontStyle="normal"
-        />
-      </Head>
-      <Preview>{asunto}</Preview>
-      <Body style={body}>
-        <Container style={container}>
+    <EmailBase preview={asunto} unsubscribeUrl={unsubscribeUrl}>
 
-          <EmailHeader />
+      {/* Saludo */}
+      <Text style={styles.saludo}>{saludo}</Text>
 
-          <Section style={content}>
+      {/* Título */}
+      <Text style={styles.h1}>{asunto}</Text>
 
-            {/* Título del envío */}
-            <Text style={h1}>{asunto}</Text>
+      <Hr style={styles.dividerSection} />
 
-            {contenido ? (
-              /* MODO: Escrito propio */
-              <>
-                {contenido.split(/\n\n+/).map((parrafo, i) => (
-                  <Text key={i} style={paragraph}>{parrafo.trim()}</Text>
-                ))}
-                <Hr style={innerDivider} />
-              </>
-            ) : (
-              /* MODO: Artículos */
-              <>
-                <Text style={paragraph}>{intro || ' '}</Text>
-                <Hr style={innerDivider} />
-              </>
-            )}
+      {modoEscrito ? (
+        /* ── MODO ESCRITO ── */
+        <>
+          {contenido!.split(/\n\n+/).map((p, i) => (
+            <Text key={i} style={styles.paragraph}>{p.trim()}</Text>
+          ))}
 
-            {/* Artículos (solo en modo artículos) */}
-            {!contenido && articulos.map((art, i) => (
-              <Section key={art.id} style={i > 0 ? { ...articleSection, borderTop: '1px solid #E8EDE9' } : articleSection}>
-                {art.image_url && (
-                  <Img
-                    src={art.image_url}
-                    alt={art.title}
-                    width="480"
-                    style={articleImage}
-                  />
+          {/* Firma */}
+          <Text style={styles.firma}>
+            Un saludo,{'\n'}
+            <span style={styles.firmaNombre}>Equipo ÉCLAT · Centro de Atención Integral</span>
+          </Text>
+        </>
+      ) : (
+        /* ── MODO ARTÍCULOS ── */
+        <>
+          {intro?.trim() && (
+            <Text style={styles.paragraph}>{intro}</Text>
+          )}
+
+          {articulos.map((art, i) => (
+            <Section
+              key={art.id}
+              style={i > 0 ? { ...articleSection, borderTop: '1px solid #E8EDE9' } : articleSection}
+            >
+              {art.image_url && (
+                <Img
+                  src={art.image_url}
+                  alt={art.title}
+                  width="500"
+                  style={articleImage}
+                />
+              )}
+              <Text style={styles.label}>{art.category}</Text>
+              <Text style={articleTitle}>{art.title}</Text>
+              <Text style={styles.paragraph}>{art.excerpt}</Text>
+              {art.author && <Text style={authorText}>{art.author}</Text>}
+              <Link href={`${siteUrl}/publicaciones/${art.id}`} style={styles.readMore}>
+                Leer artículo →
+              </Link>
+            </Section>
+          ))}
+
+          {/* Firma */}
+          <Hr style={{ ...styles.dividerSection, marginTop: '28px' }} />
+          <Text style={styles.firma}>
+            Un saludo,{'\n'}
+            <span style={styles.firmaNombre}>Equipo ÉCLAT · Centro de Atención Integral</span>
+          </Text>
+        </>
+      )}
+
+      {/* ── CURSOS AL FINAL ── */}
+      {cursos.length > 0 && (
+        <>
+          <Hr style={styles.dividerSection} />
+          <Text style={styles.sectionTitle}>Formaciones disponibles</Text>
+
+          {cursos.map((curso) => {
+            const url = curso.link?.startsWith('http') ? curso.link : `${siteUrl}/formacion`
+            return (
+              <Section key={curso.id} style={cursoRow}>
+                <Section style={cursoBadgeRow}>
+                  <Text style={styles.badge(curso.badge_type)}>{curso.badge}</Text>
+                </Section>
+                <Text style={cursoTitle}>{curso.title}</Text>
+                <Text style={cursoDesc}>{curso.description}</Text>
+                {(curso.duration || curso.modality) && (
+                  <Text style={styles.metaText}>
+                    {[curso.modality, curso.duration].filter(Boolean).join(' · ')}
+                  </Text>
                 )}
-                <Text style={categoryBadge}>{art.category}</Text>
-                <Text style={articleTitle}>{art.title}</Text>
-                <Text style={articleExcerpt}>{art.excerpt}</Text>
-                {art.author && <Text style={articleAuthor}>{art.author}</Text>}
-                <Link href={`${siteUrl}/publicaciones/${art.id}`} style={readMoreLink}>
-                  Leer artículo →
+                <Link href={url} style={styles.readMore}>
+                  {curso.cta || 'Ver formación →'}
                 </Link>
               </Section>
-            ))}
+            )
+          })}
 
-            {!contenido && <Hr style={innerDivider} />}
-
-            {/* CTA formaciones — solo con artículos */}
-            {!contenido && <Section style={ctaSection}>
-              <Text style={ctaText}>¿Querés seguir formándote?</Text>
-              <Link href={`${siteUrl}/formacion`} style={button}>
-                Ver formaciones disponibles
-              </Link>
-            </Section>}
-
+          <Section style={{ textAlign: 'center', paddingTop: '8px' }}>
+            <Link href={`${siteUrl}/formacion`} style={styles.buttonSecondary}>
+              Ver todas las formaciones
+            </Link>
           </Section>
+        </>
+      )}
 
-          <Hr style={divider} />
-
-          {/* Footer */}
-          <Section style={footer}>
-            <Text style={footerText}>ÉCLAT Centro de Atención Integral · Oncativo, Córdoba</Text>
-            <Text style={footerText}>
-              <Link href={siteUrl} style={footerLink}>eclatcentro.com</Link>
-              {' · '}
-              <Link href="https://wa.link/vyi5uv" style={footerLink}>WhatsApp</Link>
-            </Text>
-            <Text style={unsubText}>
-              Recibís este mail porque sos parte de la comunidad ÉCLAT.{' '}
-              <Link href={unsubscribeUrl} style={unsubLink}>Desuscribirme</Link>
-            </Text>
-          </Section>
-
-        </Container>
-      </Body>
-    </Html>
+    </EmailBase>
   )
 }
 
-const body = { backgroundColor: '#F5F5F5', fontFamily: "'Plus Jakarta Sans', Arial, sans-serif" }
-
-const container = {
-  maxWidth: '560px', margin: '32px auto',
-  backgroundColor: '#FFFFFF', borderRadius: '8px',
-  overflow: 'hidden' as const,
-  boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+const articleSection: React.CSSProperties = {
+  paddingTop: '24px',
+  paddingBottom: '24px',
 }
 
-const content = { padding: '36px 40px 28px' }
-
-const h1 = { color: '#1B2B26', fontSize: '22px', fontWeight: '500', margin: '0 0 16px', lineHeight: '1.3' }
-const paragraph = { color: '#4B6B5E', fontSize: '15px', lineHeight: '1.75', margin: '0 0 20px' }
-
-const innerDivider = { borderColor: '#E8EDE9', margin: '24px 0' }
-
-const articleSection = { paddingTop: '20px', paddingBottom: '20px' }
-const articleImage = { width: '100%', borderRadius: '6px', marginBottom: '14px', display: 'block' }
-const categoryBadge = { color: '#2F7D6B', fontSize: '11px', fontWeight: '600', letterSpacing: '0.12em', textTransform: 'uppercase' as const, margin: '0 0 6px' }
-const articleTitle = { color: '#1B2B26', fontSize: '18px', fontWeight: '600', margin: '0 0 8px', lineHeight: '1.35' }
-const articleExcerpt = { color: '#4B6B5E', fontSize: '14px', lineHeight: '1.7', margin: '0 0 8px' }
-const articleAuthor = { color: '#9CA8A3', fontSize: '12px', margin: '0 0 12px' }
-const readMoreLink = { color: '#2F7D6B', fontSize: '13px', fontWeight: '600', textDecoration: 'none' }
-
-const ctaSection = { textAlign: 'center' as const, padding: '8px 0 16px' }
-const ctaText = { color: '#4B6B5E', fontSize: '15px', margin: '0 0 16px' }
-
-const button = {
-  backgroundColor: '#2F7D6B', color: '#FFFFFF',
-  fontSize: '14px', fontWeight: '500',
-  padding: '12px 28px', borderRadius: '4px',
-  textDecoration: 'none', display: 'inline-block',
+const articleImage: React.CSSProperties = {
+  width: '100%',
+  borderRadius: '10px',
+  marginBottom: '16px',
+  display: 'block',
 }
 
-const divider = { borderColor: '#E8EDE9', margin: '0' }
-const footer = { padding: '20px 40px', textAlign: 'center' as const }
-const footerText = { color: '#9CA8A3', fontSize: '12px', margin: '4px 0' }
-const footerLink = { color: '#9CA8A3', textDecoration: 'underline' }
-const unsubText = { color: '#C4CECA', fontSize: '11px', margin: '12px 0 0', lineHeight: '1.5' }
-const unsubLink = { color: '#C4CECA', textDecoration: 'underline' }
+const articleTitle: React.CSSProperties = {
+  color: '#1B2B26',
+  fontSize: '19px',
+  fontWeight: '700',
+  margin: '4px 0 10px',
+  lineHeight: '1.3',
+  fontFamily: "'Plus Jakarta Sans', Arial, sans-serif",
+}
+
+const authorText: React.CSSProperties = {
+  color: '#9CA8A3',
+  fontSize: '12px',
+  margin: '6px 0 10px',
+  fontFamily: "'Plus Jakarta Sans', Arial, sans-serif",
+}
+
+const cursoRow: React.CSSProperties = {
+  backgroundColor: '#F7FAF8',
+  borderRadius: '10px',
+  padding: '18px 20px',
+  marginBottom: '12px',
+}
+
+const cursoBadgeRow: React.CSSProperties = {
+  marginBottom: '8px',
+}
+
+const cursoTitle: React.CSSProperties = {
+  color: '#1B2B26',
+  fontSize: '16px',
+  fontWeight: '700',
+  margin: '0 0 6px',
+  lineHeight: '1.3',
+  fontFamily: "'Plus Jakarta Sans', Arial, sans-serif",
+}
+
+const cursoDesc: React.CSSProperties = {
+  color: '#3a3a3c',
+  fontSize: '13px',
+  lineHeight: '1.6',
+  margin: '0 0 10px',
+  fontFamily: "'Plus Jakarta Sans', Arial, sans-serif",
+}

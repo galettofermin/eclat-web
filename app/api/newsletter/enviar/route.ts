@@ -61,6 +61,15 @@ export async function POST(req: Request) {
       articulos = data
     }
 
+    // Traer cursos publicados para mostrar al final del email
+    const { data: cursosData } = await admin
+      .from('courses')
+      .select('id, title, description, badge, badge_type, link, cta, duration, modality')
+      .eq('published', true)
+      .order('sort_order')
+      .limit(3)
+    const cursos = cursosData ?? []
+
     // Traer todos los suscriptores activos
     const { data: suscriptores } = await admin
       .from('suscriptores')
@@ -84,8 +93,10 @@ export async function POST(req: Request) {
           contenido: modoEscrito ? contenido : undefined,
           intro: modoArticulos ? (intro || undefined) : undefined,
           articulos,
+          cursos,
           unsubscribeUrl,
           siteUrl: SITE_URL,
+          nombreDestinatario: suscriptor.nombre || undefined,
         }))
 
         await resend.emails.send({

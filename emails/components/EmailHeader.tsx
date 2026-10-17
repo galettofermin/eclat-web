@@ -1,21 +1,21 @@
-import { Img, Section, Text } from '@react-email/components'
+import { Img, Section } from '@react-email/components'
 import * as React from 'react'
+
+const SITE_URL = 'https://eclatcentro.com'
 
 /**
  * Encabezado unificado para todos los emails de ÉCLAT.
- * Logo centrado + "ÉCLAT" en verde sage + línea verde. Estilo limpio.
+ * Usa el logo completo (isotipo + texto ÉCLAT en sage green).
  */
 export default function EmailHeader() {
   return (
     <Section style={header}>
       <Img
-        src="https://eclatcentro.com/logo-256.png"
+        src={`${SITE_URL}/LOGO%20CON%20NOMBRE.png`}
         alt="ÉCLAT"
-        width="56"
-        height="56"
+        height="64"
         style={logo}
       />
-      <Text style={brand}>ÉCLAT</Text>
       <div style={line} />
     </Section>
   )
@@ -23,27 +23,20 @@ export default function EmailHeader() {
 
 const header: React.CSSProperties = {
   backgroundColor: '#FFFFFF',
-  padding: '36px 40px 24px',
+  padding: '32px 40px 0',
   textAlign: 'center',
 }
 
 const logo: React.CSSProperties = {
   display: 'block',
-  margin: '0 auto 10px',
-}
-
-const brand: React.CSSProperties = {
-  color: '#4F7566',
-  fontSize: '13px',
-  fontWeight: '600',
-  letterSpacing: '0.22em',
-  textTransform: 'uppercase',
-  margin: '0 0 20px',
-  fontFamily: "'Plus Jakarta Sans', Arial, sans-serif",
+  margin: '0 auto 24px',
+  height: '64px',
+  width: 'auto',
 }
 
 const line: React.CSSProperties = {
-  height: '1px',
-  background: 'linear-gradient(90deg, transparent 0%, #B8D4CA 30%, #7FA294 50%, #B8D4CA 70%, transparent 100%)',
+  height: '3px',
+  background: 'linear-gradient(90deg, #4F7566 0%, #7aab96 50%, #4F7566 100%)',
+  borderRadius: '2px',
   margin: '0',
 }
