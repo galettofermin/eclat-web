@@ -157,21 +157,9 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <div
-      className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden"
-      style={{ background: 'var(--eclat-cream)' }}
+      className="min-h-screen flex items-center justify-center px-4"
+      style={{ background: 'linear-gradient(160deg, #EDF3F0 0%, #FAFBF9 60%, #F0F4F2 100%)' }}
     >
-      {/* Decoración SVG */}
-      <svg className="absolute right-0 top-0 pointer-events-none" width="340" height="340" viewBox="0 0 340 340" style={{ opacity: 0.05 }}>
-        <circle cx="280" cy="60" r="100" fill="none" stroke="#3a5444" strokeWidth="1.5"/>
-        <circle cx="280" cy="60" r="55" fill="none" stroke="#3a5444" strokeWidth="1"/>
-        <line x1="180" y1="0" x2="340" y2="160" stroke="#3a5444" strokeWidth="1"/>
-        <line x1="210" y1="0" x2="340" y2="130" stroke="#3a5444" strokeWidth="0.8"/>
-      </svg>
-      <svg className="absolute left-0 bottom-0 pointer-events-none" width="240" height="240" viewBox="0 0 240 240" style={{ opacity: 0.05 }}>
-        <circle cx="60" cy="180" r="80" fill="none" stroke="#3a5444" strokeWidth="1.5"/>
-        <line x1="0" y1="100" x2="140" y2="240" stroke="#3a5444" strokeWidth="1"/>
-      </svg>
-
       <Suspense fallback={<div className="w-full" style={{ maxWidth: 420 }} />}>
         <LoginForm />
       </Suspense>
