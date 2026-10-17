@@ -1,3 +1,4 @@
+import * as React from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
@@ -157,6 +158,13 @@ export default async function ArticlePage({ params }: Props) {
     .order('created_at', { ascending: false })
     .limit(3)
 
+  const { data: courses } = await supabase
+    .from('courses')
+    .select('id, title, description, badge, badge_type, link, cta, duration, modality')
+    .eq('published', true)
+    .order('sort_order')
+    .limit(3)
+
   const content: string = article.content ?? ''
   const imageUrl: string = article.image_url?.trim() ?? ''
   const author: string = article.author ?? ''
@@ -256,6 +264,114 @@ export default async function ArticlePage({ params }: Props) {
                   </div>
                 </Link>
               ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Formaciones */}
+      {courses && courses.length > 0 && (
+        <section style={{
+          padding: 'clamp(48px,7vw,80px) 0',
+          background: 'var(--sage-50, #F4F8F6)',
+        }}>
+          <div className="wrap">
+            <span className="kicker">Formación ÉCLAT</span>
+            <h2 style={{ marginTop: 10, fontSize: 'clamp(24px,3vw,36px)', fontWeight: 600, letterSpacing: '-0.02em' }}>
+              Formaciones disponibles
+            </h2>
+            <div style={{ marginTop: 32, display: 'grid', gap: 16 }}>
+              {courses.map((c) => {
+                const href = c.link?.startsWith('http') ? c.link : '/formacion'
+                const meta = [c.modality, c.duration].filter(Boolean).join(' · ')
+                return (
+                  <Link
+                    key={c.id}
+                    href={href}
+                    style={{ textDecoration: 'none', display: 'block' }}
+                  >
+                    <div style={{
+                      background: '#fff',
+                      borderRadius: 14,
+                      padding: '22px 26px',
+                      border: '1px solid #E2EBE6',
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: 20,
+                      transition: 'box-shadow .2s',
+                    }}>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        {/* Badge */}
+                        <span style={{
+                          display: 'inline-block',
+                          fontSize: 10,
+                          fontWeight: 700,
+                          letterSpacing: '0.1em',
+                          textTransform: 'uppercase',
+                          padding: '3px 10px',
+                          borderRadius: 20,
+                          background: c.badge_type === 'free' ? '#DCEFE8' : '#F0F0F5',
+                          color: c.badge_type === 'free' ? '#2F7D6B' : '#6e6e73',
+                          marginBottom: 8,
+                        }}>{c.badge}</span>
+
+                        <p style={{
+                          fontSize: 17,
+                          fontWeight: 700,
+                          color: 'var(--slate-900, #1B2B26)',
+                          margin: '0 0 6px',
+                          lineHeight: 1.3,
+                        }}>{c.title}</p>
+
+                        {meta && (
+                          <p style={{
+                            fontSize: 12,
+                            color: 'var(--ink-muted, #6e6e73)',
+                            margin: '0 0 8px',
+                          }}>{meta}</p>
+                        )}
+
+                        <p style={{
+                          fontSize: 14,
+                          color: 'var(--ink-secondary, #3a3a3c)',
+                          margin: 0,
+                          lineHeight: 1.55,
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical',
+                          overflow: 'hidden',
+                        } as React.CSSProperties}>{c.description}</p>
+                      </div>
+
+                      <span style={{
+                        flexShrink: 0,
+                        fontSize: 13,
+                        fontWeight: 600,
+                        color: '#2F7D6B',
+                        whiteSpace: 'nowrap',
+                        paddingTop: 2,
+                      }}>
+                        {c.cta || 'Ver formación'} →
+                      </span>
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
+
+            <div style={{ marginTop: 24, textAlign: 'center' }}>
+              <Link href="/formacion" style={{
+                display: 'inline-block',
+                fontSize: 13,
+                fontWeight: 600,
+                color: '#2F7D6B',
+                textDecoration: 'none',
+                padding: '10px 22px',
+                border: '1.5px solid #2F7D6B',
+                borderRadius: 8,
+              }}>
+                Ver todas las formaciones →
+              </Link>
             </div>
           </div>
         </section>
