@@ -20,7 +20,7 @@ const NAV_ITEMS = [
   {
     href: '/admin/inscripciones',
     label: 'Inscripciones',
-    shortLabel: 'Inscripciones',
+    shortLabel: 'Inscripc.',
     badge: 'pending',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -30,37 +30,15 @@ const NAV_ITEMS = [
     ),
   },
   {
-    href: '/admin/usuarios',
-    label: 'Usuarios',
-    shortLabel: 'Usuarios',
+    href: '/admin/comunidad',
+    label: 'Comunidad',
+    shortLabel: 'Comunidad',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
         <circle cx="9" cy="7" r="4" />
         <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
         <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-      </svg>
-    ),
-  },
-  {
-    href: '/admin/suscriptores',
-    label: 'Suscriptores',
-    shortLabel: 'Suscrip.',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-        <polyline points="22,6 12,13 2,6" />
-      </svg>
-    ),
-  },
-  {
-    href: '/admin/formacion',
-    label: 'Formación',
-    shortLabel: 'Formac.',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
       </svg>
     ),
   },
@@ -76,20 +54,23 @@ const NAV_ITEMS = [
     ),
   },
   {
-    href: '/admin/mensajes',
-    label: 'Mensajes',
-    shortLabel: 'Mensajes',
-    badge: 'messages',
+    href: '/admin/formacion',
+    label: 'Formación',
+    shortLabel: 'Formac.',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
       </svg>
     ),
   },
+]
+
+// Items secundarios (footer del sidebar, no en tab bar mobile)
+const NAV_SECONDARY = [
   {
     href: '/admin/configuracion',
     label: 'Configuración',
-    shortLabel: 'Config.',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="3" />
@@ -99,13 +80,12 @@ const NAV_ITEMS = [
   },
 ]
 
-// Items que se muestran en la tab bar mobile (los 5 más importantes)
-const MOBILE_TAB_ITEMS = ['/admin', '/admin/inscripciones', '/admin/mensajes', '/admin/formacion', '/admin/escritos']
+// Items que se muestran en la tab bar mobile
+const MOBILE_TAB_ITEMS = ['/admin', '/admin/inscripciones', '/admin/comunidad', '/admin/escritos', '/admin/formacion']
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const [pendingCount, setPendingCount] = useState(0)
-  const [messagesCount, setMessagesCount] = useState(0)
 
   useEffect(() => {
     const load = async () => {
@@ -115,15 +95,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         .select('*', { count: 'exact', head: true })
         .eq('status', 'pending')
       setPendingCount(count ?? 0)
-
-      try {
-        const r = await fetch('/api/mensajes')
-        const d = await r.json()
-        const total = (d.conversaciones ?? []).reduce(
-          (acc: number, c: { noLeidos: number }) => acc + c.noLeidos, 0
-        )
-        setMessagesCount(total)
-      } catch {}
     }
     load()
     const interval = setInterval(load, 60_000)
@@ -135,7 +106,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
   const getBadge = (item: typeof NAV_ITEMS[0]) => {
     if (item.badge === 'pending') return pendingCount
-    if (item.badge === 'messages') return messagesCount
     return 0
   }
 
@@ -239,35 +209,56 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         </nav>
 
         {/* Footer del sidebar */}
-        <div style={{
-          padding: '12px 16px',
-          borderTop: '0.5px solid rgba(0,0,0,0.07)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}>
-          <a href="/" target="_blank" rel="noopener" style={{
-            fontSize: 12, color: '#86868b', textDecoration: 'none',
-            display: 'flex', alignItems: 'center', gap: 4,
+        <div style={{ borderTop: '0.5px solid rgba(0,0,0,0.07)' }}>
+          {/* Items secundarios */}
+          <div style={{ padding: '8px 8px 0' }}>
+            {NAV_SECONDARY.map(item => {
+              const active = isActive(item.href)
+              return (
+                <Link key={item.href} href={item.href} style={{
+                  display: 'flex', alignItems: 'center', gap: 10,
+                  padding: '7px 10px', borderRadius: 8, marginBottom: 2,
+                  fontSize: 12.5, fontWeight: active ? 600 : 400,
+                  color: active ? '#2F7D6B' : '#86868b',
+                  background: active ? 'rgba(47,125,107,0.10)' : 'transparent',
+                  textDecoration: 'none', transition: 'background 0.15s',
+                }}
+                  onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.background = 'rgba(0,0,0,0.04)' }}
+                  onMouseLeave={e => { if (!active) (e.currentTarget as HTMLElement).style.background = 'transparent' }}
+                >
+                  <span style={{ width: 16, height: 16, flexShrink: 0, color: active ? '#2F7D6B' : '#a1a1a6' }}>{item.icon}</span>
+                  <span>{item.label}</span>
+                </Link>
+              )
+            })}
+          </div>
+          <div style={{
+            padding: '10px 16px 14px',
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           }}>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-              <polyline points="15,3 21,3 21,9" />
-              <line x1="10" y1="14" x2="21" y2="3" />
-            </svg>
-            Ver sitio
-          </a>
-          <a href="/api/auth/logout" style={{
-            fontSize: 12, color: '#86868b', textDecoration: 'none',
-            display: 'flex', alignItems: 'center', gap: 4,
-          }}>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-              <polyline points="16,17 21,12 16,7" />
-              <line x1="21" y1="12" x2="9" y2="12" />
-            </svg>
-            Salir
-          </a>
+            <a href="/" target="_blank" rel="noopener" style={{
+              fontSize: 12, color: '#86868b', textDecoration: 'none',
+              display: 'flex', alignItems: 'center', gap: 4,
+            }}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                <polyline points="15,3 21,3 21,9" />
+                <line x1="10" y1="14" x2="21" y2="3" />
+              </svg>
+              Ver sitio
+            </a>
+            <a href="/api/auth/logout" style={{
+              fontSize: 12, color: '#86868b', textDecoration: 'none',
+              display: 'flex', alignItems: 'center', gap: 4,
+            }}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16,17 21,12 16,7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+              Salir
+            </a>
+          </div>
         </div>
       </aside>
 
