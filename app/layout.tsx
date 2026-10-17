@@ -173,8 +173,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                     className="foot__logo-full"
                     src="/LOGO CON NOMBRE.png"
                     alt="ÉCLAT"
-                    width={180}
-                    height={64}
+                    width={240}
+                    height={240}
                   />
                 </div>
                 <p className="foot__tag">Centro de atención integral en Oncativo, Córdoba. Salud mental, educación y formación desde una mirada interdisciplinaria.</p>
