@@ -5,15 +5,16 @@ const SITE_URL = 'https://eclatcentro.com'
 
 /**
  * Encabezado unificado para todos los emails de ÉCLAT.
- * Usa el logo completo (isotipo + texto ÉCLAT en sage green).
+ * Logo cuadrado (isotipo + ÈCLAT en grande) centrado, 120px de alto.
  */
 export default function EmailHeader() {
   return (
     <Section style={header}>
       <Img
-        src={`${SITE_URL}/LOGO%20CON%20NOMBRE.png`}
-        alt="ÉCLAT"
-        height="64"
+        src={`${SITE_URL}/logo-eclat.png`}
+        alt="ÈCLAT"
+        width="120"
+        height="120"
         style={logo}
       />
       <div style={line} />
@@ -23,15 +24,15 @@ export default function EmailHeader() {
 
 const header: React.CSSProperties = {
   backgroundColor: '#FFFFFF',
-  padding: '32px 40px 0',
+  padding: '36px 40px 0',
   textAlign: 'center',
 }
 
 const logo: React.CSSProperties = {
   display: 'block',
   margin: '0 auto 24px',
-  height: '64px',
-  width: 'auto',
+  width: '120px',
+  height: '120px',
 }
 
 const line: React.CSSProperties = {
