@@ -2,6 +2,10 @@
  * POST /api/newsletter/enviar
  * Envía un newsletter a todos los suscriptores activos.
  * Solo accesible para el director (verificado por email de sesión).
+ *
+ * Acepta dos modos:
+ *   - Artículos:  { asunto, intro?, articuloIds: string[] }
+ *   - Escrito:    { asunto, contenido: string }
  */
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
@@ -23,22 +27,38 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
     }
 
-    const { asunto, intro, articuloIds } = await req.json()
-    if (!asunto || !articuloIds?.length) {
-      return NextResponse.json({ error: 'Asunto y al menos un artículo son requeridos' }, { status: 400 })
+    const body = await req.json()
+    const { asunto, intro, articuloIds, contenido } = body
+
+    if (!asunto) {
+      return NextResponse.json({ error: 'El asunto es requerido' }, { status: 400 })
+    }
+
+    const modoEscrito = !!contenido?.trim()
+    const modoArticulos = !modoEscrito && Array.isArray(articuloIds) && articuloIds.length > 0
+
+    if (!modoEscrito && !modoArticulos) {
+      return NextResponse.json(
+        { error: 'Incluí un contenido escrito o al menos un artículo' },
+        { status: 400 }
+      )
     }
 
     const admin = createAdminClient()
 
-    // Traer artículos seleccionados
-    const { data: articulos } = await admin
-      .from('articles')
-      .select('id, title, excerpt, category, image_url, author')
-      .in('id', articuloIds)
-      .eq('published', true)
+    // Traer artículos solo si se necesitan
+    let articulos: { id: string; title: string; excerpt: string; category: string; image_url?: string | null; author?: string | null }[] = []
+    if (modoArticulos) {
+      const { data } = await admin
+        .from('articles')
+        .select('id, title, excerpt, category, image_url, author')
+        .in('id', articuloIds)
+        .eq('published', true)
 
-    if (!articulos?.length) {
-      return NextResponse.json({ error: 'No se encontraron artículos publicados' }, { status: 400 })
+      if (!data?.length) {
+        return NextResponse.json({ error: 'No se encontraron artículos publicados' }, { status: 400 })
+      }
+      articulos = data
     }
 
     // Traer todos los suscriptores activos
@@ -55,13 +75,14 @@ export async function POST(req: Request) {
     let enviados = 0
     let errores = 0
 
-    // Enviar en lotes de 10 para no saturar Resend
+    // Enviar en lotes con pausa entre mensajes para respetar rate limits
     for (const suscriptor of suscriptores) {
       try {
         const unsubscribeUrl = `${SITE_URL}/desuscribirse?id=${suscriptor.id}`
         const html = await render(EmailNewsletter({
           asunto,
-          intro: intro || undefined,
+          contenido: modoEscrito ? contenido : undefined,
+          intro: modoArticulos ? (intro || undefined) : undefined,
           articulos,
           unsubscribeUrl,
           siteUrl: SITE_URL,
@@ -80,7 +101,7 @@ export async function POST(req: Request) {
         errores++
       }
 
-      // Pequeña pausa entre envíos para respetar rate limits
+      // Pequeña pausa para respetar rate limits de Resend
       await new Promise(r => setTimeout(r, 100))
     }
 
@@ -88,11 +109,12 @@ export async function POST(req: Request) {
     await admin.from('newsletter_envios').insert({
       asunto,
       intro: intro || null,
-      articulo_ids: articuloIds,
+      articulo_ids: modoArticulos ? articuloIds : null,
+      contenido: modoEscrito ? contenido : null,
       total_enviados: enviados,
       total_errores: errores,
       enviado_por: user.email,
-    }) // supabase-js no lanza: si falla el registro, no bloquea
+    })
 
     return NextResponse.json({ ok: true, enviados, errores })
   } catch (error) {

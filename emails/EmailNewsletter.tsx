@@ -16,15 +16,17 @@ interface Articulo {
 
 interface Props {
   asunto: string
+  /** Texto libre para newsletters escritos directamente (sin artículos) */
+  contenido?: string
   intro?: string
-  articulos: Articulo[]
+  articulos?: Articulo[]
   unsubscribeUrl: string
   siteUrl?: string
 }
 
 const BASE = 'https://eclatcentro.com'
 
-export default function EmailNewsletter({ asunto, intro, articulos, unsubscribeUrl, siteUrl = BASE }: Props) {
+export default function EmailNewsletter({ asunto, contenido, intro, articulos = [], unsubscribeUrl, siteUrl = BASE }: Props) {
   return (
     <Html lang="es">
       <Head>
@@ -60,13 +62,24 @@ export default function EmailNewsletter({ asunto, intro, articulos, unsubscribeU
             {/* Título del envío */}
             <Text style={h1}>{asunto}</Text>
 
-            {/* Intro — siempre visible para Gmail */}
-            <Text style={paragraph}>{intro || ' '}</Text>
+            {contenido ? (
+              /* MODO: Escrito propio */
+              <>
+                {contenido.split(/\n\n+/).map((parrafo, i) => (
+                  <Text key={i} style={paragraph}>{parrafo.trim()}</Text>
+                ))}
+                <Hr style={innerDivider} />
+              </>
+            ) : (
+              /* MODO: Artículos */
+              <>
+                <Text style={paragraph}>{intro || ' '}</Text>
+                <Hr style={innerDivider} />
+              </>
+            )}
 
-            <Hr style={innerDivider} />
-
-            {/* Artículos */}
-            {articulos.map((art, i) => (
+            {/* Artículos (solo en modo artículos) */}
+            {!contenido && articulos.map((art, i) => (
               <Section key={art.id} style={i > 0 ? { ...articleSection, borderTop: '1px solid #E8EDE9' } : articleSection}>
                 {art.image_url && (
                   <Img
@@ -86,15 +99,15 @@ export default function EmailNewsletter({ asunto, intro, articulos, unsubscribeU
               </Section>
             ))}
 
-            <Hr style={innerDivider} />
+            {!contenido && <Hr style={innerDivider} />}
 
-            {/* CTA formaciones */}
-            <Section style={ctaSection}>
+            {/* CTA formaciones — solo con artículos */}
+            {!contenido && <Section style={ctaSection}>
               <Text style={ctaText}>¿Querés seguir formándote?</Text>
               <Link href={`${siteUrl}/formacion`} style={button}>
                 Ver formaciones disponibles
               </Link>
-            </Section>
+            </Section>}
 
           </Section>
 

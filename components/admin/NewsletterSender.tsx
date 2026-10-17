@@ -14,12 +14,16 @@ interface Props {
   articulos: Articulo[]
 }
 
+type Modo = 'articulos' | 'escrito'
+
 export default function NewsletterSender({ articuloPreseleccionado, articulos }: Props) {
   const [open, setOpen] = useState(false)
+  const [modo, setModo] = useState<Modo>(articuloPreseleccionado ? 'articulos' : 'escrito')
   const [asunto, setAsunto] = useState(
     articuloPreseleccionado ? `Nuevo en ÉCLAT: ${articuloPreseleccionado.title}` : ''
   )
   const [intro, setIntro] = useState('')
+  const [contenido, setContenido] = useState('')
   const [seleccionados, setSeleccionados] = useState<string[]>(
     articuloPreseleccionado ? [articuloPreseleccionado.id] : []
   )
@@ -31,15 +35,29 @@ export default function NewsletterSender({ articuloPreseleccionado, articulos }:
     setSeleccionados(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id])
 
   const handleEnviar = async () => {
-    if (!asunto.trim() || seleccionados.length === 0) {
-      setError('Completá el asunto y seleccioná al menos un artículo')
+    if (!asunto.trim()) {
+      setError('El asunto es obligatorio')
       return
     }
+    if (modo === 'articulos' && seleccionados.length === 0) {
+      setError('Seleccioná al menos un artículo')
+      return
+    }
+    if (modo === 'escrito' && !contenido.trim()) {
+      setError('Escribí el contenido del newsletter')
+      return
+    }
+
     setLoading(true); setError('')
+    const body =
+      modo === 'escrito'
+        ? { asunto, contenido }
+        : { asunto, intro, articuloIds: seleccionados }
+
     const res = await fetch('/api/newsletter/enviar', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ asunto, intro, articuloIds: seleccionados }),
+      body: JSON.stringify(body),
     })
     const json = await res.json()
     setLoading(false)
@@ -66,6 +84,7 @@ export default function NewsletterSender({ articuloPreseleccionado, articulos }:
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        {/* Header */}
         <div className="p-6 border-b border-black/5 flex items-center justify-between">
           <div>
             <h2 className="text-[18px] font-semibold text-[#0A0A0A]">Enviar newsletter</h2>
@@ -95,6 +114,33 @@ export default function NewsletterSender({ articuloPreseleccionado, articulos }:
           </div>
         ) : (
           <div className="p-6 space-y-5">
+
+            {/* Selector de modo */}
+            <div className="flex rounded-xl border border-black/10 overflow-hidden">
+              <button
+                type="button"
+                onClick={() => setModo('escrito')}
+                className={`flex-1 py-2.5 text-[13px] font-semibold transition-colors ${
+                  modo === 'escrito'
+                    ? 'bg-[#1B2B26] text-white'
+                    : 'bg-transparent text-[#6E6E73] hover:text-[#0A0A0A]'
+                }`}
+              >
+                ✍️ Escrito propio
+              </button>
+              <button
+                type="button"
+                onClick={() => setModo('articulos')}
+                className={`flex-1 py-2.5 text-[13px] font-semibold transition-colors ${
+                  modo === 'articulos'
+                    ? 'bg-[#1B2B26] text-white'
+                    : 'bg-transparent text-[#6E6E73] hover:text-[#0A0A0A]'
+                }`}
+              >
+                📰 Artículos del sitio
+              </button>
+            </div>
+
             {/* Asunto */}
             <div>
               <label className="block text-[12px] font-semibold text-[#0A0A0A] mb-1.5 uppercase tracking-wide">Asunto del mail *</label>
@@ -102,47 +148,77 @@ export default function NewsletterSender({ articuloPreseleccionado, articulos }:
                 type="text"
                 value={asunto}
                 onChange={e => setAsunto(e.target.value)}
-                placeholder="Ej: Nuevo artículo · Junio en ÉCLAT"
+                placeholder={modo === 'escrito' ? 'Ej: Carta de junio · ÉCLAT' : 'Ej: Nuevo artículo · Junio en ÉCLAT'}
                 className="w-full px-4 py-3 rounded-xl border border-black/10 text-[14px] focus:outline-none focus:border-[#2F7D6B] transition-colors"
               />
             </div>
 
-            {/* Intro opcional */}
-            <div>
-              <label className="block text-[12px] font-semibold text-[#0A0A0A] mb-1.5 uppercase tracking-wide">
-                Mensaje de bienvenida <span className="font-normal text-[#86868b] normal-case">(opcional)</span>
-              </label>
-              <textarea
-                rows={3}
-                value={intro}
-                onChange={e => setIntro(e.target.value)}
-                placeholder="Ej: Este mes compartimos un nuevo artículo sobre inclusión escolar..."
-                className="w-full px-4 py-3 rounded-xl border border-black/10 text-[14px] focus:outline-none focus:border-[#2F7D6B] transition-colors resize-none"
-              />
-            </div>
-
-            {/* Artículos */}
-            <div>
-              <label className="block text-[12px] font-semibold text-[#0A0A0A] mb-2 uppercase tracking-wide">
-                Artículos a incluir *
-              </label>
-              <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
-                {articulos.map(art => (
-                  <label key={art.id} className="flex items-start gap-3 cursor-pointer p-3 rounded-xl hover:bg-[#F5F9F7] transition-colors border border-transparent hover:border-[#2F7D6B]/20">
-                    <input
-                      type="checkbox"
-                      checked={seleccionados.includes(art.id)}
-                      onChange={() => toggleArticulo(art.id)}
-                      className="mt-0.5 w-4 h-4 accent-[#2F7D6B] rounded shrink-0"
-                    />
-                    <div>
-                      <p className="text-[13px] font-medium text-[#0A0A0A] leading-snug">{art.title}</p>
-                      <p className="text-[11px] text-[#86868b] mt-0.5">{art.category}</p>
-                    </div>
-                  </label>
-                ))}
+            {/* MODO: ESCRITO PROPIO */}
+            {modo === 'escrito' && (
+              <div>
+                <label className="block text-[12px] font-semibold text-[#0A0A0A] mb-1.5 uppercase tracking-wide">
+                  Contenido *
+                </label>
+                <textarea
+                  rows={10}
+                  value={contenido}
+                  onChange={e => setContenido(e.target.value)}
+                  placeholder="Escribí acá tu newsletter, carta mensual, aviso de nuevo curso, o cualquier comunicado que quieras enviar a la comunidad ÉCLAT..."
+                  className="w-full px-4 py-3 rounded-xl border border-black/10 text-[14px] focus:outline-none focus:border-[#2F7D6B] transition-colors resize-none leading-relaxed"
+                />
+                <p className="text-[11px] text-[#86868b] mt-1.5">
+                  Podés usar párrafos separados. El texto se enviará con el membretado de ÉCLAT.
+                </p>
               </div>
-            </div>
+            )}
+
+            {/* MODO: ARTÍCULOS */}
+            {modo === 'articulos' && (
+              <>
+                {/* Intro opcional */}
+                <div>
+                  <label className="block text-[12px] font-semibold text-[#0A0A0A] mb-1.5 uppercase tracking-wide">
+                    Mensaje de bienvenida <span className="font-normal text-[#86868b] normal-case">(opcional)</span>
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={intro}
+                    onChange={e => setIntro(e.target.value)}
+                    placeholder="Ej: Este mes compartimos un nuevo artículo sobre inclusión escolar..."
+                    className="w-full px-4 py-3 rounded-xl border border-black/10 text-[14px] focus:outline-none focus:border-[#2F7D6B] transition-colors resize-none"
+                  />
+                </div>
+
+                {/* Lista de artículos */}
+                <div>
+                  <label className="block text-[12px] font-semibold text-[#0A0A0A] mb-2 uppercase tracking-wide">
+                    Artículos a incluir *
+                  </label>
+                  {articulos.length === 0 ? (
+                    <p className="text-[13px] text-[#86868b] px-4 py-6 border border-dashed border-black/15 rounded-xl text-center">
+                      No hay artículos publicados todavía
+                    </p>
+                  ) : (
+                    <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                      {articulos.map(art => (
+                        <label key={art.id} className="flex items-start gap-3 cursor-pointer p-3 rounded-xl hover:bg-[#F5F9F7] transition-colors border border-transparent hover:border-[#2F7D6B]/20">
+                          <input
+                            type="checkbox"
+                            checked={seleccionados.includes(art.id)}
+                            onChange={() => toggleArticulo(art.id)}
+                            className="mt-0.5 w-4 h-4 accent-[#2F7D6B] rounded shrink-0"
+                          />
+                          <div>
+                            <p className="text-[13px] font-medium text-[#0A0A0A] leading-snug">{art.title}</p>
+                            <p className="text-[11px] text-[#86868b] mt-0.5">{art.category}</p>
+                          </div>
+                        </label>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
 
             {error && (
               <p className="text-[13px] text-red-600 bg-red-50 px-4 py-3 rounded-xl border border-red-100">{error}</p>

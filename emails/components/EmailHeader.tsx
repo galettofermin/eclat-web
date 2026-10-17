@@ -2,8 +2,8 @@ import { Img, Section, Text } from '@react-email/components'
 import * as React from 'react'
 
 /**
- * Encabezado compartido para todos los emails de ÉCLAT.
- * Fondo crema claro con logo centrado y líneas decorativas verdes.
+ * Encabezado unificado para todos los emails de ÉCLAT.
+ * Logo centrado + "ÉCLAT" en verde sage + línea verde. Estilo limpio.
  */
 export default function EmailHeader() {
   return (
@@ -11,22 +11,20 @@ export default function EmailHeader() {
       <Img
         src="https://eclatcentro.com/logo-256.png"
         alt="ÉCLAT"
-        width="72"
-        height="72"
+        width="56"
+        height="56"
         style={logo}
       />
-      <Text style={tagline}>Salud Mental · Educación y Acompañamiento Interdisciplinario</Text>
-
-      <div style={decorBottom} />
+      <Text style={brand}>ÉCLAT</Text>
+      <div style={line} />
     </Section>
   )
 }
 
 const header: React.CSSProperties = {
   backgroundColor: '#FFFFFF',
-  padding: '36px 40px 28px',
+  padding: '36px 40px 24px',
   textAlign: 'center',
-  borderBottom: '1px solid #D8E8E0',
 }
 
 const logo: React.CSSProperties = {
@@ -34,18 +32,18 @@ const logo: React.CSSProperties = {
   margin: '0 auto 10px',
 }
 
-const tagline: React.CSSProperties = {
-  color: '#7FA294',
-  fontSize: '10px',
-  letterSpacing: '0.18em',
+const brand: React.CSSProperties = {
+  color: '#4F7566',
+  fontSize: '13px',
+  fontWeight: '600',
+  letterSpacing: '0.22em',
   textTransform: 'uppercase',
-  margin: '0',
+  margin: '0 0 20px',
   fontFamily: "'Plus Jakarta Sans', Arial, sans-serif",
 }
 
-// Línea decorativa inferior
-const decorBottom: React.CSSProperties = {
-  marginTop: '20px',
+const line: React.CSSProperties = {
   height: '1px',
-  background: 'linear-gradient(90deg, transparent 0%, #C5DDD5 20%, #8BBDAD 50%, #C5DDD5 80%, transparent 100%)',
+  background: 'linear-gradient(90deg, transparent 0%, #B8D4CA 30%, #7FA294 50%, #B8D4CA 70%, transparent 100%)',
+  margin: '0',
 }
