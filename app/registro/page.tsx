@@ -93,11 +93,11 @@ export default function RegistroPage() {
         style={{ maxWidth: 420 }}
       >
         {/* Logo */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '32px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '28px' }}>
           <img
             src="/logo.svg"
             alt="ÉCLAT"
-            style={{ width: '120px', height: '120px', objectFit: 'contain', marginBottom: '12px' }}
+            style={{ width: '80px', height: '80px', objectFit: 'contain', marginBottom: '10px' }}
           />
           <span style={{
             fontSize: '11px',
@@ -106,13 +106,13 @@ export default function RegistroPage() {
             color: 'var(--ink-muted)',
             fontWeight: 600
           }}>
-            Centro de Atención Integral
+            ÉCLAT
           </span>
         </div>
 
         {/* Card */}
         <div
-          className="bg-white px-10 py-9"
+          className="bg-white login-card"
           style={{ borderRadius: 12, border: '1px solid var(--eclat-border-2)', boxShadow: '0 2px 16px rgba(30,42,36,0.07)' }}
         >
           {sent ? (

@@ -172,9 +172,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                   <Image
                     className="foot__logo-full"
                     src="/LOGO CON NOMBRE.png"
-                    alt="ÉCLAT Centro de Atención Integral"
-                    width={220}
-                    height={80}
+                    alt="ÉCLAT"
+                    width={180}
+                    height={64}
                   />
                 </div>
                 <p className="foot__tag">Centro de atención integral en Oncativo, Córdoba. Salud mental, educación y formación desde una mirada interdisciplinaria.</p>
