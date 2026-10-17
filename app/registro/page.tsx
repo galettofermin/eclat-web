@@ -81,21 +81,12 @@ export default function RegistroPage() {
         style={{ maxWidth: 420 }}
       >
         {/* Logo */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '28px' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '28px' }}>
           <img
-            src="/logo.svg"
+            src="/LOGO CON NOMBRE.png"
             alt="ÉCLAT"
-            style={{ width: '80px', height: '80px', objectFit: 'contain', marginBottom: '10px' }}
+            style={{ width: '140px', objectFit: 'contain' }}
           />
-          <span style={{
-            fontSize: '11px',
-            letterSpacing: '0.2em',
-            textTransform: 'uppercase',
-            color: 'var(--ink-muted)',
-            fontWeight: 600
-          }}>
-            ÉCLAT
-          </span>
         </div>
 
         {/* Card */}
