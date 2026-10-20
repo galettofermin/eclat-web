@@ -195,11 +195,19 @@ export default function NewsletterPreview({ asunto, bloques, articulos, cursos }
                               style={{ width: '100%', borderRadius: 8, marginBottom: 12, display: 'block', maxHeight: 180, objectFit: 'cover' }}
                             />
                           )}
-                          {bloque.texto?.trim() && bloque.texto.split(/\n\n+/).map((p, i) => (
-                            <p key={i} style={{ fontSize: 14, color: '#3D4F48', lineHeight: 1.75, margin: '0 0 14px', fontFamily: FONT }}>
-                              {p.trim()}
+                          <div style={{
+                            background: '#F2F6F4', borderRadius: 8, padding: '16px 20px',
+                            borderLeft: '3px solid #2F7D6B',
+                          }}>
+                            <p style={{ fontSize: 10, fontWeight: 700, color: '#4F7566', textTransform: 'uppercase', letterSpacing: '0.14em', margin: '0 0 10px', fontFamily: FONT }}>
+                              Comunicado institucional
                             </p>
-                          ))}
+                            {bloque.texto?.trim() && bloque.texto.split(/\n\n+/).map((p, i) => (
+                              <p key={i} style={{ fontSize: 14, color: '#1B2B26', lineHeight: 1.75, margin: '0 0 12px', fontFamily: FONT }}>
+                                {p.trim()}
+                              </p>
+                            ))}
+                          </div>
                         </div>
                       ) : (
                         <div style={{ background: '#F4F8F6', borderRadius: 8, padding: '14px 16px' }}>

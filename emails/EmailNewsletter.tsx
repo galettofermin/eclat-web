@@ -134,9 +134,12 @@ export default function EmailNewsletter({
                   style={articleImage}
                 />
               )}
-              {bloque.texto.split(/\n\n+/).map((p, i) => (
-                <Text key={i} style={styles.paragraph}>{p.trim()}</Text>
-              ))}
+              <Section style={institucionalBox}>
+                <Text style={institucionalLabel}>Comunicado institucional</Text>
+                {bloque.texto.split(/\n\n+/).map((p, i) => (
+                  <Text key={i} style={institucionalText}>{p.trim()}</Text>
+                ))}
+              </Section>
             </Section>
           )}
         </React.Fragment>
@@ -189,5 +192,30 @@ const cursoTitle: React.CSSProperties = {
   fontWeight: '700',
   margin: '10px 0 6px',
   lineHeight: '1.3',
+  fontFamily: FONT,
+}
+
+const institucionalBox: React.CSSProperties = {
+  backgroundColor: '#F2F6F4',
+  borderRadius: '8px',
+  padding: '20px 24px',
+  borderLeft: '3px solid #2F7D6B',
+}
+
+const institucionalLabel: React.CSSProperties = {
+  color: '#4F7566',
+  fontSize: '10px',
+  fontWeight: '700',
+  letterSpacing: '0.14em',
+  textTransform: 'uppercase',
+  margin: '0 0 12px',
+  fontFamily: FONT,
+}
+
+const institucionalText: React.CSSProperties = {
+  color: '#1B2B26',
+  fontSize: '15px',
+  lineHeight: '1.75',
+  margin: '0 0 14px',
   fontFamily: FONT,
 }
