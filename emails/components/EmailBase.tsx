@@ -83,9 +83,11 @@ export default function EmailBase({ preview, unsubscribeUrl, children }: Props) 
                           <Link href={SITE_URL} style={footerLink}>eclatcentro.com</Link>
                           {'  ·  '}
                           <Link href="https://wa.link/vyi5uv" style={footerLink}>WhatsApp</Link>
+                          {'  ·  '}
+                          <Link href="https://instagram.com/eclatcentro" style={footerLink}>@eclatcentro</Link>
                         </Text>
                         <Text style={footerAddress}>
-                          ÉCLAT Centro de Atención Integral · Oncativo, Córdoba
+                          Castelli 260, Oncativo, Córdoba · Lun a Vie 8:30 a 20:30 h
                         </Text>
                         {unsubscribeUrl && (
                           <Text style={unsubText}>
