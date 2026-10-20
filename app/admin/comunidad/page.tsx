@@ -3,6 +3,14 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
+// ─── Config listas ───────────────────────────────────────────────────────────
+
+const LISTA_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
+  general:       { label: 'General',       color: '#2F7D6B', bg: '#e8f5f0' },
+  pausa:         { label: 'Pausa',         color: '#7A6B2F', bg: '#f5f0e8' },
+  profesionales: { label: 'Prof.',         color: '#1B2B26', bg: '#d4e0da' },
+}
+
 // ─── Tipos ───────────────────────────────────────────────────────────────────
 
 interface Alumno {
@@ -18,6 +26,7 @@ interface Suscriptor {
   id: string
   email: string
   nombre: string
+  lista: string
   creado: string
   activo: boolean
 }
@@ -70,7 +79,7 @@ export default function ComunidadPage() {
       // Suscriptores
       const { data: suscs } = await supabase
         .from('suscriptores')
-        .select('id, email, nombre, created_at, activo')
+        .select('id, email, nombre, lista, created_at, activo')
         .order('created_at', { ascending: false })
       setSuscriptores(suscs?.map(s => ({ ...s, creado: s.created_at })) ?? [])
 
@@ -120,7 +129,7 @@ export default function ComunidadPage() {
           { id: 'suscriptores', label: `Suscriptores (${suscriptores.filter(s => s.activo).length})` },
           { id: 'agregar', label: '+ Agregar contacto' },
         ] as { id: Tab; label: string }[]).map(t => (
-          <button key={t.id} onClick={() => { setTab(t.id); setSearch(''); setSelected({}) }}
+          <button key={t.id} onClick={() => { setTab(t.id); setSearch(''); setSelected({}); setShowEmailModal(false) }}
             style={{
               padding: '7px 16px', borderRadius: 7, border: 'none', cursor: 'pointer',
               fontSize: 13.5, fontWeight: tab === t.id ? 600 : 400,
@@ -309,15 +318,27 @@ export default function ComunidadPage() {
                     <p style={{ margin: '2px 0 0', fontSize: 13, color: '#6e6e73' }}>{s.email}</p>
                   </div>
 
-                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                    <span style={{
-                      fontSize: 11, fontWeight: 600, padding: '3px 8px', borderRadius: 20,
-                      background: s.activo ? '#DCEFE8' : '#f5f5f7',
-                      color: s.activo ? '#2F7D6B' : '#86868b',
-                    }}>
-                      {s.activo ? 'Activo' : 'Dado de baja'}
-                    </span>
-                    <p style={{ margin: '4px 0 0', fontSize: 11, color: '#a1a1a6' }}>Desde {fmt(s.creado)}</p>
+                  <div style={{ textAlign: 'right', flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
+                    <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                      {s.lista && LISTA_CONFIG[s.lista] && (
+                        <span style={{
+                          fontSize: 10, fontWeight: 700, letterSpacing: '0.05em',
+                          textTransform: 'uppercase', padding: '2px 7px', borderRadius: 20,
+                          background: LISTA_CONFIG[s.lista].bg,
+                          color: LISTA_CONFIG[s.lista].color,
+                        }}>
+                          {LISTA_CONFIG[s.lista].label}
+                        </span>
+                      )}
+                      <span style={{
+                        fontSize: 11, fontWeight: 600, padding: '3px 8px', borderRadius: 20,
+                        background: s.activo ? '#DCEFE8' : '#f5f5f7',
+                        color: s.activo ? '#2F7D6B' : '#86868b',
+                      }}>
+                        {s.activo ? 'Activo' : 'Dado de baja'}
+                      </span>
+                    </div>
+                    <p style={{ margin: 0, fontSize: 11, color: '#a1a1a6' }}>Desde {fmt(s.creado)}</p>
                   </div>
                 </div>
               )
@@ -344,7 +365,7 @@ export default function ComunidadPage() {
 // ─── Agregar contacto ────────────────────────────────────────────────────────
 
 function AgregarContacto() {
-  const [form, setForm] = useState({ nombre: '', email: '', telefono: '', nota: '' })
+  const [form, setForm] = useState({ nombre: '', apellido: '', email: '', telefono: '', lista: 'general' })
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<{ ok: boolean; msg: string } | null>(null)
 
@@ -354,16 +375,22 @@ function AgregarContacto() {
     e.preventDefault()
     setLoading(true); setResult(null)
 
-    // Suscribir al newsletter
-    const res = await fetch('/api/newsletter/suscribir', {
+    const nombreCompleto = [form.nombre.trim(), form.apellido.trim()].filter(Boolean).join(' ')
+
+    // Usar la API admin que guarda lista correctamente
+    const res = await fetch('/api/admin/suscriptores', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: form.email.trim(), nombre: form.nombre.trim() }),
+      body: JSON.stringify({
+        email: form.email.trim(),
+        nombre: nombreCompleto || null,
+        lista: form.lista,
+      }),
     })
 
     if (res.ok) {
-      setResult({ ok: true, msg: `${form.nombre || form.email} fue agregado/a a la comunidad y al newsletter.` })
-      setForm({ nombre: '', email: '', telefono: '', nota: '' })
+      setResult({ ok: true, msg: `${nombreCompleto || form.email} fue agregado/a como ${LISTA_CONFIG[form.lista]?.label ?? form.lista}.` })
+      setForm({ nombre: '', apellido: '', email: '', telefono: '', lista: 'general' })
     } else {
       const d = await res.json().catch(() => ({}))
       setResult({ ok: false, msg: d.error || 'Ocurrió un error al agregar el contacto.' })
@@ -377,16 +404,16 @@ function AgregarContacto() {
     outline: 'none', boxSizing: 'border-box',
   }
   const focus = {
-    onFocus: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => (e.target.style.borderColor = '#4F7566'),
-    onBlur: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => (e.target.style.borderColor = 'rgba(0,0,0,0.12)'),
+    onFocus: (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => (e.target.style.borderColor = '#4F7566'),
+    onBlur: (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => (e.target.style.borderColor = 'rgba(0,0,0,0.12)'),
   }
 
   return (
     <div style={{ maxWidth: 480 }}>
       <div style={{ background: '#fff', borderRadius: 16, border: '1px solid rgba(0,0,0,0.07)', padding: '28px 28px' }}>
-        <h2 style={{ margin: '0 0 6px', fontSize: 18, fontWeight: 600, color: '#1d1d1f' }}>Nuevo contacto</h2>
+        <h2 style={{ margin: '0 0 6px', fontSize: 18, fontWeight: 600, color: '#1d1d1f' }}>Nuevo suscriptor</h2>
         <p style={{ margin: '0 0 24px', fontSize: 13.5, color: '#6e6e73', lineHeight: 1.5 }}>
-          La persona quedará suscripta al newsletter y podrás enviarle emails desde el panel.
+          Agregá un contacto manualmente a cualquier lista del newsletter.
         </p>
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -400,9 +427,9 @@ function AgregarContacto() {
             </div>
             <div>
               <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#6e6e73', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>
-                Apellido / Alias
+                Apellido
               </label>
-              <input value={form.nota} onChange={e => set('nota', e.target.value)}
+              <input value={form.apellido} onChange={e => set('apellido', e.target.value)}
                 placeholder="Ej: García" style={inputStyle} {...focus} />
             </div>
           </div>
@@ -417,10 +444,14 @@ function AgregarContacto() {
 
           <div>
             <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#6e6e73', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>
-              Teléfono <span style={{ color: '#a1a1a6', fontWeight: 400, textTransform: 'none', fontSize: 11 }}>(opcional)</span>
+              Lista
             </label>
-            <input value={form.telefono} onChange={e => set('telefono', e.target.value)}
-              placeholder="+54 9 3572..." style={inputStyle} {...focus} />
+            <select value={form.lista} onChange={e => set('lista', e.target.value)}
+              style={{ ...inputStyle, cursor: 'pointer' }} {...focus}>
+              <option value="general">General — suscriptores públicos</option>
+              <option value="profesionales">Profesionales — equipo del centro</option>
+              <option value="pausa">Pausa — sin newsletters por ahora</option>
+            </select>
           </div>
 
           {result && (
@@ -440,13 +471,13 @@ function AgregarContacto() {
             fontSize: 14, fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer',
             transition: 'background 0.15s',
           }}>
-            {loading ? 'Agregando...' : 'Agregar a la comunidad'}
+            {loading ? 'Agregando...' : 'Agregar suscriptor'}
           </button>
         </form>
       </div>
 
       <p style={{ marginTop: 16, fontSize: 12.5, color: '#a1a1a6', lineHeight: 1.6, textAlign: 'center' }}>
-        El contacto quedará en la lista de suscriptores. Desde ahí podés seleccionarlo y enviarle emails.
+        El contacto quedará en la lista elegida. Podés editarlo desde el panel de Newsletter.
       </p>
     </div>
   )

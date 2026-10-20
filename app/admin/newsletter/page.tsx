@@ -675,6 +675,7 @@ export default function AdminNewsletter() {
                 placeholder="Nombre (opcional)"
                 value={nuevoNombre}
                 onChange={e => setNuevoNombre(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && e.preventDefault()}
                 style={{ ...inputStyle, fontSize: 12, padding: '7px 10px' }}
               />
               <input
@@ -682,6 +683,7 @@ export default function AdminNewsletter() {
                 placeholder="Email *"
                 value={nuevoEmail}
                 onChange={e => setNuevoEmail(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); if (nuevoEmail.trim()) agregarSuscriptorManual() } }}
                 style={{ ...inputStyle, fontSize: 12, padding: '7px 10px' }}
               />
               <select
