@@ -23,6 +23,12 @@ interface Bloque {
 interface Articulo { id: string; title: string; excerpt: string; category: string; image_url?: string | null }
 interface Curso { id: string; title: string; badge: string; badge_type: string; description: string; duration?: string; modality?: string; cta?: string | null; link?: string | null }
 interface Suscriptor { id: string; email: string; nombre: string | null; lista: string }
+
+const LISTA_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
+  general:       { label: 'General',       color: '#2F7D6B', bg: '#e8f5f0' },
+  pausa:         { label: 'Pausa',         color: '#7A6B2F', bg: '#f5f0e8' },
+  profesionales: { label: 'Prof.',         color: '#1B2B26', bg: '#d4e0da' },
+}
 interface Envio {
   id: string
   asunto: string
@@ -56,7 +62,7 @@ export default function AdminNewsletter() {
 
   /* ── Destinatarios ── */
   const [seleccionados, setSeleccionados] = useState<Set<string>>(new Set())
-  const [filtroLista, setFiltroLista] = useState<'todos' | 'pausa' | 'general'>('todos')
+  const [filtroLista, setFiltroLista] = useState<'todos' | 'pausa' | 'general' | 'profesionales'>('todos')
 
   /* ── Estado envío ── */
   const [enviando, setEnviando] = useState(false)
@@ -427,26 +433,29 @@ export default function AdminNewsletter() {
               </span>
             </div>
             {/* Filtro lista */}
-            <div style={{ display: 'flex', gap: 6 }}>
-              {(['todos', 'general', 'pausa'] as const).map(f => (
-                <button
-                  key={f}
-                  onClick={() => setFiltroLista(f)}
-                  style={{
-                    fontSize: 11,
-                    fontWeight: 600,
-                    padding: '4px 10px',
-                    borderRadius: 20,
-                    border: filtroLista === f ? 'none' : '1px solid #E2EBE6',
-                    background: filtroLista === f ? '#2F7D6B' : 'transparent',
-                    color: filtroLista === f ? '#fff' : '#6E6E73',
-                    cursor: 'pointer',
-                    textTransform: 'capitalize',
-                  }}
-                >
-                  {f === 'todos' ? 'Todos' : f.charAt(0).toUpperCase() + f.slice(1)}
-                </button>
-              ))}
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+              {(['todos', 'general', 'profesionales', 'pausa'] as const).map(f => {
+                const cfg = f !== 'todos' ? LISTA_CONFIG[f] : null
+                const active = filtroLista === f
+                return (
+                  <button
+                    key={f}
+                    onClick={() => setFiltroLista(f)}
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 600,
+                      padding: '4px 10px',
+                      borderRadius: 20,
+                      border: active ? 'none' : '1px solid #E2EBE6',
+                      background: active ? (cfg?.color ?? '#2F7D6B') : 'transparent',
+                      color: active ? '#fff' : '#6E6E73',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {f === 'todos' ? 'Todos' : cfg?.label ?? f}
+                  </button>
+                )
+              })}
             </div>
           </div>
 
@@ -496,10 +505,23 @@ export default function AdminNewsletter() {
                     }}>
                       {checked && <svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3L3 5L7 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
                     </div>
-                    <div style={{ minWidth: 0 }}>
-                      {s.nombre && (
-                        <div style={{ fontSize: 12, fontWeight: 600, color: '#1B2B26', lineHeight: 1.2 }}>{s.nombre}</div>
-                      )}
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        {s.nombre && (
+                          <div style={{ fontSize: 12, fontWeight: 600, color: '#1B2B26', lineHeight: 1.2 }}>{s.nombre}</div>
+                        )}
+                        {s.lista && LISTA_CONFIG[s.lista] && (
+                          <span style={{
+                            fontSize: 9, fontWeight: 700, letterSpacing: '0.06em',
+                            textTransform: 'uppercase', padding: '2px 6px', borderRadius: 10,
+                            background: LISTA_CONFIG[s.lista].bg,
+                            color: LISTA_CONFIG[s.lista].color,
+                            flexShrink: 0,
+                          }}>
+                            {LISTA_CONFIG[s.lista].label}
+                          </span>
+                        )}
+                      </div>
                       <div style={{ fontSize: 11, color: '#7A9088', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {s.email}
                       </div>

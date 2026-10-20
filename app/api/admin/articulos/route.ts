@@ -8,7 +8,7 @@ export async function GET() {
   const supabase = createAdminClient()
   let query = supabase
     .from('articles')
-    .select('id, title, category, created_at, published')
+    .select('id, title, category, excerpt, image_url, created_at, published')
     .order('created_at', { ascending: false })
   // Sin sesión de admin, solo artículos publicados
   if (!(await isAdmin())) query = query.eq('published', true)
