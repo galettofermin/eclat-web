@@ -58,6 +58,7 @@ export async function POST(req: Request) {
     const { error } = await resend.emails.send({
       from: 'ÉCLAT <hola@eclatcentro.com>',
       to: destinatarioEmail.trim(),
+      reply_to: 'centrointegraleclat@gmail.com',
       subject: asunto,
       html,
     })
