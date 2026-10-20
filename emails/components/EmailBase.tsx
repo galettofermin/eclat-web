@@ -1,6 +1,6 @@
 /**
  * EmailBase — estructura base para todos los emails de ÉCLAT.
- * Card blanca redondeada sobre fondo gris, header con logo, footer estándar.
+ * Fondo verde claro #e0e7dc, card blanca, tipografía DM Sans (grotesca moderna).
  * Los emails específicos usan este componente y solo aportan el contenido del body.
  */
 import { Body, Container, Font, Head, Html, Link, Preview, Section, Text, Hr } from '@react-email/components'
@@ -8,6 +8,9 @@ import * as React from 'react'
 import EmailHeader from './EmailHeader'
 
 const SITE_URL = 'https://eclatcentro.com'
+
+// Fuente principal: DM Sans (grotesca geométrica, la más cercana a Lab Grotesque disponible en woff2)
+const FONT = "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif"
 
 interface Props {
   preview: string
@@ -19,31 +22,34 @@ export default function EmailBase({ preview, unsubscribeUrl, children }: Props) 
   return (
     <Html lang="es">
       <Head>
+        {/* DM Sans 400 */}
         <Font
-          fontFamily="Plus Jakarta Sans"
+          fontFamily="DM Sans"
           fallbackFontFamily="Arial"
           webFont={{
-            url: 'https://fonts.gstatic.com/s/plusjakartasans/v8/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_KU7NSg.woff2',
+            url: 'https://fonts.gstatic.com/s/dmsans/v15/rP2tp2ywxg089UriI5-g4vlH9VoD8CnssC2u.woff2',
             format: 'woff2',
           }}
           fontWeight={400}
           fontStyle="normal"
         />
+        {/* DM Sans 500 */}
         <Font
-          fontFamily="Plus Jakarta Sans"
+          fontFamily="DM Sans"
           fallbackFontFamily="Arial"
           webFont={{
-            url: 'https://fonts.gstatic.com/s/plusjakartasans/v8/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_ck7NSg.woff2',
+            url: 'https://fonts.gstatic.com/s/dmsans/v15/rP2tp2ywxg089UriI5-g4vlH9VoD8Cm8sC2u.woff2',
             format: 'woff2',
           }}
-          fontWeight={600}
+          fontWeight={500}
           fontStyle="normal"
         />
+        {/* DM Sans 700 */}
         <Font
-          fontFamily="Plus Jakarta Sans"
+          fontFamily="DM Sans"
           fallbackFontFamily="Arial"
           webFont={{
-            url: 'https://fonts.gstatic.com/s/plusjakartasans/v8/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_Lk7NSg.woff2',
+            url: 'https://fonts.gstatic.com/s/dmsans/v15/rP2tp2ywxg089UriI5-g4vlH9VoD8CmusC2u.woff2',
             format: 'woff2',
           }}
           fontWeight={700}
@@ -54,35 +60,48 @@ export default function EmailBase({ preview, unsubscribeUrl, children }: Props) 
       <Preview>{preview}</Preview>
 
       <Body style={body}>
-        <Container style={container}>
+        {/* Wrapper exterior verde claro */}
+        <table width="100%" cellPadding="0" cellSpacing="0" border={0} style={outerTable}>
+          <tbody>
+            <tr>
+              <td style={outerCell}>
 
-          <EmailHeader />
+                <Container style={container}>
+                  <EmailHeader />
 
-          <Section style={contentWrapper}>
-            {children}
-          </Section>
+                  <Section style={contentWrapper}>
+                    {children}
+                  </Section>
+                </Container>
 
-          <Hr style={divider} />
+                {/* Footer fuera de la card, sobre el verde */}
+                <table width="100%" cellPadding="0" cellSpacing="0" border={0}>
+                  <tbody>
+                    <tr>
+                      <td style={footerOuter}>
+                        <Text style={footerLinks}>
+                          <Link href={SITE_URL} style={footerLink}>eclatcentro.com</Link>
+                          {'  ·  '}
+                          <Link href="https://wa.link/vyi5uv" style={footerLink}>WhatsApp</Link>
+                        </Text>
+                        <Text style={footerAddress}>
+                          ÉCLAT Centro de Atención Integral · Oncativo, Córdoba
+                        </Text>
+                        {unsubscribeUrl && (
+                          <Text style={unsubText}>
+                            Recibís este mail porque sos parte de la comunidad ÉCLAT.{' '}
+                            <Link href={unsubscribeUrl} style={unsubLink}>Desuscribirme</Link>
+                          </Text>
+                        )}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
 
-          {/* Footer */}
-          <Section style={footer}>
-            <Text style={footerCenter}>
-              <Link href={SITE_URL} style={footerLink}>eclatcentro.com</Link>
-              {' · '}
-              <Link href="https://wa.link/vyi5uv" style={footerLink}>WhatsApp</Link>
-            </Text>
-            <Text style={footerAddress}>
-              ÉCLAT Centro de Atención Integral · Oncativo, Córdoba
-            </Text>
-            {unsubscribeUrl && (
-              <Text style={unsubText}>
-                Recibís este mail porque sos parte de la comunidad ÉCLAT.{' '}
-                <Link href={unsubscribeUrl} style={unsubLink}>Desuscribirme</Link>
-              </Text>
-            )}
-          </Section>
-
-        </Container>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </Body>
     </Html>
   )
@@ -93,51 +112,53 @@ export default function EmailBase({ preview, unsubscribeUrl, children }: Props) 
 export const styles = {
   h1: {
     color: '#1B2B26',
-    fontSize: '22px',
+    fontSize: '24px',
     fontWeight: '700',
-    margin: '0 0 8px',
-    lineHeight: '1.25',
-    fontFamily: "'Plus Jakarta Sans', Arial, sans-serif",
+    margin: '0 0 10px',
+    lineHeight: '1.2',
+    letterSpacing: '-0.02em',
+    fontFamily: FONT,
   } as React.CSSProperties,
 
   h2: {
     color: '#1B2B26',
-    fontSize: '16px',
-    fontWeight: '600',
-    margin: '0 0 16px',
+    fontSize: '17px',
+    fontWeight: '700',
+    margin: '0 0 14px',
     lineHeight: '1.3',
     letterSpacing: '-0.01em',
-    fontFamily: "'Plus Jakarta Sans', Arial, sans-serif",
+    fontFamily: FONT,
   } as React.CSSProperties,
 
   saludo: {
-    color: '#1d1d1f',
-    fontSize: '15px',
-    lineHeight: '1.7',
-    margin: '0 0 16px',
-    fontFamily: "'Plus Jakarta Sans', Arial, sans-serif",
+    color: '#1B2B26',
+    fontSize: '16px',
+    fontWeight: '500',
+    lineHeight: '1.6',
+    margin: '0 0 18px',
+    fontFamily: FONT,
   } as React.CSSProperties,
 
   paragraph: {
-    color: '#3a3a3c',
+    color: '#3D4F48',
     fontSize: '15px',
     lineHeight: '1.75',
     margin: '0 0 18px',
-    fontFamily: "'Plus Jakarta Sans', Arial, sans-serif",
+    fontFamily: FONT,
   } as React.CSSProperties,
 
   label: {
     color: '#4F7566',
     fontSize: '11px',
-    fontWeight: '600',
-    letterSpacing: '0.1em',
+    fontWeight: '700',
+    letterSpacing: '0.12em',
     textTransform: 'uppercase' as const,
     margin: '0 0 6px',
-    fontFamily: "'Plus Jakarta Sans', Arial, sans-serif",
+    fontFamily: FONT,
   } as React.CSSProperties,
 
   dividerSection: {
-    borderColor: '#E8EDE9',
+    borderColor: '#D4E0DA',
     margin: '28px 0',
   } as React.CSSProperties,
 
@@ -145,148 +166,161 @@ export const styles = {
     display: 'inline-block',
     fontSize: '10px',
     fontWeight: '700',
-    letterSpacing: '0.1em',
+    letterSpacing: '0.12em',
     textTransform: 'uppercase' as const,
-    padding: '3px 10px',
-    borderRadius: '20px',
-    backgroundColor: type === 'free' ? '#DCEFE8' : '#F0F0F5',
-    color: type === 'free' ? '#2F7D6B' : '#6e6e73',
-    fontFamily: "'Plus Jakarta Sans', Arial, sans-serif",
+    padding: '4px 12px',
+    borderRadius: '4px',
+    backgroundColor: type === 'free' ? '#d0e8df' : '#e8ede6',
+    color: type === 'free' ? '#1E5C4A' : '#4F7566',
+    fontFamily: FONT,
   }) as React.CSSProperties,
 
   button: {
-    backgroundColor: '#2F7D6B',
+    backgroundColor: '#1B2B26',
     color: '#FFFFFF',
-    fontSize: '14px',
-    fontWeight: '600',
-    padding: '13px 28px',
-    borderRadius: '8px',
+    fontSize: '13px',
+    fontWeight: '700',
+    letterSpacing: '0.06em',
+    padding: '14px 32px',
+    borderRadius: '4px',
     textDecoration: 'none',
     display: 'inline-block',
-    fontFamily: "'Plus Jakarta Sans', Arial, sans-serif",
+    fontFamily: FONT,
   } as React.CSSProperties,
 
   buttonSecondary: {
     backgroundColor: 'transparent',
     color: '#2F7D6B',
     fontSize: '13px',
-    fontWeight: '600',
-    padding: '10px 22px',
-    borderRadius: '8px',
+    fontWeight: '700',
+    letterSpacing: '0.04em',
+    padding: '11px 24px',
+    borderRadius: '4px',
     textDecoration: 'none',
     display: 'inline-block',
     border: '1.5px solid #2F7D6B',
-    fontFamily: "'Plus Jakarta Sans', Arial, sans-serif",
+    fontFamily: FONT,
   } as React.CSSProperties,
 
   greenBox: {
-    backgroundColor: '#EDF3F0',
-    borderRadius: '10px',
-    padding: '18px 22px',
+    backgroundColor: '#e8f0ec',
+    borderRadius: '6px',
+    padding: '20px 24px',
     margin: '0 0 24px',
   } as React.CSSProperties,
 
   metaText: {
-    color: '#6e6e73',
+    color: '#7A9088',
     fontSize: '13px',
     margin: '0 0 20px',
     lineHeight: '1.5',
-    fontFamily: "'Plus Jakarta Sans', Arial, sans-serif",
+    fontFamily: FONT,
   } as React.CSSProperties,
 
   readMore: {
     color: '#2F7D6B',
     fontSize: '13px',
-    fontWeight: '600',
+    fontWeight: '700',
+    letterSpacing: '0.04em',
     textDecoration: 'none',
-    fontFamily: "'Plus Jakarta Sans', Arial, sans-serif",
+    fontFamily: FONT,
   } as React.CSSProperties,
 
   sectionTitle: {
-    color: '#1B2B26',
-    fontSize: '14px',
+    color: '#4F7566',
+    fontSize: '11px',
     fontWeight: '700',
-    letterSpacing: '0.05em',
+    letterSpacing: '0.14em',
     textTransform: 'uppercase' as const,
     margin: '0 0 20px',
-    fontFamily: "'Plus Jakarta Sans', Arial, sans-serif",
+    fontFamily: FONT,
   } as React.CSSProperties,
 
   firma: {
-    color: '#6e6e73',
+    color: '#7A9088',
     fontSize: '14px',
     lineHeight: '1.6',
     margin: '24px 0 0',
-    fontFamily: "'Plus Jakarta Sans', Arial, sans-serif",
+    fontFamily: FONT,
   } as React.CSSProperties,
 
   firmaNombre: {
-    color: '#4F7566',
-    fontWeight: '600',
-    fontFamily: "'Plus Jakarta Sans', Arial, sans-serif",
+    color: '#2F7D6B',
+    fontWeight: '700',
+    fontFamily: FONT,
   } as React.CSSProperties,
 }
 
 /* ── Estilos privados de EmailBase ── */
 
 const body: React.CSSProperties = {
-  backgroundColor: '#F2F4F3',
-  fontFamily: "'Plus Jakarta Sans', Arial, sans-serif",
+  backgroundColor: '#e0e7dc',
+  fontFamily: FONT,
   margin: '0',
   padding: '0',
 }
 
+const outerTable: React.CSSProperties = {
+  backgroundColor: '#e0e7dc',
+  margin: '0',
+  padding: '0',
+}
+
+const outerCell: React.CSSProperties = {
+  backgroundColor: '#e0e7dc',
+  padding: '40px 20px 32px',
+}
+
 const container: React.CSSProperties = {
   maxWidth: '580px',
-  margin: '32px auto',
+  margin: '0 auto',
   backgroundColor: '#FFFFFF',
-  borderRadius: '16px',
+  borderRadius: '6px',
   overflow: 'hidden',
-  boxShadow: '0 4px 24px rgba(0,0,0,0.07)',
+  boxShadow: '0 2px 12px rgba(27,43,38,0.10)',
 }
 
 const contentWrapper: React.CSSProperties = {
-  padding: '32px 40px 28px',
+  padding: '36px 44px 32px',
 }
 
-const divider: React.CSSProperties = {
-  borderColor: '#E8EDE9',
-  margin: '0',
-}
-
-const footer: React.CSSProperties = {
-  padding: '20px 40px 28px',
+const footerOuter: React.CSSProperties = {
+  maxWidth: '580px',
+  margin: '0 auto',
+  padding: '24px 44px 0',
   textAlign: 'center',
 }
 
-const footerCenter: React.CSSProperties = {
-  color: '#9CA8A3',
+const footerLinks: React.CSSProperties = {
+  color: '#6B8A7E',
   fontSize: '12px',
   margin: '0 0 4px',
-  fontFamily: "'Plus Jakarta Sans', Arial, sans-serif",
+  fontFamily: FONT,
 }
 
 const footerAddress: React.CSSProperties = {
-  color: '#B0B8B4',
+  color: '#8AA89E',
   fontSize: '11px',
   margin: '0 0 12px',
-  fontFamily: "'Plus Jakarta Sans', Arial, sans-serif",
+  letterSpacing: '0.04em',
+  fontFamily: FONT,
 }
 
 const footerLink: React.CSSProperties = {
-  color: '#9CA8A3',
-  textDecoration: 'underline',
+  color: '#4F7566',
+  textDecoration: 'none',
+  fontWeight: '500',
 }
 
 const unsubText: React.CSSProperties = {
-  color: '#C4CECA',
+  color: '#9DBDB4',
   fontSize: '11px',
   margin: '0',
   lineHeight: '1.5',
-  fontFamily: "'Plus Jakarta Sans', Arial, sans-serif",
+  fontFamily: FONT,
 }
 
 const unsubLink: React.CSSProperties = {
-  color: '#C4CECA',
+  color: '#9DBDB4',
   textDecoration: 'underline',
 }
