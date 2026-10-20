@@ -69,6 +69,15 @@ export default function AdminNewsletter() {
   const [enviandoPrueba, setEnviandoPrueba] = useState(false)
   const [resultado, setResultado] = useState<{ ok: boolean; msg: string } | null>(null)
 
+  /* ── Gestión suscriptores ── */
+  const [editando, setEditando] = useState<Suscriptor | null>(null)
+  const [editLista, setEditLista] = useState('')
+  const [guardandoEdit, setGuardandoEdit] = useState(false)
+  const [nuevoNombre, setNuevoNombre] = useState('')
+  const [nuevoEmail, setNuevoEmail] = useState('')
+  const [nuevaLista, setNuevaLista] = useState<'general' | 'profesionales' | 'pausa'>('general')
+  const [agregando, setAgregando] = useState(false)
+
   const fileRefs = useRef<Record<string, HTMLInputElement | null>>({})
 
   /* ── Carga inicial ── */
@@ -123,6 +132,64 @@ export default function AdminNewsletter() {
       }
       return next
     })
+  }
+
+  /* ── Gestión suscriptores ── */
+  const recargarSuscriptores = async () => {
+    const res = await fetch('/api/admin/suscriptores')
+    const data = await res.json()
+    const lista = Array.isArray(data) ? data : []
+    setSuscriptores(lista)
+    setSeleccionados(new Set<string>(lista.map((s: Suscriptor) => s.id)))
+  }
+
+  const abrirEditar = (s: Suscriptor) => {
+    setEditando(s)
+    setEditLista(s.lista)
+  }
+
+  const guardarEditar = async () => {
+    if (!editando) return
+    setGuardandoEdit(true)
+    await fetch('/api/admin/suscriptores', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: editando.id, lista: editLista }),
+    })
+    await recargarSuscriptores()
+    setEditando(null)
+    setGuardandoEdit(false)
+  }
+
+  const eliminarSuscriptor = async () => {
+    if (!editando) return
+    if (!confirm(`¿Eliminar a ${editando.nombre || editando.email}?`)) return
+    setGuardandoEdit(true)
+    await fetch('/api/admin/suscriptores', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: editando.id }),
+    })
+    await recargarSuscriptores()
+    setEditando(null)
+    setGuardandoEdit(false)
+  }
+
+  const agregarSuscriptorManual = async () => {
+    if (!nuevoEmail.trim()) return
+    setAgregando(true)
+    const res = await fetch('/api/admin/suscriptores', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nombre: nuevoNombre, email: nuevoEmail, lista: nuevaLista }),
+    })
+    if (res.ok) {
+      setNuevoNombre('')
+      setNuevoEmail('')
+      setNuevaLista('general')
+      await recargarSuscriptores()
+    }
+    setAgregando(false)
   }
 
   /* ── Bloques ── */
@@ -526,13 +593,118 @@ export default function AdminNewsletter() {
                         {s.email}
                       </div>
                     </div>
+                    {/* Botón editar */}
+                    <button
+                      onClick={e => { e.stopPropagation(); abrirEditar(s) }}
+                      style={{ ...btnIconStyle, color: '#C4CFC9', flexShrink: 0 }}
+                      title="Editar"
+                    >
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
                   </div>
                 )
               })
             )}
           </div>
+
+          {/* ── Agregar suscriptor manual ── */}
+          <div style={{ borderTop: '1px solid #F0F4F2', padding: '14px 16px' }}>
+            <p style={{ fontSize: 11, fontWeight: 700, color: '#9CA8A3', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 10px' }}>
+              Agregar suscriptor
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+              <input
+                type="text"
+                placeholder="Nombre (opcional)"
+                value={nuevoNombre}
+                onChange={e => setNuevoNombre(e.target.value)}
+                style={{ ...inputStyle, fontSize: 12, padding: '7px 10px' }}
+              />
+              <input
+                type="email"
+                placeholder="Email *"
+                value={nuevoEmail}
+                onChange={e => setNuevoEmail(e.target.value)}
+                style={{ ...inputStyle, fontSize: 12, padding: '7px 10px' }}
+              />
+              <select
+                value={nuevaLista}
+                onChange={e => setNuevaLista(e.target.value as 'general' | 'profesionales' | 'pausa')}
+                style={{ ...selectStyle, fontSize: 12, padding: '7px 10px' }}
+              >
+                <option value="general">General</option>
+                <option value="profesionales">Profesionales</option>
+                <option value="pausa">Pausa</option>
+              </select>
+              <button
+                onClick={agregarSuscriptorManual}
+                disabled={agregando || !nuevoEmail.trim()}
+                style={{
+                  background: '#1B2B26', color: '#fff', border: 'none',
+                  borderRadius: 8, padding: '8px 14px', fontSize: 12,
+                  fontWeight: 700, cursor: agregando || !nuevoEmail.trim() ? 'not-allowed' : 'pointer',
+                  opacity: agregando || !nuevoEmail.trim() ? 0.6 : 1,
+                }}
+              >
+                {agregando ? 'Agregando...' : '+ Agregar'}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* ── Modal editar suscriptor ── */}
+      {editando && (
+        <div style={{
+          position: 'fixed', inset: 0, background: 'rgba(27,43,38,0.4)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
+        }} onClick={() => setEditando(null)}>
+          <div style={{
+            background: '#fff', borderRadius: 16, padding: 28, width: 320, boxShadow: '0 8px 40px rgba(0,0,0,0.18)',
+          }} onClick={e => e.stopPropagation()}>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1B2B26', margin: '0 0 4px' }}>
+              Editar suscriptor
+            </h3>
+            <p style={{ fontSize: 12, color: '#7A9088', margin: '0 0 20px' }}>
+              {editando.nombre && <><strong>{editando.nombre}</strong> · </>}{editando.email}
+            </p>
+
+            <label style={labelStyle}>Lista</label>
+            <select
+              value={editLista}
+              onChange={e => setEditLista(e.target.value)}
+              style={{ ...selectStyle, marginBottom: 20 }}
+            >
+              <option value="general">General</option>
+              <option value="profesionales">Profesionales</option>
+              <option value="pausa">Pausa</option>
+            </select>
+
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button
+                onClick={eliminarSuscriptor}
+                disabled={guardandoEdit}
+                style={{
+                  flex: 1, padding: '10px', borderRadius: 8, fontSize: 13, fontWeight: 600,
+                  border: '1.5px solid #fca5a5', background: '#fef2f2', color: '#dc2626', cursor: 'pointer',
+                }}
+              >
+                Eliminar
+              </button>
+              <button
+                onClick={guardarEditar}
+                disabled={guardandoEdit}
+                style={{
+                  flex: 2, padding: '10px', borderRadius: 8, fontSize: 13, fontWeight: 700,
+                  border: 'none', background: '#1B2B26', color: '#fff', cursor: 'pointer',
+                }}
+              >
+                {guardandoEdit ? 'Guardando...' : 'Guardar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Preview en tiempo real ── */}
       <NewsletterPreview
