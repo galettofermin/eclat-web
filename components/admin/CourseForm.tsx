@@ -207,10 +207,10 @@ export default function CourseForm({ course }: { course?: Course }) {
               <select value={form.badge_type} onChange={(e) => {
                 const type = e.target.value as 'free' | 'soon'
                 set('badge_type', type)
-                set('badge', type === 'free' ? 'Descarga gratuita' : 'Próximamente')
+                set('badge', type === 'free' ? 'Inscripción abierta' : 'Próximamente')
               }} className="w-full px-4 py-3 rounded-xl border border-black/10 text-[15px] focus:outline-none focus:border-[#2F7D6B] transition-colors bg-white">
                 <option value="soon">Próximamente</option>
-                <option value="free">Descarga gratuita / Disponible</option>
+                <option value="free">Inscripción abierta / Disponible</option>
               </select>
             </div>
             <div>
