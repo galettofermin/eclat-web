@@ -35,6 +35,7 @@ export default function CourseForm({ course }: { course?: Course }) {
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [saved, setSaved] = useState(false)
 
   const set = (k: keyof typeof form, v: string | boolean | number) =>
     setForm((f) => ({ ...f, [k]: v }))
@@ -43,6 +44,7 @@ export default function CourseForm({ course }: { course?: Course }) {
     e.preventDefault()
     setLoading(true)
     setError('')
+    setSaved(false)
     const { instructors, ...rest } = form
     // instructors solo se manda si la columna ya existe en la base (el curso la trae) o si se cargó algo:
     // así el formulario sigue guardando aunque todavía no se haya corrido el SQL de la columna
@@ -56,6 +58,8 @@ export default function CourseForm({ course }: { course?: Course }) {
       const { error } = await supabase.from('courses').update(payload).eq('id', course.id)
       if (error) { setError(error.message); setLoading(false); return }
       setLoading(false)
+      setSaved(true)
+      setTimeout(() => setSaved(false), 3000)
     } else {
       const { data, error } = await supabase.from('courses').insert(payload).select().single()
       if (error) { setError(error.message); setLoading(false); return }
@@ -256,6 +260,11 @@ export default function CourseForm({ course }: { course?: Course }) {
 
         {error && (
           <p className="text-[13px] text-red-500 bg-red-50 px-4 py-3 rounded-xl border border-red-100">{error}</p>
+        )}
+        {saved && (
+          <p className="text-[13px] text-[#2F7D6B] bg-[#EDF3F0] px-4 py-3 rounded-xl border border-[#c5ddd7] flex items-center gap-2">
+            ✅ Cambios guardados correctamente
+          </p>
         )}
 
         <div className="flex items-center gap-4 pt-2 border-t border-black/5">
