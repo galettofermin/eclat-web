@@ -82,7 +82,7 @@ export default function EmailSeguimientoCurso({ nombre, tituloCurso, urlCurso, d
             <Text style={footerText}>ÉCLAT Centro de Atención Integral · Oncativo, Córdoba</Text>
             <Text style={footerText}>
               ¿Preferís hablar por WhatsApp?{' '}
-              <Link href="https://wa.link/vyi5uv" style={footerLink}>Escribinos acá</Link>
+              <Link href="https://wa.me/543572441454" style={footerLink}>Escribinos acá</Link>
             </Text>
             <Text style={unsubText}>
               Recibiste este mail porque visitaste uno de nuestros cursos.{' '}

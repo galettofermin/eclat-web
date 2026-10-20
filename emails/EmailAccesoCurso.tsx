@@ -57,7 +57,7 @@ export default function EmailAccesoCurso({ nombre, tituloCurso, urlCurso }: Prop
             <Text style={footerText}>ÉCLAT Centro de Atención Integral · Oncativo, Córdoba</Text>
             <Text style={footerText}>
               ¿Problemas? Escribinos a{' '}
-              <Link href="https://wa.link/vyi5uv" style={footerLink}>WhatsApp</Link>
+              <Link href="https://wa.me/543572441454" style={footerLink}>WhatsApp</Link>
             </Text>
           </Section>
 

@@ -82,7 +82,7 @@ export default function EmailBase({ preview, unsubscribeUrl, children }: Props) 
                         <Text style={footerLinks}>
                           <Link href={SITE_URL} style={footerLink}>eclatcentro.com</Link>
                           {'  ·  '}
-                          <Link href="https://wa.link/vyi5uv" style={footerLink}>WhatsApp</Link>
+                          <Link href="https://wa.me/543572441454" style={footerLink}>WhatsApp</Link>
                           {'  ·  '}
                           <Link href="https://instagram.com/eclatcentro" style={footerLink}>@eclatcentro</Link>
                         </Text>
