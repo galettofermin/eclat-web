@@ -207,16 +207,25 @@ export default function CourseForm({ course }: { course?: Course }) {
               <select value={form.badge_type} onChange={(e) => {
                 const type = e.target.value as 'free' | 'soon'
                 set('badge_type', type)
-                set('badge', type === 'free' ? 'Inscripción abierta' : 'Próximamente')
               }} className="w-full px-4 py-3 rounded-xl border border-black/10 text-[15px] focus:outline-none focus:border-[#2F7D6B] transition-colors bg-white">
                 <option value="soon">Próximamente</option>
-                <option value="free">Inscripción abierta / Disponible</option>
+                <option value="free">Disponible</option>
               </select>
             </div>
             <div>
               <label className="block text-[13px] font-medium text-[#0A0A0A] mb-1.5">Texto del badge</label>
               <input type="text" value={form.badge} onChange={(e) => set('badge', e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-black/10 text-[15px] focus:outline-none focus:border-[#2F7D6B] transition-colors" />
+                className="w-full px-4 py-3 rounded-xl border border-black/10 text-[15px] focus:outline-none focus:border-[#2F7D6B] transition-colors"
+                placeholder="Ej: Inscripción abierta, Próximamente, Cupos limitados..." />
+              <div className="flex gap-2 mt-2 flex-wrap">
+                {['Inscripción abierta', 'Próximamente', 'Cupos limitados', 'Gratuito'].map(op => (
+                  <button key={op} type="button"
+                    onClick={() => set('badge', op)}
+                    className="text-[11px] px-3 py-1 rounded-full border border-black/10 hover:border-[#2F7D6B] hover:text-[#2F7D6B] transition-colors bg-white">
+                    {op}
+                  </button>
+                ))}
+              </div>
             </div>
             <div>
               <label className="block text-[13px] font-medium text-[#0A0A0A] mb-1.5">Enlace externo <span className="text-[#86868b] font-normal">(opcional)</span></label>
