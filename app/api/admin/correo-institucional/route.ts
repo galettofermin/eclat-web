@@ -8,6 +8,9 @@
  *     texto: string
  *     destinatarioEmail: string
  *     destinatarioNombre?: string
+ *     imagenUrl?: string
+ *     pdfUrl?: string
+ *     pdfNombre?: string
  *   }
  */
 import { NextResponse } from 'next/server'
@@ -29,13 +32,19 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json()
-    const { asunto, texto, destinatarioEmail, destinatarioNombre } = body
+    const { asunto, texto, destinatarioEmail, destinatarioNombre, imagenUrl, pdfUrl, pdfNombre } = body
 
     if (!asunto?.trim()) return NextResponse.json({ error: 'El asunto es requerido' }, { status: 400 })
     if (!texto?.trim()) return NextResponse.json({ error: 'El texto es requerido' }, { status: 400 })
     if (!destinatarioEmail?.trim()) return NextResponse.json({ error: 'El email del destinatario es requerido' }, { status: 400 })
 
-    const bloques = [{ tipo: 'institucional' as const, texto: texto.trim() }]
+    const bloques = [{
+      tipo: 'institucional' as const,
+      texto: texto.trim(),
+      imagenUrl: imagenUrl || undefined,
+      pdfUrl: pdfUrl || undefined,
+      pdfNombre: pdfNombre || undefined,
+    }]
 
     const html = await render(EmailNewsletter({
       asunto,

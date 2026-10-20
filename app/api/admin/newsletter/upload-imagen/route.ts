@@ -9,9 +9,12 @@ export async function POST(req: Request) {
   const fd = await req.formData()
   const file = fd.get('file') as File | null
   if (!file) return NextResponse.json({ error: 'Archivo requerido' }, { status: 400 })
+  if (!file.type.startsWith('image/')) return NextResponse.json({ error: 'Solo se permiten imágenes' }, { status: 400 })
 
-  const ext = file.name.split('.').pop() ?? 'jpg'
-  const filePath = `newsletter/${Date.now()}.${ext}`
+  const nombreLimpio = file.name
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-zA-Z0-9._-]/g, '_')
+  const filePath = `newsletter/imagenes/${Date.now()}_${nombreLimpio}`
 
   const supabase = createAdminClient()
   const { error } = await supabase.storage

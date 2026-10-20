@@ -40,6 +40,7 @@ interface BloqueFormacion {
 interface BloqueInstitucional {
   tipo: 'institucional'
   texto: string
+  label?: string
   imagenUrl?: string
   pdfUrl?: string
   pdfNombre?: string
@@ -137,7 +138,9 @@ export default function EmailNewsletter({
                 />
               )}
               <div style={institucionalBox}>
-                <Text style={institucionalLabel}>Comunicado institucional</Text>
+                {bloque.label && (
+                  <Text style={institucionalLabel}>{bloque.label}</Text>
+                )}
                 {bloque.texto.split(/\n\n+/).map((p, i) => (
                   <Text key={i} style={institucionalText}>{p.trim()}</Text>
                 ))}
