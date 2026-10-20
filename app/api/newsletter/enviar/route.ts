@@ -1,11 +1,19 @@
 /**
  * POST /api/newsletter/enviar
- * Envía un newsletter a todos los suscriptores activos.
- * Solo accesible para el director (verificado por email de sesión).
+ * Envía un newsletter compuesto por bloques a suscriptores seleccionados.
  *
- * Acepta dos modos:
- *   - Artículos:  { asunto, intro?, articuloIds: string[] }
- *   - Escrito:    { asunto, contenido: string }
+ * Body:
+ *   {
+ *     asunto: string
+ *     bloques: Bloque[]           // nuevo sistema unificado
+ *     suscriptorIds?: string[]    // si se omite → todos los activos
+ *     prueba?: boolean            // envía solo al director
+ *   }
+ *
+ * Tipos de bloque:
+ *   { tipo: 'articulo',      articuloId: string }
+ *   { tipo: 'formacion',     cursoId: string }
+ *   { tipo: 'institucional', texto: string, imagenUrl?: string }
  */
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
@@ -28,72 +36,81 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json()
-    const { asunto, intro, articuloIds, contenido } = body
+    const { asunto, bloques, suscriptorIds, prueba } = body
 
-    if (!asunto) {
+    if (!asunto?.trim()) {
       return NextResponse.json({ error: 'El asunto es requerido' }, { status: 400 })
     }
-
-    const modoEscrito = !!contenido?.trim()
-    const modoArticulos = !modoEscrito && Array.isArray(articuloIds) && articuloIds.length > 0
-
-    if (!modoEscrito && !modoArticulos) {
-      return NextResponse.json(
-        { error: 'Incluí un contenido escrito o al menos un artículo' },
-        { status: 400 }
-      )
+    if (!Array.isArray(bloques) || bloques.length === 0) {
+      return NextResponse.json({ error: 'Incluí al menos un bloque' }, { status: 400 })
     }
 
     const admin = createAdminClient()
 
-    // Traer artículos solo si se necesitan
-    let articulos: { id: string; title: string; excerpt: string; category: string; image_url?: string | null; author?: string | null }[] = []
-    if (modoArticulos) {
-      const { data } = await admin
-        .from('articles')
-        .select('id, title, excerpt, category, image_url, author')
-        .in('id', articuloIds)
-        .eq('published', true)
-
-      if (!data?.length) {
-        return NextResponse.json({ error: 'No se encontraron artículos publicados' }, { status: 400 })
+    // Resolver datos de cada bloque
+    const bloquesResueltos = await Promise.all(bloques.map(async (b: { tipo: string; articuloId?: string; cursoId?: string; texto?: string; imagenUrl?: string }) => {
+      if (b.tipo === 'articulo') {
+        const { data } = await admin
+          .from('articles')
+          .select('id, title, excerpt, category, image_url, author')
+          .eq('id', b.articuloId)
+          .eq('published', true)
+          .single()
+        if (!data) throw new Error(`Artículo no encontrado: ${b.articuloId}`)
+        return { tipo: 'articulo' as const, articulo: data }
       }
-      articulos = data
+      if (b.tipo === 'formacion') {
+        const { data } = await admin
+          .from('courses')
+          .select('id, title, description, badge, badge_type, link, cta, duration, modality')
+          .eq('id', b.cursoId)
+          .eq('published', true)
+          .single()
+        if (!data) throw new Error(`Curso no encontrado: ${b.cursoId}`)
+        return { tipo: 'formacion' as const, curso: data }
+      }
+      if (b.tipo === 'institucional') {
+        if (!b.texto?.trim()) throw new Error('El mensaje institucional no puede estar vacío')
+        return { tipo: 'institucional' as const, texto: b.texto, imagenUrl: b.imagenUrl }
+      }
+      throw new Error(`Tipo de bloque desconocido: ${b.tipo}`)
+    }))
+
+    // Destinatarios
+    let suscriptores: { id: string; email: string; nombre: string | null }[] = []
+
+    if (prueba) {
+      // Solo enviar al director
+      suscriptores = [{ id: 'prueba', email: user.email!, nombre: 'Admin' }]
+    } else if (Array.isArray(suscriptorIds) && suscriptorIds.length > 0) {
+      const { data } = await admin
+        .from('suscriptores')
+        .select('id, email, nombre')
+        .in('id', suscriptorIds)
+        .eq('activo', true)
+      suscriptores = data ?? []
+    } else {
+      const { data } = await admin
+        .from('suscriptores')
+        .select('id, email, nombre')
+        .eq('activo', true)
+      suscriptores = data ?? []
     }
 
-    // Traer cursos publicados para mostrar al final del email
-    const { data: cursosData } = await admin
-      .from('courses')
-      .select('id, title, description, badge, badge_type, link, cta, duration, modality')
-      .eq('published', true)
-      .order('sort_order')
-      .limit(3)
-    const cursos = cursosData ?? []
-
-    // Traer todos los suscriptores activos
-    const { data: suscriptores } = await admin
-      .from('suscriptores')
-      .select('id, email, nombre')
-      .eq('activo', true)
-
-    if (!suscriptores?.length) {
-      return NextResponse.json({ error: 'No hay suscriptores activos' }, { status: 400 })
+    if (!suscriptores.length) {
+      return NextResponse.json({ error: 'No hay destinatarios' }, { status: 400 })
     }
 
     const resend = new Resend(process.env.RESEND_API_KEY)
     let enviados = 0
     let errores = 0
 
-    // Enviar en lotes con pausa entre mensajes para respetar rate limits
     for (const suscriptor of suscriptores) {
       try {
         const unsubscribeUrl = `${SITE_URL}/desuscribirse?id=${suscriptor.id}`
         const html = await render(EmailNewsletter({
           asunto,
-          contenido: modoEscrito ? contenido : undefined,
-          intro: modoArticulos ? (intro || undefined) : undefined,
-          articulos,
-          cursos,
+          bloques: bloquesResueltos,
           unsubscribeUrl,
           siteUrl: SITE_URL,
           nombreDestinatario: suscriptor.nombre || undefined,
@@ -105,31 +122,32 @@ export async function POST(req: Request) {
           subject: asunto,
           html,
         })
-
         enviados++
       } catch (err) {
         console.error(`Error enviando a ${suscriptor.email}:`, err)
         errores++
       }
-
-      // Pequeña pausa para respetar rate limits de Resend
       await new Promise(r => setTimeout(r, 100))
     }
 
-    // Registrar el envío
-    await admin.from('newsletter_envios').insert({
-      asunto,
-      intro: intro || null,
-      articulo_ids: modoArticulos ? articuloIds : null,
-      contenido: modoEscrito ? contenido : null,
-      total_enviados: enviados,
-      total_errores: errores,
-      enviado_por: user.email,
-    })
+    // Registrar en historial (solo envíos reales, no pruebas)
+    if (!prueba) {
+      try {
+        await admin.from('newsletter_envios').insert({
+          asunto,
+          bloques: bloques,
+          total_enviados: enviados,
+          total_errores: errores,
+          enviado_por: user.email,
+        })
+      } catch (e) {
+        console.error('No se pudo guardar historial:', e)
+      }
+    }
 
     return NextResponse.json({ ok: true, enviados, errores })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Newsletter enviar error:', error)
-    return NextResponse.json({ error: 'Error interno' }, { status: 500 })
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'Error interno' }, { status: 500 })
   }
 }
