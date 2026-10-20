@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
+import NewsletterPreview from './NewsletterPreview'
 
 /* ── Tipos ── */
 type BloqueType = 'articulo' | 'formacion' | 'institucional'
@@ -19,8 +20,8 @@ interface Bloque {
   imagenPreview?: string
 }
 
-interface Articulo { id: string; title: string; excerpt: string; category: string }
-interface Curso { id: string; title: string; badge: string }
+interface Articulo { id: string; title: string; excerpt: string; category: string; image_url?: string | null }
+interface Curso { id: string; title: string; badge: string; badge_type: string; description: string; duration?: string; modality?: string; cta?: string | null; link?: string | null }
 interface Suscriptor { id: string; email: string; nombre: string | null; lista: string }
 interface Envio {
   id: string
@@ -412,43 +413,10 @@ export default function AdminNewsletter() {
             </div>
           )}
 
-          {/* ── Historial ── */}
-          {historial.length > 0 && (
-            <div style={{ marginTop: 8 }}>
-              <h2 style={{ fontSize: 16, fontWeight: 700, color: '#1B2B26', marginBottom: 12, letterSpacing: '-0.01em' }}>
-                Historial de envíos
-              </h2>
-              <div style={{ ...card, padding: 0, overflow: 'hidden' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-                  <thead>
-                    <tr style={{ borderBottom: '1px solid #E8EDE9', background: '#F9FAF9' }}>
-                      <th style={thStyle}>Asunto</th>
-                      <th style={{ ...thStyle, textAlign: 'center' }}>Enviados</th>
-                      <th style={{ ...thStyle, textAlign: 'right' }}>Fecha</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {historial.map((e, i) => (
-                      <tr key={e.id} style={{ borderBottom: i < historial.length - 1 ? '1px solid #F0F4F2' : 'none' }}>
-                        <td style={{ ...tdStyle, color: '#1B2B26', fontWeight: 500 }}>{e.asunto}</td>
-                        <td style={{ ...tdStyle, textAlign: 'center' }}>
-                          <span style={{ color: '#2F7D6B', fontWeight: 700 }}>{e.total_enviados}</span>
-                          {e.total_errores > 0 && <span style={{ color: '#dc2626', marginLeft: 4 }}>({e.total_errores} err)</span>}
-                        </td>
-                        <td style={{ ...tdStyle, textAlign: 'right', color: '#9CA8A3' }}>
-                          {new Date(e.creado_en).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* ── Columna derecha: destinatarios ── */}
-        <div style={{ ...card, padding: 0, overflow: 'hidden', position: 'sticky', top: 24 }}>
+        <div style={{ ...card, padding: 0, overflow: 'hidden', position: 'sticky', top: 24, alignSelf: 'start' }}>
           <div style={{ padding: '16px 16px 12px', borderBottom: '1px solid #F0F4F2' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
               <span style={{ fontSize: 13, fontWeight: 700, color: '#1B2B26' }}>
@@ -543,6 +511,48 @@ export default function AdminNewsletter() {
           </div>
         </div>
       </div>
+
+      {/* ── Preview en tiempo real ── */}
+      <NewsletterPreview
+        asunto={asunto}
+        bloques={bloques}
+        articulos={articulos}
+        cursos={cursos}
+      />
+
+      {/* ── Historial ── */}
+      {historial.length > 0 && (
+        <div style={{ marginTop: 32 }}>
+          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#1B2B26', marginBottom: 12, letterSpacing: '-0.01em' }}>
+            Historial de envíos
+          </h2>
+          <div style={{ ...card, padding: 0, overflow: 'hidden' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+              <thead>
+                <tr style={{ borderBottom: '1px solid #E8EDE9', background: '#F9FAF9' }}>
+                  <th style={thStyle}>Asunto</th>
+                  <th style={{ ...thStyle, textAlign: 'center' }}>Enviados</th>
+                  <th style={{ ...thStyle, textAlign: 'right' }}>Fecha</th>
+                </tr>
+              </thead>
+              <tbody>
+                {historial.map((e, i) => (
+                  <tr key={e.id} style={{ borderBottom: i < historial.length - 1 ? '1px solid #F0F4F2' : 'none' }}>
+                    <td style={{ ...tdStyle, color: '#1B2B26', fontWeight: 500 }}>{e.asunto}</td>
+                    <td style={{ ...tdStyle, textAlign: 'center' }}>
+                      <span style={{ color: '#2F7D6B', fontWeight: 700 }}>{e.total_enviados}</span>
+                      {e.total_errores > 0 && <span style={{ color: '#dc2626', marginLeft: 4 }}>({e.total_errores} err)</span>}
+                    </td>
+                    <td style={{ ...tdStyle, textAlign: 'right', color: '#9CA8A3' }}>
+                      {new Date(e.creado_en).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
