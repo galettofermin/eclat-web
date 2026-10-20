@@ -20,6 +20,8 @@ interface Bloque {
   texto?: string
   imagenPreview?: string
   imagenUrl?: string
+  pdfNombre?: string
+  pdfFile?: File
 }
 
 interface Articulo { id: string; title: string; excerpt: string; category: string; image_url?: string | null }
@@ -207,6 +209,16 @@ export default function NewsletterPreview({ asunto, bloques, articulos, cursos }
                                 {p.trim()}
                               </p>
                             ))}
+                            {(bloque.pdfNombre || bloque.pdfFile) && (
+                              <div style={{
+                                display: 'inline-flex', alignItems: 'center', gap: 6,
+                                border: '1.5px solid #2F7D6B', borderRadius: 6,
+                                padding: '8px 16px', marginTop: 4,
+                                color: '#2F7D6B', fontSize: 12, fontWeight: 700, fontFamily: FONT,
+                              }}>
+                                📄 {bloque.pdfNombre ?? bloque.pdfFile?.name ?? 'documento.pdf'}
+                              </div>
+                            )}
                           </div>
                         </div>
                       ) : (

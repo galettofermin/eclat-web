@@ -15,9 +15,12 @@ interface Bloque {
   cursoId?: string
   // institucional
   texto?: string
-  imagenUrl?: string  // URL pública ya subida
-  imagenFile?: File   // archivo local pendiente de subir
+  imagenUrl?: string     // URL pública ya subida
+  imagenFile?: File      // archivo local pendiente de subir
   imagenPreview?: string
+  pdfUrl?: string        // URL pública del PDF ya subido
+  pdfNombre?: string     // nombre original del PDF
+  pdfFile?: File         // PDF local pendiente de subir
 }
 
 interface Articulo { id: string; title: string; excerpt: string; category: string; image_url?: string | null }
@@ -79,6 +82,7 @@ export default function AdminNewsletter() {
   const [agregando, setAgregando] = useState(false)
 
   const fileRefs = useRef<Record<string, HTMLInputElement | null>>({})
+  const pdfRefs = useRef<Record<string, HTMLInputElement | null>>({})
 
   /* ── Carga inicial ── */
   useEffect(() => {
@@ -222,6 +226,21 @@ export default function AdminNewsletter() {
     return data.url
   }
 
+  /* ── Subir PDF a Supabase storage ── */
+  const subirPdf = async (file: File): Promise<{ url: string; nombre: string }> => {
+    const form = new FormData()
+    form.append('file', file)
+    const res = await fetch('/api/admin/newsletter/upload-pdf', { method: 'POST', body: form })
+    const data = await res.json()
+    if (!res.ok || !data.url) throw new Error(data.error || 'Error al subir PDF')
+    return { url: data.url, nombre: data.nombre }
+  }
+
+  const handlePdfChange = (bloqueId: string, file: File | undefined) => {
+    if (!file) return
+    actualizarBloque(bloqueId, { pdfFile: file, pdfNombre: file.name, pdfUrl: undefined })
+  }
+
   /* ── Preparar payload ── */
   const prepararBloques = async () => {
     const resultado = []
@@ -235,10 +254,15 @@ export default function AdminNewsletter() {
       } else if (b.tipo === 'institucional') {
         if (!b.texto?.trim()) throw new Error('El mensaje institucional no puede estar vacío')
         let imagenUrl = b.imagenUrl
-        if (b.imagenFile) {
-          imagenUrl = await subirImagen(b.imagenFile)
+        if (b.imagenFile) imagenUrl = await subirImagen(b.imagenFile)
+        let pdfUrl = b.pdfUrl
+        let pdfNombre = b.pdfNombre
+        if (b.pdfFile) {
+          const pdf = await subirPdf(b.pdfFile)
+          pdfUrl = pdf.url
+          pdfNombre = pdf.nombre
         }
-        resultado.push({ tipo: 'institucional', texto: b.texto, imagenUrl })
+        resultado.push({ tipo: 'institucional', texto: b.texto, imagenUrl, pdfUrl, pdfNombre })
       }
     }
     return resultado
@@ -422,6 +446,39 @@ export default function AdminNewsletter() {
                       style={btnSecundario}
                     >
                       {bloque.imagenPreview ? '↺ Cambiar imagen' : '+ Subir imagen'}
+                    </button>
+                  </div>
+                  {/* PDF adjunto */}
+                  <div>
+                    <label style={labelStyle}>PDF adjunto (opcional)</label>
+                    {bloque.pdfNombre && (
+                      <div style={{
+                        display: 'flex', alignItems: 'center', gap: 8,
+                        background: '#F2F6F4', borderRadius: 6, padding: '8px 12px', marginBottom: 8,
+                      }}>
+                        <span style={{ fontSize: 16 }}>📄</span>
+                        <span style={{ fontSize: 12, color: '#1B2B26', fontWeight: 600, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {bloque.pdfNombre}
+                        </span>
+                        <button
+                          onClick={() => actualizarBloque(bloque.id, { pdfFile: undefined, pdfNombre: undefined, pdfUrl: undefined })}
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9CA8A3', padding: 0, fontSize: 14 }}
+                          title="Quitar PDF"
+                        >✕</button>
+                      </div>
+                    )}
+                    <input
+                      ref={el => { pdfRefs.current[bloque.id] = el }}
+                      type="file"
+                      accept="application/pdf"
+                      style={{ display: 'none' }}
+                      onChange={e => handlePdfChange(bloque.id, e.target.files?.[0])}
+                    />
+                    <button
+                      onClick={() => pdfRefs.current[bloque.id]?.click()}
+                      style={btnSecundario}
+                    >
+                      {bloque.pdfNombre ? '↺ Cambiar PDF' : '+ Adjuntar PDF'}
                     </button>
                   </div>
                 </div>

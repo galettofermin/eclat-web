@@ -41,6 +41,8 @@ interface BloqueInstitucional {
   tipo: 'institucional'
   texto: string
   imagenUrl?: string
+  pdfUrl?: string
+  pdfNombre?: string
 }
 
 type Bloque = BloqueArticulo | BloqueFormacion | BloqueInstitucional
@@ -139,6 +141,11 @@ export default function EmailNewsletter({
                 {bloque.texto.split(/\n\n+/).map((p, i) => (
                   <Text key={i} style={institucionalText}>{p.trim()}</Text>
                 ))}
+                {bloque.pdfUrl && (
+                  <Link href={bloque.pdfUrl} style={pdfButton}>
+                    📄 {bloque.pdfNombre ?? 'Descargar documento'}
+                  </Link>
+                )}
               </Section>
             </Section>
           )}
@@ -218,4 +225,18 @@ const institucionalText: React.CSSProperties = {
   lineHeight: '1.75',
   margin: '0 0 14px',
   fontFamily: FONT,
+}
+
+const pdfButton: React.CSSProperties = {
+  display: 'inline-block',
+  backgroundColor: '#ffffff',
+  color: '#2F7D6B',
+  border: '1.5px solid #2F7D6B',
+  borderRadius: '6px',
+  padding: '10px 20px',
+  fontSize: '13px',
+  fontWeight: '700',
+  fontFamily: FONT,
+  textDecoration: 'none',
+  marginTop: '4px',
 }
