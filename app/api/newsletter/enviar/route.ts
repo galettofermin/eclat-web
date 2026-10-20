@@ -48,7 +48,7 @@ export async function POST(req: Request) {
     const admin = createAdminClient()
 
     // Resolver datos de cada bloque
-    const bloquesResueltos = await Promise.all(bloques.map(async (b: { tipo: string; articuloId?: string; cursoId?: string; texto?: string; imagenUrl?: string }) => {
+    const bloquesResueltos = await Promise.all(bloques.map(async (b: { tipo: string; articuloId?: string; cursoId?: string; texto?: string; imagenUrl?: string; pdfUrl?: string; pdfNombre?: string }) => {
       if (b.tipo === 'articulo') {
         const { data } = await admin
           .from('articles')
@@ -71,7 +71,7 @@ export async function POST(req: Request) {
       }
       if (b.tipo === 'institucional') {
         if (!b.texto?.trim()) throw new Error('El mensaje institucional no puede estar vacío')
-        return { tipo: 'institucional' as const, texto: b.texto, imagenUrl: b.imagenUrl }
+        return { tipo: 'institucional' as const, texto: b.texto, imagenUrl: b.imagenUrl, pdfUrl: b.pdfUrl, pdfNombre: b.pdfNombre }
       }
       throw new Error(`Tipo de bloque desconocido: ${b.tipo}`)
     }))
