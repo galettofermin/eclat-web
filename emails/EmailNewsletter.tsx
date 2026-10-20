@@ -136,7 +136,7 @@ export default function EmailNewsletter({
                   style={articleImage}
                 />
               )}
-              <Section style={institucionalBox}>
+              <div style={institucionalBox}>
                 <Text style={institucionalLabel}>Comunicado institucional</Text>
                 {bloque.texto.split(/\n\n+/).map((p, i) => (
                   <Text key={i} style={institucionalText}>{p.trim()}</Text>
@@ -146,7 +146,7 @@ export default function EmailNewsletter({
                     📄 {bloque.pdfNombre ?? 'Descargar documento'}
                   </Link>
                 )}
-              </Section>
+              </div>
             </Section>
           )}
         </React.Fragment>
