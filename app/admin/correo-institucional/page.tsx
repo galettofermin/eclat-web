@@ -134,10 +134,22 @@ export default function CorreoInstitucional() {
           {/* Destinatario */}
           <div className="bg-white rounded-2xl border border-black/5 p-6 space-y-4">
             <h2 className="text-[13px] font-semibold text-[#6E6E73] uppercase tracking-widest">Destinatario</h2>
+
+            <div>
+              <label className="block text-[12px] font-medium text-[#6E6E73] mb-1">Nombre</label>
+              <input type="text" placeholder="Ej: Dra. García"
+                value={destNombre} onChange={e => setDestNombre(e.target.value)}
+                className="w-full border border-black/10 rounded-xl px-4 py-2.5 text-[14px] focus:outline-none focus:border-[#2F7D6B] transition-colors" />
+            </div>
+
             <div className="relative">
-              <input type="text" placeholder="Buscar entre suscriptores..."
-                value={busqueda} onChange={e => setBusqueda(e.target.value)}
-                className="w-full border border-black/10 rounded-xl px-4 py-3 text-[14px] focus:outline-none focus:border-[#2F7D6B] transition-colors" />
+              <label className="block text-[12px] font-medium text-[#6E6E73] mb-1">Email *</label>
+              <input type="email" placeholder="correo@institución.com"
+                value={destEmail}
+                onChange={e => { setDestEmail(e.target.value); setBusqueda(e.target.value) }}
+                onFocus={e => setBusqueda(e.target.value)}
+                onBlur={() => setTimeout(() => setBusqueda(''), 150)}
+                className="w-full border border-black/10 rounded-xl px-4 py-2.5 text-[14px] focus:outline-none focus:border-[#2F7D6B] transition-colors" />
               {sugeridos.length > 0 && (
                 <div className="absolute z-10 top-full left-0 right-0 mt-1 bg-white border border-black/10 rounded-xl shadow-lg overflow-hidden">
                   {sugeridos.map(s => (
@@ -157,20 +169,7 @@ export default function CorreoInstitucional() {
                   ))}
                 </div>
               )}
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-[12px] font-medium text-[#6E6E73] mb-1">Nombre</label>
-                <input type="text" placeholder="Ej: Dra. García"
-                  value={destNombre} onChange={e => setDestNombre(e.target.value)}
-                  className="w-full border border-black/10 rounded-xl px-4 py-2.5 text-[14px] focus:outline-none focus:border-[#2F7D6B] transition-colors" />
-              </div>
-              <div>
-                <label className="block text-[12px] font-medium text-[#6E6E73] mb-1">Email *</label>
-                <input type="email" placeholder="correo@institución.com"
-                  value={destEmail} onChange={e => setDestEmail(e.target.value)}
-                  className="w-full border border-black/10 rounded-xl px-4 py-2.5 text-[14px] focus:outline-none focus:border-[#2F7D6B] transition-colors" />
-              </div>
+              <p className="text-[11px] text-[#9CA8A3] mt-1">Si es un suscriptor, aparecerán sugerencias al escribir.</p>
             </div>
           </div>
 
