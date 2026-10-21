@@ -119,7 +119,7 @@ export async function POST(req: Request) {
         await resend.emails.send({
           from: 'ÉCLAT <hola@eclatcentro.com>',
           to: suscriptor.email,
-          reply_to: 'centrointegraleclat@gmail.com',
+          replyTo: 'centrointegraleclat@gmail.com',
           subject: asunto,
           html,
         })
